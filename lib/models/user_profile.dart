@@ -20,6 +20,8 @@ class UserProfile {
   final String? jobTitle;
   final double workTimePercentage; // Pourcentage de temps de travail (10-100)
   final double weeklyHours; // Heures hebdomadaires
+  final double overtimeHours; // Heures supplémentaires par semaine
+  final bool overtimeRegular; // true = régulières, false = occasionnelles/estimées
   final double grossMonthlySalary;
   final String taxSystem;
 
@@ -41,6 +43,8 @@ class UserProfile {
     this.jobTitle,
     required this.workTimePercentage,
     required this.weeklyHours,
+    required this.overtimeHours,
+    required this.overtimeRegular,
     required this.grossMonthlySalary,
     required this.taxSystem,
   });
@@ -63,6 +67,8 @@ class UserProfile {
     String? jobTitle,
     double? workTimePercentage,
     double? weeklyHours,
+    double? overtimeHours,
+    bool? overtimeRegular,
     double? grossMonthlySalary,
     String? taxSystem,
   }) {
@@ -84,6 +90,8 @@ class UserProfile {
       jobTitle: jobTitle ?? this.jobTitle,
       workTimePercentage: workTimePercentage ?? this.workTimePercentage,
       weeklyHours: weeklyHours ?? this.weeklyHours,
+      overtimeHours: overtimeHours ?? this.overtimeHours,
+      overtimeRegular: overtimeRegular ?? this.overtimeRegular,
       grossMonthlySalary: grossMonthlySalary ?? this.grossMonthlySalary,
       taxSystem: taxSystem ?? this.taxSystem,
     );
@@ -105,6 +113,8 @@ class UserProfile {
     String? jobTitle,
     double? workTimePercentage,
     double? weeklyHours,
+    double? overtimeHours,
+    bool? overtimeRegular,
     double? grossMonthlySalary,
     String? taxSystem,
   }) {
@@ -126,6 +136,8 @@ class UserProfile {
       jobTitle: jobTitle,
       workTimePercentage: workTimePercentage ?? AppConstants.defaultWorkTimePercentage,
       weeklyHours: weeklyHours ?? AppConstants.defaultWeeklyHours,
+      overtimeHours: overtimeHours ?? 0.0,
+      overtimeRegular: overtimeRegular ?? true,
       grossMonthlySalary: grossMonthlySalary ?? AppConstants.defaultGrossSalary,
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
     );

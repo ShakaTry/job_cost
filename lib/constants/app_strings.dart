@@ -104,4 +104,18 @@ class AppStrings {
   static const String monthlyAmount = 'par mois';
   static const String annualAmount = 'par an';
   static const String euroSymbol = '€';
+  
+  // Overtime section
+  static const String overtimeSection = 'Heures supplémentaires';
+  static const String overtimeHours = 'Heures supplémentaires par semaine';
+  static const String overtimeHoursHint = 'Ex: 4';
+  static const String overtimeInfo = 'En France, les heures au-delà de 35h/semaine sont majorées : +25% de la 36e à la 43e heure, +50% au-delà.';
+  static const String overtimeMonthlyAmount = 'Montant mensuel des heures supp.';
+  static const String overtimeRate25 = 'Heures à 25%';
+  static const String overtimeRate50 = 'Heures à 50%';
+  static const String hoursPerMonth = 'h/mois';
+  static const String overtimeTaxExemption = 'Exonération fiscale (max 5000€/an)';
+  static const String regularOvertime = 'Heures supplémentaires régulières';
+  static const String regularOvertimeHelper = 'Ces heures sont effectuées chaque semaine';
+  static const String occasionalOvertimeHelper = 'Estimation ponctuelle (impact sur la précision du calcul)';
 }

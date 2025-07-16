@@ -1,4 +1,4 @@
-# Job Cost - Documentation Claude
+Il # Job Cost - Documentation Claude
 
 ## Projet
 Application Android/iOS développée avec Flutter pour estimer le salaire réel net en déduisant tous les frais annexes pour un emploi ou recherche d'emploi.
@@ -14,6 +14,8 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 
 ### Pages complétées
 1. **Sélection de profil** - Écran principal avec liste des profils
+   - Bouton création de profil de démonstration
+   - Badge "Profil de démonstration" pour Sophie Martin
 2. **Création de profil** - Dialog simple (nom/prénom uniquement)
 3. **Vue détaillée du profil** - Affiche les sections disponibles
 4. **Informations personnelles** - Formulaire complet avec :
@@ -21,8 +23,23 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - Coordonnées (adresse, téléphone, email)
    - Situation familiale (état civil, enfants à charge)
    - Validation des formulaires
-   - Sauvegarde automatique
+   - Sauvegarde automatique avec pattern PopScope
    - Navigation clavier optimisée
+5. **Situation professionnelle** - Formulaire complet avec :
+   - Statut d'emploi (dropdown)
+   - Entreprise et poste
+   - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles)
+   - Salaire brut mensuel / Taux horaire (calcul bidirectionnel automatique)
+   - Support des décimales (ex: 2500.01)
+   - Calculs officiels selon durée légale 151,67h/mois
+   - **Section heures supplémentaires** avec :
+     - Saisie des heures supp. hebdomadaires
+     - Calcul automatique avec taux de majoration (25% jusqu'à 8h, 50% au-delà)
+     - Affichage du montant mensuel des heures supp.
+     - Détail par taux de majoration
+     - Mention de l'exonération fiscale (max 5000€/an)
+   - Sauvegarde automatique avec pattern PopScope
+   - Note: Le régime fiscal a été déplacé vers "Paramètres fiscaux"
 
 ### Architecture du code
 ```
@@ -35,13 +52,22 @@ lib/
 ├── screens/
 │   ├── profile_selection_screen.dart
 │   ├── profile_detail_screen.dart
-│   └── personal_info_screen.dart
+│   ├── personal_info_screen.dart
+│   └── professional_situation_screen.dart
+├── services/
+│   └── profile_service.dart  # Service de gestion des profils (CRUD)
 ├── utils/
 │   └── validators.dart     # Validation centralisée des formulaires
 ├── widgets/
 │   ├── profile_avatar.dart # Avatar réutilisable
 │   └── info_container.dart  # Container d'info bleu réutilisable
 └── main.dart
+
+docs/
+├── calculations/
+│   └── salary_calculations.md  # Documentation officielle des calculs de salaire
+└── development/
+    └── auto_save_pattern.md    # Pattern de sauvegarde automatique
 ```
 
 ### Conventions de code
@@ -52,6 +78,9 @@ lib/
 - Vérification mounted avant setState dans les contextes async
 - Formatage automatique du téléphone français
 - textInputAction pour navigation clavier entre champs
+- Pattern PopScope pour la sauvegarde automatique (voir docs/development/auto_save_pattern.md)
+- Calculs de précision maximale en interne, arrondi seulement à l'affichage
+- Listeners sur TextEditingController pour sauvegarde temps réel
 
 ### Préférences UX de l'utilisateur
 - Pas de titres redondants
@@ -76,10 +105,10 @@ lib/
 - Export PDF détaillé
 
 ### Prochaines étapes
-1. Créer la page "Situation professionnelle"
+1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT
 2. Créer la page "Transport & Déplacements"
 3. Créer la page "Frais professionnels"
-4. Créer la page "Paramètres fiscaux"
+4. Créer la page "Paramètres fiscaux" (inclure le régime fiscal)
 5. Implémenter l'écran de calcul
 6. Ajouter la persistance des données (SQLite)
 
@@ -89,6 +118,11 @@ lib/
 - Développement progressif sans précipitation
 - Les 3 profils d'exemple sont temporaires pour le développement
 - Toujours exécuter `flutter analyze` avant de commit/push
+- Profil de démonstration "Sophie Martin" créé avec données complètes
+- Calculs de salaire basés sur 151,67h/mois (durée légale officielle)
+- Précision maximale en interne, arrondi seulement pour l'affichage
+- Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
+- Pattern de sauvegarde automatique avec PopScope obligatoire pour toutes les pages de formulaire
 
 ### Commandes utiles
 ```bash
@@ -101,6 +135,11 @@ flutter run -d emulator-5554
 # Nettoyer et récupérer les dépendances
 flutter clean && flutter pub get
 ```
+
+### Note importante pour Claude
+- NE JAMAIS utiliser `flutter run` directement car cela créera toujours un timeout
+- L'utilisateur lancera l'application lui-même et donnera son feedback
+- Se contenter de vérifier le code avec `flutter analyze`
 
 ## Gestion Git (rappel du workflow)
 

@@ -16,6 +16,16 @@
   - [x] Situation familiale (état civil, enfants)
   - [x] Navigation clavier entre champs
   - [x] Sauvegarde automatique
+- [x] Situation professionnelle
+  - [x] Statut professionnel (dropdown)
+  - [x] Nom de l'entreprise
+  - [x] Poste/Fonction occupée
+  - [x] Temps de travail (curseur 10-100% + heures hebdomadaires)
+  - [x] Salaire brut mensuel / Taux horaire (calcul bidirectionnel)
+  - [x] Salaire annuel (affichage automatique)
+  - [x] Sauvegarde automatique avec pattern PopScope
+  - [x] Support des décimales pour les salaires
+  - [x] Calculs officiels selon durée légale 151,67h/mois
 
 **Améliorations futures (optionnel) :**
 - [ ] Upload photo de profil fonctionnel
@@ -25,22 +35,10 @@
 
 ### 📋 Pages à créer
 
-#### 1. 💼 Situation professionnelle actuelle
-**Champs à inclure :**
-- [ ] Statut professionnel (CDI, CDD, Intérim, Chômage, Étudiant, Indépendant)
-- [ ] Nom de l'employeur actuel
-- [ ] Poste/Fonction occupée
-- [ ] Date d'embauche (calcul ancienneté)
-- [ ] Salaire brut mensuel actuel
-- [ ] Convention collective
-- [ ] Temps de travail (temps plein, temps partiel %)
-- [ ] Nombre de jours de présence par semaine (présentiel/télétravail)
-- [ ] Avantages actuels (mutuelle, tickets resto, etc.)
-
-#### 2. 🚗 Transport & Déplacements
+#### 1. 🚗 Transport & Déplacements
 **Champs à inclure :**
 - [ ] Permis de conduire (types détenus)
-- [ ] Mode de transport principal (voiture, transport en commun, vélo, marche)
+- [ ] Mode de transport principal (voiture, transport en commun, vélo, marche) 
 - [ ] Distance domicile-travail (km)
 - [ ] Temps de trajet moyen (aller simple)
 - [ ] Si voiture :
@@ -53,7 +51,7 @@
   - [ ] Coût mensuel
   - [ ] Participation employeur
 
-#### 3. 💰 Frais professionnels
+#### 2. 💰 Frais professionnels
 **Champs à inclure :**
 - [ ] Repas :
   - [ ] Cantine entreprise (oui/non, prix)
@@ -75,8 +73,9 @@
   - [ ] Formations suivies
   - [ ] Coûts non pris en charge
 
-#### 4. 🏦 Paramètres fiscaux
+#### 3. 🏦 Paramètres fiscaux
 **Champs à inclure :**
+- [ ] Régime fiscal (Prélèvement à la source, Acomptes provisionnels, Non imposable)
 - [ ] Taux marginal d'imposition
 - [ ] Nombre de parts fiscales
 - [ ] Régime (réel ou forfaitaire)

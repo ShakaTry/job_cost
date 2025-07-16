@@ -29,7 +29,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late String _employmentStatus;
   late double _workTimePercentage;
   late TextEditingController _weeklyHoursController;
-  late String _taxSystem;
+  late TextEditingController _overtimeHoursController;
+  late bool _overtimeRegular;
   late UserProfile _modifiedProfile;
   late FocusNode _salaryFocusNode;
 
@@ -48,7 +49,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _employmentStatus = widget.profile.employmentStatus;
     _workTimePercentage = widget.profile.workTimePercentage;
     _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toString());
-    _taxSystem = widget.profile.taxSystem;
+    _overtimeHoursController = TextEditingController(text: widget.profile.overtimeHours > 0 ? widget.profile.overtimeHours.toString() : '');
+    _overtimeRegular = widget.profile.overtimeRegular;
     _salaryFocusNode = FocusNode();
     
     // Initialiser les valeurs exactes
@@ -61,20 +63,24 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     }
     
     // Sauvegarde automatique comme sur la page d'infos personnelles
-    _companyNameController.addListener(_updateProfile);
-    _jobTitleController.addListener(_updateProfile);
+    _companyNameController.addListener(() {
+      _updateProfile();
+    });
+    _jobTitleController.addListener(() {
+      _updateProfile();
+    });
     _salaryController.addListener(() {
       if (!_isUpdating) {
         _updateHourlyFromSalary();
-        if (mounted) setState(() {});
         _updateProfile();
+        if (mounted) setState(() {});
       }
     });
     _hourlyRateController.addListener(() {
       if (!_isUpdating) {
         _updateSalaryFromHourly();
-        if (mounted) setState(() {});
         _updateProfile();
+        if (mounted) setState(() {});
       }
     });
     _weeklyHoursController.addListener(() {
@@ -86,9 +92,13 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         } else if (_exactHourlyRate > 0) {
           _updateSalaryFromHourly();
         }
-        if (mounted) setState(() {});
         _updateProfile();
+        if (mounted) setState(() {});
       }
+    });
+    _overtimeHoursController.addListener(() {
+      _updateProfile();
+      if (mounted) setState(() {});
     });
     
     // Formater le salaire quand l'utilisateur quitte le champ
@@ -109,6 +119,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _salaryController.dispose();
     _hourlyRateController.dispose();
     _weeklyHoursController.dispose();
+    _overtimeHoursController.dispose();
     _salaryFocusNode.dispose();
     super.dispose();
   }
@@ -266,6 +277,57 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   double _calculateAnnualSalary(double monthlySalary) {
     return monthlySalary * 12;
   }
+  
+  // Calculs des heures supplémentaires
+  double _calculateOvertimeSalary() {
+    final overtimeHours = double.tryParse(_overtimeHoursController.text) ?? 0.0;
+    if (overtimeHours <= 0 || _exactHourlyRate <= 0) return 0.0;
+    
+    // Heures supplémentaires par mois (semaines * 52 / 12)
+    final monthlyOvertimeHours = overtimeHours * 52 / 12;
+    
+    // Calcul selon les taux de majoration
+    double overtimeSalary = 0.0;
+    
+    if (overtimeHours <= 8) {
+      // Toutes les heures à 25%
+      overtimeSalary = monthlyOvertimeHours * _exactHourlyRate * 1.25;
+    } else {
+      // 8 premières heures à 25%
+      final hours25 = 8.0 * 52 / 12;
+      // Heures restantes à 50%
+      final hours50 = (overtimeHours - 8) * 52 / 12;
+      
+      overtimeSalary = (hours25 * _exactHourlyRate * 1.25) + 
+                      (hours50 * _exactHourlyRate * 1.50);
+    }
+    
+    return overtimeSalary;
+  }
+  
+  // Calcul des heures supplémentaires mensuelles par taux
+  Map<String, double> _getOvertimeHoursByRate() {
+    final overtimeHours = double.tryParse(_overtimeHoursController.text) ?? 0.0;
+    
+    if (overtimeHours <= 0) {
+      return {'hours25': 0.0, 'hours50': 0.0};
+    }
+    
+    // Conversion hebdo -> mensuel
+    const weeksPerMonth = 52.0 / 12.0;
+    
+    if (overtimeHours <= 8) {
+      return {
+        'hours25': overtimeHours * weeksPerMonth,
+        'hours50': 0.0,
+      };
+    } else {
+      return {
+        'hours25': 8.0 * weeksPerMonth,
+        'hours50': (overtimeHours - 8) * weeksPerMonth,
+      };
+    }
+  }
 
 
   bool _hasEmployment() {
@@ -276,14 +338,16 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
 
   void _updateProfile() {
     final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
+    final overtimeHours = double.tryParse(_overtimeHoursController.text) ?? 0.0;
     _modifiedProfile = _modifiedProfile.copyWith(
       employmentStatus: _employmentStatus,
       companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
       jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
       workTimePercentage: _workTimePercentage,
       weeklyHours: weeklyHours,
+      overtimeHours: overtimeHours,
+      overtimeRegular: _overtimeRegular,
       grossMonthlySalary: _getCurrentMonthlySalary(),
-      taxSystem: _taxSystem,
     );
     
     // Sauvegarder automatiquement le profil (comme sur la page d'infos personnelles)
@@ -296,7 +360,14 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final monthlySalary = _getCurrentMonthlySalary();
     final annualSalary = _calculateAnnualSalary(monthlySalary);
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (!didPop) {
+          Navigator.pop(context, _modifiedProfile);
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
         foregroundColor: Colors.white,
@@ -384,7 +455,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   border: OutlineInputBorder(),
                 ),
                 textInputAction: TextInputAction.next,
-                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
@@ -397,7 +467,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   border: OutlineInputBorder(),
                 ),
                 textInputAction: TextInputAction.next,
-                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
@@ -443,7 +512,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                 ],
                 textInputAction: TextInputAction.next,
-                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: AppConstants.largePadding),
@@ -522,43 +590,94 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   ),
                 ),
               ],
+              
+              const SizedBox(height: AppConstants.largePadding),
+              
+              // Section Heures supplémentaires
+              Text(
+                AppStrings.overtimeSection,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: AppConstants.defaultPadding),
+              
+              TextFormField(
+                controller: _overtimeHoursController,
+                decoration: const InputDecoration(
+                  labelText: AppStrings.overtimeHours,
+                  hintText: AppStrings.overtimeHoursHint,
+                  border: OutlineInputBorder(),
+                  suffixText: 'h/semaine',
+                  helperText: 'Au-delà de 35h : +25% (36-43h), +50% (>43h)',
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                ],
+                textInputAction: TextInputAction.done,
+              ),
+              
+              if (double.tryParse(_overtimeHoursController.text) != null && double.tryParse(_overtimeHoursController.text)! > 0) ...[
+                const SizedBox(height: AppConstants.defaultPadding),
+                SwitchListTile(
+                  title: const Text(AppStrings.regularOvertime),
+                  subtitle: Text(
+                    _overtimeRegular ? AppStrings.regularOvertimeHelper : AppStrings.occasionalOvertimeHelper,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _overtimeRegular ? Colors.green[700] : Colors.orange[700],
+                    ),
+                  ),
+                  value: _overtimeRegular,
+                  onChanged: (value) {
+                    setState(() {
+                      _overtimeRegular = value;
+                    });
+                    _updateProfile();
+                  },
+                  activeColor: Colors.green,
+                ),
+              ],
+              
+              if (_calculateOvertimeSalary() > 0) ...[
+                const SizedBox(height: AppConstants.defaultPadding),
+                
+                // Affichage simple du montant
+                Container(
+                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(AppStrings.overtimeMonthlyAmount),
+                          Text(
+                            '${_formatSalary(_calculateOvertimeSalary().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppConstants.smallPadding),
+                      Text(
+                        '${_getOvertimeHoursByRate()['hours25']!.toStringAsFixed(1)}h à 125% + ${_getOvertimeHoursByRate()['hours50']!.toStringAsFixed(1)}h à 150% par mois',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ],
-            
-            const SizedBox(height: AppConstants.largePadding),
-            
-            Text(
-              AppStrings.taxSection,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            
-            DropdownButtonFormField<String>(
-              value: _taxSystem,
-              decoration: const InputDecoration(
-                labelText: AppStrings.taxSystem,
-                border: OutlineInputBorder(),
-              ),
-              items: AppConstants.taxSystemOptions
-                  .map((system) => DropdownMenuItem(
-                        value: system,
-                        child: Text(system),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    _taxSystem = value;
-                  });
-                  _updateProfile();
-                }
-              },
-            ),
-            
-            const SizedBox(height: AppConstants.largePadding),
           ],
         ),
+      ),
       ),
     );
   }
