@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
 import 'add_profile_screen.dart';
+import 'profile_detail_screen.dart';
 
 class ProfileSelectionScreen extends StatefulWidget {
   const ProfileSelectionScreen({super.key});
@@ -113,10 +114,19 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
     );
   }
 
-  void _selectProfile(UserProfile profile) {
-    // TODO: Navigation vers l'écran principal avec le profil sélectionné
-    // Pour l'instant, on affiche juste un message temporaire
-    debugPrint('Profil sélectionné: ${profile.fullName}');
+  void _selectProfile(UserProfile profile) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProfileDetailScreen(profile: profile),
+      ),
+    );
+    
+    if (result == 'delete') {
+      setState(() {
+        _profiles.remove(profile);
+      });
+    }
   }
 
   void _addNewProfile() async {
