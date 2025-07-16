@@ -19,7 +19,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sélection du Profil'),
+        title: const Text('Choisissez votre profil'),
         centerTitle: true,
       ),
       body: Padding(
@@ -27,15 +27,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Choisissez votre profil',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
             Expanded(
               child: ListView.builder(
                 itemCount: _profiles.length,
@@ -116,18 +108,49 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   }
 
   void _selectProfile(UserProfile profile) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Profil sélectionné: ${profile.name}'),
-      ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: Text('Voulez-vous continuer en tant que ${profile.name} ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // TODO: Navigation vers l'écran principal
+              },
+              child: const Text('Confirmer'),
+            ),
+          ],
+        );
+      },
     );
   }
 
   void _addNewProfile() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Fonction d\'ajout de profil à implémenter'),
-      ),
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Nouveau profil'),
+          content: const Text('Cette fonctionnalité sera bientôt disponible.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
