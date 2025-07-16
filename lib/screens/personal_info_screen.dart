@@ -77,19 +77,43 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) {
+      onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
           if (_formKey.currentState!.validate()) {
             _updateProfile();
             Navigator.pop(context, _modifiedProfile);
           } else {
-            // Afficher un message d'erreur
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Veuillez corriger les erreurs avant de continuer'),
-                backgroundColor: Colors.red,
-              ),
+            // Afficher un dialogue de confirmation
+            final bool? shouldExit = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Données invalides'),
+                  content: const Text(
+                    'Certaines informations ne sont pas valides.\n\n'
+                    'Voulez-vous quitter sans sauvegarder les modifications ?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('Rester et corriger'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.red,
+                      ),
+                      child: const Text('Quitter sans sauvegarder'),
+                    ),
+                  ],
+                );
+              },
             );
+            
+            if (shouldExit == true && mounted) {
+              // Retourner le profil original sans modifications
+              Navigator.pop(context, widget.profile);
+            }
           }
         }
       },
