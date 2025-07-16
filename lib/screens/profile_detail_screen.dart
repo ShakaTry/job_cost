@@ -36,7 +36,32 @@ class ProfileDetailScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.amber.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.amber.shade300),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.amber.shade700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Votre situation actuelle',
+                        style: TextStyle(
+                          color: Colors.amber.shade700,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
               
               _buildSectionCard(
                 context,
@@ -51,8 +76,8 @@ class ProfileDetailScreen extends StatelessWidget {
               _buildSectionCard(
                 context,
                 icon: Icons.work,
-                title: 'Situation professionnelle',
-                subtitle: 'Statut actuel, régime fiscal',
+                title: 'Situation professionnelle actuelle',
+                subtitle: 'Emploi actuel, statut, régime fiscal',
                 onTap: () {
                   // TODO: Navigation
                 },

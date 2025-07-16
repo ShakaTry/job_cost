@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
-import 'add_profile_screen.dart';
 import 'profile_detail_screen.dart';
 
 class ProfileSelectionScreen extends StatefulWidget {
@@ -121,11 +120,83 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   }
 
   void _addNewProfile() async {
-    final UserProfile? newProfile = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AddProfileScreen(),
-      ),
+    final formKey = GlobalKey<FormState>();
+    final lastNameController = TextEditingController();
+    final firstNameController = TextEditingController();
+
+    final UserProfile? newProfile = await showDialog<UserProfile>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Nouveau profil'),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: lastNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nom',
+                    hintText: 'Ex: Dupont',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  autofocus: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un nom';
+                    }
+                    if (value.length < 2) {
+                      return 'Le nom doit contenir au moins 2 caractères';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: firstNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Prénom',
+                    hintText: 'Ex: Jean',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                  textCapitalization: TextCapitalization.words,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Veuillez entrer un prénom';
+                    }
+                    if (value.length < 2) {
+                      return 'Le prénom doit contenir au moins 2 caractères';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  final profile = UserProfile.create(
+                    lastName: lastNameController.text,
+                    firstName: firstNameController.text,
+                  );
+                  Navigator.of(context).pop(profile);
+                }
+              },
+              child: const Text('Créer'),
+            ),
+          ],
+        );
+      },
     );
 
     if (newProfile != null) {
