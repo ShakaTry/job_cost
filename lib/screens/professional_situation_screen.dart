@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/user_profile.dart';
@@ -52,6 +51,15 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _taxSystem = widget.profile.taxSystem;
     _salaryFocusNode = FocusNode();
     
+    // Initialiser les valeurs exactes
+    _exactMonthlySalary = widget.profile.grossMonthlySalary;
+    if (_exactMonthlySalary > 0) {
+      final coefficient = widget.profile.weeklyHours / _dureeLegaleHebdo;
+      final dureeReelle = _dureeLegaleMensuelle * coefficient;
+      _exactHourlyRate = _exactMonthlySalary / dureeReelle;
+      _hourlyRateController.text = _exactHourlyRate.toStringAsFixed(2);
+    }
+    
     _companyNameController.addListener(_saveData);
     _jobTitleController.addListener(_saveData);
     _salaryController.addListener(() {
@@ -73,7 +81,12 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _weeklyHoursController.addListener(() {
       if (!_isUpdating) {
         _updatePercentageFromHours();
-        _updateHourlyFromSalary();
+        // Recalculer avec les valeurs exactes pour maintenir la précision
+        if (_exactMonthlySalary > 0) {
+          _updateHourlyFromSalary();
+        } else if (_exactHourlyRate > 0) {
+          _updateSalaryFromHourly();
+        }
         if (mounted) setState(() {});
         _saveData();
       }
@@ -149,8 +162,16 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
 
   bool _isUpdating = false;
   bool _isUserInputting = false;
+  
+  // Variables pour conserver la précision maximale (selon documentation)
+  double _exactHourlyRate = 0.0;
+  double _exactMonthlySalary = 0.0;
 
   double _getCurrentMonthlySalary() {
+    // Retourner la valeur exacte si disponible (précision maximale)
+    if (_exactMonthlySalary > 0) {
+      return _exactMonthlySalary;
+    }
     final salaryText = _salaryController.text.replaceAll(' ', '');
     return double.tryParse(salaryText) ?? 0.0;
   }
@@ -158,8 +179,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   // Constantes officielles selon la documentation
   static const double _dureeLegaleMensuelle = 151.67; // heures/mois pour 35h/semaine
   static const double _dureeLegaleHebdo = 35.0; // heures/semaine
-  static const int _precisionTauxHoraire = 4; // décimales pour taux horaire
-  static const int _precisionSalaire = 2; // décimales pour salaire
 
   double _getWorkTimeCoefficient() {
     final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? _dureeLegaleHebdo;
@@ -181,28 +200,28 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _isUpdating = false;
   }
 
-  // Fonction d'arrondi selon les spécifications officielles
-  double _roundToPrecision(double value, int decimals) {
-    final factor = pow(10, decimals);
-    return (value * factor).round() / factor;
-  }
 
   void _updateHourlyFromSalary() {
     final salaryText = _salaryController.text.replaceAll(' ', '');
     final salary = double.tryParse(salaryText);
     if (salary != null && salary > 0) {
+      // Stocker la valeur exacte du salaire (précision maximale)
+      _exactMonthlySalary = salary;
+      
       // Calcul avec coefficient de temps de travail selon la documentation officielle
       final coefficient = _getWorkTimeCoefficient();
       final dureeReelle = _dureeLegaleMensuelle * coefficient;
       
       // Formule officielle : Taux_Horaire_Brut = Salaire_Mensuel_Brut / Durée_Mensuelle_Travail
-      final hourlyRate = salary / dureeReelle;
+      _exactHourlyRate = salary / dureeReelle; // Conserver précision maximale
       
       _isUpdating = true;
-      // Affichage avec précision recommandée (4 décimales pour taux horaire)
-      _hourlyRateController.text = _roundToPrecision(hourlyRate, _precisionTauxHoraire).toString();
+      // Affichage arrondi seulement (selon documentation: "arrondir seulement à l'affichage")
+      _hourlyRateController.text = _exactHourlyRate.toStringAsFixed(2); // 2 décimales pour UX
       _isUpdating = false;
     } else if (salaryText.isEmpty) {
+      _exactMonthlySalary = 0.0;
+      _exactHourlyRate = 0.0;
       _isUpdating = true;
       _hourlyRateController.clear();
       _isUpdating = false;
@@ -213,19 +232,23 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final hourlyText = _hourlyRateController.text;
     final hourlyRate = double.tryParse(hourlyText);
     if (hourlyRate != null && hourlyRate > 0) {
+      // Utiliser la valeur exacte si disponible (évite double arrondi)
+      final exactRate = _exactHourlyRate > 0 ? _exactHourlyRate : hourlyRate;
+      
       // Calcul avec coefficient de temps de travail selon la documentation officielle
       final coefficient = _getWorkTimeCoefficient();
       final dureeReelle = _dureeLegaleMensuelle * coefficient;
       
       // Formule officielle : Salaire_Mensuel_Brut = Taux_Horaire_Brut × Durée_Mensuelle_Travail
-      final monthlySalary = hourlyRate * dureeReelle;
+      _exactMonthlySalary = exactRate * dureeReelle; // Conserver précision maximale
       
       _isUpdating = true;
-      // Arrondir à 2 décimales (centimes) pour le salaire selon les spécifications
-      final roundedSalary = _roundToPrecision(monthlySalary, _precisionSalaire);
-      _salaryController.text = roundedSalary.toString();
+      // Affichage arrondi seulement (selon documentation: "arrondir seulement à l'affichage")
+      _salaryController.text = _exactMonthlySalary.toStringAsFixed(2);
       _isUpdating = false;
     } else if (hourlyText.isEmpty) {
+      _exactHourlyRate = 0.0;
+      _exactMonthlySalary = 0.0;
       _isUpdating = true;
       _salaryController.clear();
       _isUpdating = false;
