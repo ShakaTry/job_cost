@@ -39,7 +39,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _jobTitleController = TextEditingController(text: widget.profile.jobTitle ?? '');
     _salaryController = TextEditingController(
       text: widget.profile.grossMonthlySalary > 0 
-        ? _formatSalary(widget.profile.grossMonthlySalary.toStringAsFixed(0)) 
+        ? widget.profile.grossMonthlySalary.toStringAsFixed(0) 
         : ''
     );
     _hourlyRateController = TextEditingController();
@@ -49,8 +49,18 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     
     _companyNameController.addListener(_saveData);
     _jobTitleController.addListener(_saveData);
-    _salaryController.addListener(_onSalaryChanged);
-    _hourlyRateController.addListener(_onHourlyRateChanged);
+    _salaryController.addListener(() {
+      // Update hourly rate and refresh UI
+      _updateHourlyRateFromSalary();
+      if (mounted) setState(() {});
+      _saveData();
+    });
+    _hourlyRateController.addListener(() {
+      // Update salary and refresh UI  
+      _updateSalaryFromHourlyRate();
+      if (mounted) setState(() {});
+      _saveData();
+    });
   }
 
   @override
@@ -80,65 +90,42 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return result;
   }
 
-  void _onSalaryChanged() {
-    final cursorPosition = _salaryController.selection.baseOffset;
-    final oldLength = _salaryController.text.length;
-    final formatted = _formatSalary(_salaryController.text);
-    
-    if (formatted != _salaryController.text) {
-      final newLength = formatted.length;
-      final diff = newLength - oldLength;
-      
-      _salaryController.text = formatted;
-      _salaryController.selection = TextSelection.fromPosition(
-        TextPosition(offset: (cursorPosition + diff).clamp(0, formatted.length)),
-      );
-    }
-    
-    // Calculate hourly rate from monthly salary
-    _updateHourlyRateFromSalary();
-    
-    _saveData();
-  }
 
-  void _onHourlyRateChanged() {
-    // Calculate monthly salary from hourly rate
-    _updateSalaryFromHourlyRate();
-    
-    _saveData();
-  }
+  bool _updatingFromCode = false;
 
   void _updateHourlyRateFromSalary() {
+    if (_updatingFromCode) return;
+    
     final monthlySalary = _parseSalary(_salaryController.text);
     if (monthlySalary > 0) {
       final weeklyHours = _getWeeklyHoursNumber();
       final hourlyRate = monthlySalary / (weeklyHours * 4.33);
       
-      // Update hourly rate without triggering listener
-      _hourlyRateController.removeListener(_onHourlyRateChanged);
+      _updatingFromCode = true;
       _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
-      _hourlyRateController.addListener(_onHourlyRateChanged);
-    } else {
-      _hourlyRateController.removeListener(_onHourlyRateChanged);
+      _updatingFromCode = false;
+    } else if (_salaryController.text.isEmpty) {
+      _updatingFromCode = true;
       _hourlyRateController.clear();
-      _hourlyRateController.addListener(_onHourlyRateChanged);
+      _updatingFromCode = false;
     }
   }
 
   void _updateSalaryFromHourlyRate() {
+    if (_updatingFromCode) return;
+    
     final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
     if (hourlyRate > 0) {
       final weeklyHours = _getWeeklyHoursNumber();
       final monthlySalary = hourlyRate * weeklyHours * 4.33;
       
-      // Update salary without triggering listener
-      _salaryController.removeListener(_onSalaryChanged);
-      _salaryController.text = _formatSalary(monthlySalary.toStringAsFixed(0));
-      _salaryController.addListener(_onSalaryChanged);
-    } else {
-      _salaryController.removeListener(_onSalaryChanged);
+      _updatingFromCode = true;
+      _salaryController.text = monthlySalary.toStringAsFixed(0);
+      _updatingFromCode = false;
+    } else if (_hourlyRateController.text.isEmpty) {
+      _updatingFromCode = true;
       _salaryController.clear();
-      _salaryController.addListener(_onSalaryChanged);
+      _updatingFromCode = false;
     }
   }
 
