@@ -10,13 +10,25 @@ class AddProfileScreen extends StatefulWidget {
 
 class _AddProfileScreenState extends State<AddProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _roleController = TextEditingController();
+  final _lastNameController = TextEditingController(text: 'Utilisateur');
+  final _firstNameController = TextEditingController(text: 'Nouveau');
+  final _addressController = TextEditingController(text: '1 rue de la République, 75001 Paris');
+  String _maritalStatus = 'Célibataire';
+  int _dependentChildren = 0;
+
+  final List<String> _maritalStatusOptions = [
+    'Célibataire',
+    'Marié(e)',
+    'Divorcé(e)',
+    'Veuf(ve)',
+    'Pacsé(e)',
+  ];
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _roleController.dispose();
+    _lastNameController.dispose();
+    _firstNameController.dispose();
+    _addressController.dispose();
     super.dispose();
   }
 
@@ -27,27 +39,27 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
         title: const Text('Nouveau profil'),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Center(
                 child: Stack(
                   children: [
                     CircleAvatar(
-                      radius: 60,
+                      radius: 50,
                       backgroundColor: Theme.of(context).primaryColor,
                       child: Text(
-                        _nameController.text.isNotEmpty
-                            ? _nameController.text[0].toUpperCase()
+                        _firstNameController.text.isNotEmpty
+                            ? _firstNameController.text[0].toUpperCase()
                             : '?',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 48,
+                          fontSize: 36,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -61,13 +73,14 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: Colors.white,
-                            width: 3,
+                            width: 2,
                           ),
                         ),
                         child: IconButton(
                           icon: const Icon(
                             Icons.camera_alt,
                             color: Colors.white,
+                            size: 20,
                           ),
                           onPressed: _pickImage,
                         ),
@@ -76,21 +89,42 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
               TextFormField(
-                controller: _nameController,
+                controller: _lastNameController,
                 decoration: const InputDecoration(
-                  labelText: 'Nom du profil',
-                  hintText: 'Ex: Jean Dupont',
+                  labelText: 'Nom',
+                  hintText: 'Ex: Dupont',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
+                  prefixIcon: Icon(Icons.person_outline),
                 ),
+                textCapitalization: TextCapitalization.words,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un nom';
+                    return 'Veuillez entrer votre nom';
                   }
                   if (value.length < 2) {
                     return 'Le nom doit contenir au moins 2 caractères';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _firstNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Prénom',
+                  hintText: 'Ex: Jean',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
+                ),
+                textCapitalization: TextCapitalization.words,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Veuillez entrer votre prénom';
+                  }
+                  if (value.length < 2) {
+                    return 'Le prénom doit contenir au moins 2 caractères';
                   }
                   return null;
                 },
@@ -100,24 +134,116 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _roleController,
+                controller: _addressController,
                 decoration: const InputDecoration(
-                  labelText: 'Rôle',
-                  hintText: 'Ex: Chef de projet, Technicien...',
+                  labelText: 'Adresse',
+                  hintText: 'Ex: 123 rue de la Paix, 75001 Paris',
                   border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.work),
+                  prefixIcon: Icon(Icons.home),
                 ),
+                maxLines: 2,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer un rôle';
+                    return 'Veuillez entrer votre adresse';
                   }
-                  if (value.length < 3) {
-                    return 'Le rôle doit contenir au moins 3 caractères';
+                  if (value.length < 10) {
+                    return 'L\'adresse semble incomplète';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _maritalStatus,
+                decoration: const InputDecoration(
+                  labelText: 'Situation matrimoniale',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.family_restroom),
+                ),
+                items: _maritalStatusOptions.map((String status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _maritalStatus = newValue;
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: InputDecorator(
+                      decoration: const InputDecoration(
+                        labelText: 'Enfants à charge',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.child_care),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '$_dependentChildren',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove_circle_outline),
+                                onPressed: _dependentChildren > 0
+                                    ? () {
+                                        setState(() {
+                                          _dependentChildren--;
+                                        });
+                                      }
+                                    : null,
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add_circle_outline),
+                                onPressed: () {
+                                  setState(() {
+                                    _dependentChildren++;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue.shade200),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: Colors.blue.shade700),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Ces informations sont utilisées pour le calcul des charges sociales et fiscales',
+                        style: TextStyle(
+                          color: Colors.blue.shade700,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _saveProfile,
                 style: ElevatedButton.styleFrom(
@@ -128,6 +254,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   style: TextStyle(fontSize: 16),
                 ),
               ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -158,8 +285,11 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
   void _saveProfile() {
     if (_formKey.currentState!.validate()) {
       final newProfile = UserProfile.create(
-        name: _nameController.text,
-        role: _roleController.text,
+        lastName: _lastNameController.text,
+        firstName: _firstNameController.text,
+        address: _addressController.text,
+        maritalStatus: _maritalStatus,
+        dependentChildren: _dependentChildren,
       );
       
       Navigator.of(context).pop(newProfile);

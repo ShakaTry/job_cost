@@ -11,9 +11,27 @@ class ProfileSelectionScreen extends StatefulWidget {
 
 class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   final List<UserProfile> _profiles = [
-    UserProfile.create(name: 'Admin', role: 'Administrateur'),
-    UserProfile.create(name: 'Chef Projet', role: 'Gestionnaire'),
-    UserProfile.create(name: 'Technicien', role: 'Exécutant'),
+    UserProfile.create(
+      lastName: 'Dupont', 
+      firstName: 'Jean',
+      address: '15 rue du Commerce, 75015 Paris',
+      maritalStatus: 'Marié(e)',
+      dependentChildren: 2,
+    ),
+    UserProfile.create(
+      lastName: 'Martin', 
+      firstName: 'Sophie',
+      address: '8 avenue Victor Hugo, 69002 Lyon',
+      maritalStatus: 'Célibataire',
+      dependentChildren: 0,
+    ),
+    UserProfile.create(
+      lastName: 'Bernard', 
+      firstName: 'Pierre',
+      address: '23 boulevard de la Liberté, 59000 Lille',
+      maritalStatus: 'Divorcé(e)',
+      dependentChildren: 1,
+    ),
   ];
 
   @override
@@ -50,7 +68,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                               radius: 30,
                               backgroundColor: Theme.of(context).primaryColor,
                               child: Text(
-                                profile.name[0].toUpperCase(),
+                                profile.firstName[0].toUpperCase(),
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 24,
@@ -64,7 +82,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    profile.name,
+                                    profile.fullName,
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -72,7 +90,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    profile.role,
+                                    '${profile.maritalStatus} • ${profile.dependentChildren} enfant${profile.dependentChildren > 1 ? 's' : ''}',
                                     style: TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey[600],
