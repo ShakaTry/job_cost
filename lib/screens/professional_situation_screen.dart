@@ -30,6 +30,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late String _workTime;
   late String _taxSystem;
   late UserProfile _modifiedProfile;
+  String? _activeField;
 
   @override
   void initState() {
@@ -51,16 +52,22 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _jobTitleController.addListener(_saveData);
     _salaryController.addListener(() {
       if (!_updatingFromCode) {
-        // Update hourly rate and refresh UI
-        _updateHourlyRateFromSalary();
+        if (_activeField == 'salary') {
+          // Update hourly rate only when salary field is active
+          _updateHourlyRateFromSalary();
+        }
+        // Always refresh UI to update annual salary
         if (mounted) setState(() {});
         _saveData();
       }
     });
     _hourlyRateController.addListener(() {
       if (!_updatingFromCode) {
-        // Update salary and refresh UI  
-        _updateSalaryFromHourlyRate();
+        if (_activeField == 'hourly') {
+          // Update salary only when hourly field is active
+          _updateSalaryFromHourlyRate();
+        }
+        // Always refresh UI to update annual salary
         if (mounted) setState(() {});
         _saveData();
       }
@@ -364,19 +371,26 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
               Row(
                 children: [
                   Expanded(
-                    child: TextFormField(
-                      controller: _salaryController,
-                      decoration: const InputDecoration(
-                        labelText: 'Salaire brut',
-                        hintText: 'En euros',
-                        border: OutlineInputBorder(),
-                        suffixText: '€/mois',
+                    child: Focus(
+                      onFocusChange: (hasFocus) {
+                        setState(() {
+                          _activeField = hasFocus ? 'salary' : null;
+                        });
+                      },
+                      child: TextFormField(
+                        controller: _salaryController,
+                        decoration: const InputDecoration(
+                          labelText: 'Salaire brut',
+                          hintText: 'En euros',
+                          border: OutlineInputBorder(),
+                          suffixText: '€/mois',
+                        ),
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        textInputAction: TextInputAction.next,
                       ),
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      textInputAction: TextInputAction.next,
                     ),
                   ),
                   Padding(
@@ -387,19 +401,26 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     ),
                   ),
                   Expanded(
-                    child: TextFormField(
-                      controller: _hourlyRateController,
-                      decoration: const InputDecoration(
-                        labelText: 'Taux horaire',
-                        hintText: 'En euros',
-                        border: OutlineInputBorder(),
-                        suffixText: '€/h',
+                    child: Focus(
+                      onFocusChange: (hasFocus) {
+                        setState(() {
+                          _activeField = hasFocus ? 'hourly' : null;
+                        });
+                      },
+                      child: TextFormField(
+                        controller: _hourlyRateController,
+                        decoration: const InputDecoration(
+                          labelText: 'Taux horaire',
+                          hintText: 'En euros',
+                          border: OutlineInputBorder(),
+                          suffixText: '€/h',
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        ],
+                        textInputAction: TextInputAction.done,
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                      ],
-                      textInputAction: TextInputAction.done,
                     ),
                   ),
                 ],
