@@ -17,6 +17,11 @@
   - [x] Navigation clavier entre champs
   - [x] Sauvegarde automatique
 
+**Améliorations futures (optionnel) :**
+- [ ] Upload photo de profil fonctionnel
+- [ ] Extraction automatique du département depuis le code postal
+- [ ] Intégration avec l'appareil photo pour la photo de profil
+
 ### 📋 Pages à créer
 
 #### 1. 💼 Situation professionnelle actuelle
@@ -29,6 +34,7 @@
 - [ ] Convention collective
 - [ ] Temps de travail (temps plein, temps partiel %)
 - [ ] Avantages actuels (mutuelle, tickets resto, etc.)
+- [ ] Numéro de sécurité sociale (pour calculs cotisations)
 
 #### 2. 🚗 Transport & Déplacements
 **Champs à inclure :**
@@ -45,6 +51,7 @@
   - [ ] Coût mensuel
   - [ ] Participation employeur
 - [ ] Nombre de jours de présence par semaine
+- [ ] Permis de conduire (types détenus)
 
 #### 3. 💰 Frais professionnels
 **Champs à inclure :**
@@ -82,6 +89,10 @@
   - [ ] Intérêts prêt immobilier
   - [ ] Pension alimentaire
   - [ ] Épargne retraite
+- [ ] Numéro fiscal
+- [ ] Centre des impôts de rattachement
+- [ ] Revenus du conjoint (si déclaration commune)
+- [ ] Autres personnes à charge (parents, etc.)
 
 ### 🎯 Fonctionnalités principales
 
