@@ -523,8 +523,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                         hintText: 'Ex: 4.00',
                         border: OutlineInputBorder(),
                         suffixText: 'h/sem',
-                        helperText: '+25% ou +50%',
-                        helperMaxLines: 1,
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
