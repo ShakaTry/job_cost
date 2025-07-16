@@ -185,7 +185,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 30)),
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
-                    locale: const Locale('fr', 'FR'),
                   );
                   if (picked != null && picked != _birthDate) {
                     setState(() {
