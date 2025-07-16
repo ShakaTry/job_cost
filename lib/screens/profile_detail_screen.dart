@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
+import 'personal_info_screen.dart';
 
 class ProfileDetailScreen extends StatelessWidget {
   final UserProfile profile;
@@ -69,7 +70,12 @@ class ProfileDetailScreen extends StatelessWidget {
                 title: 'Informations personnelles',
                 subtitle: 'Nom, adresse, situation familiale',
                 onTap: () {
-                  // TODO: Navigation vers la page d'édition
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PersonalInfoScreen(profile: profile),
+                    ),
+                  );
                 },
               ),
               
