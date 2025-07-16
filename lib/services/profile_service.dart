@@ -64,6 +64,12 @@ class ProfileService {
       'birthDate': profile.birthDate?.toIso8601String(),
       'nationality': profile.nationality,
       'createdAt': profile.createdAt.toIso8601String(),
+      'employmentStatus': profile.employmentStatus,
+      'companyName': profile.companyName,
+      'jobTitle': profile.jobTitle,
+      'workTime': profile.workTime,
+      'grossMonthlySalary': profile.grossMonthlySalary,
+      'taxSystem': profile.taxSystem,
     };
   }
   
@@ -83,6 +89,12 @@ class ProfileService {
           : null,
       nationality: json['nationality'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      employmentStatus: json['employmentStatus'] as String? ?? 'Sans emploi',
+      companyName: json['companyName'] as String?,
+      jobTitle: json['jobTitle'] as String?,
+      workTime: json['workTime'] as String? ?? 'Temps plein',
+      grossMonthlySalary: (json['grossMonthlySalary'] as num?)?.toDouble() ?? 0.0,
+      taxSystem: json['taxSystem'] as String? ?? 'Prélèvement à la source',
     );
   }
 }

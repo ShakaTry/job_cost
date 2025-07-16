@@ -4,6 +4,7 @@ import '../widgets/profile_avatar.dart';
 import '../widgets/info_container.dart';
 import '../constants/app_strings.dart';
 import 'personal_info_screen.dart';
+import 'professional_situation_screen.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final UserProfile profile;
@@ -95,8 +96,28 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 icon: Icons.work,
                 title: AppStrings.professionalSituationTitle,
                 subtitle: AppStrings.professionalSituationSubtitle,
-                onTap: () {
-                  // TODO: Navigation
+                onTap: () async {
+                  try {
+                    final updatedProfile = await Navigator.push<UserProfile>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfessionalSituationScreen(profile: profile),
+                      ),
+                    );
+                    
+                    if (updatedProfile != null && mounted) {
+                      setState(() {
+                        profile = updatedProfile;
+                      });
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erreur de navigation: $e')),
+                      );
+                    }
+                  }
                 },
               ),
               

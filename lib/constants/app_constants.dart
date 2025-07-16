@@ -67,4 +67,37 @@ class AppConstants {
     'Mexique',
     'Autre',
   ];
+
+  // Professional situation
+  static const List<String> employmentStatusOptions = [
+    'Salarié(e) CDI',
+    'Salarié(e) CDD',
+    'Intérimaire',
+    'Auto-entrepreneur',
+    'Indépendant',
+    'Sans emploi',
+    'Étudiant(e)',
+    'Retraité(e)',
+  ];
+
+  static const List<String> workTimeOptions = [
+    'Temps plein',
+    'Temps partiel 80%',
+    'Temps partiel 60%',
+    'Temps partiel 50%',
+    'Mi-temps',
+    'Autre',
+  ];
+
+  static const List<String> taxSystemOptions = [
+    'Prélèvement à la source',
+    'Acomptes provisionnels',
+    'Micro-entrepreneur',
+  ];
+
+  // Default professional values
+  static const String defaultEmploymentStatus = 'Sans emploi';
+  static const String defaultWorkTime = 'Temps plein';
+  static const String defaultTaxSystem = 'Prélèvement à la source';
+  static const double defaultGrossSalary = 0.0;
 }

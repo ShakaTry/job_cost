@@ -14,6 +14,14 @@ class UserProfile {
   final String nationality;
   final DateTime createdAt;
 
+  // Professional situation fields
+  final String employmentStatus;
+  final String? companyName;
+  final String? jobTitle;
+  final String workTime;
+  final double grossMonthlySalary;
+  final String taxSystem;
+
   UserProfile({
     required this.id,
     required this.lastName,
@@ -27,6 +35,12 @@ class UserProfile {
     this.birthDate,
     required this.nationality,
     required this.createdAt,
+    required this.employmentStatus,
+    this.companyName,
+    this.jobTitle,
+    required this.workTime,
+    required this.grossMonthlySalary,
+    required this.taxSystem,
   });
 
   String get fullName => '$firstName $lastName';
@@ -42,6 +56,12 @@ class UserProfile {
     String? email,
     DateTime? birthDate,
     String? nationality,
+    String? employmentStatus,
+    String? companyName,
+    String? jobTitle,
+    String? workTime,
+    double? grossMonthlySalary,
+    String? taxSystem,
   }) {
     return UserProfile(
       id: id,
@@ -56,6 +76,12 @@ class UserProfile {
       birthDate: birthDate ?? this.birthDate,
       nationality: nationality ?? this.nationality,
       createdAt: createdAt,
+      employmentStatus: employmentStatus ?? this.employmentStatus,
+      companyName: companyName ?? this.companyName,
+      jobTitle: jobTitle ?? this.jobTitle,
+      workTime: workTime ?? this.workTime,
+      grossMonthlySalary: grossMonthlySalary ?? this.grossMonthlySalary,
+      taxSystem: taxSystem ?? this.taxSystem,
     );
   }
 
@@ -70,6 +96,12 @@ class UserProfile {
     String? email,
     DateTime? birthDate,
     String? nationality,
+    String? employmentStatus,
+    String? companyName,
+    String? jobTitle,
+    String? workTime,
+    double? grossMonthlySalary,
+    String? taxSystem,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -84,6 +116,12 @@ class UserProfile {
       birthDate: birthDate,
       nationality: nationality ?? AppConstants.defaultNationality,
       createdAt: DateTime.now(),
+      employmentStatus: employmentStatus ?? AppConstants.defaultEmploymentStatus,
+      companyName: companyName,
+      jobTitle: jobTitle,
+      workTime: workTime ?? AppConstants.defaultWorkTime,
+      grossMonthlySalary: grossMonthlySalary ?? AppConstants.defaultGrossSalary,
+      taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
     );
   }
 }

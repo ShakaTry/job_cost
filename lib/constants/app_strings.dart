@@ -78,4 +78,26 @@ class AppStrings {
   static const String notSpecifiedDate = 'Non renseignée';
   static const String none = 'Aucun';
   static const String yearsOld = 'ans';
+
+  // Professional situation screen
+  static const String professionalSituationScreenTitle = 'Situation professionnelle';
+  static const String currentEmploymentSection = 'Emploi actuel';
+  static const String salarySection = 'Salaire et revenus';
+  static const String taxSection = 'Régime fiscal';
+  static const String employmentStatus = 'Statut professionnel';
+  static const String companyName = 'Nom de l\'entreprise';
+  static const String jobTitle = 'Intitulé du poste';
+  static const String workTime = 'Temps de travail';
+  static const String grossMonthlySalary = 'Salaire brut mensuel';
+  static const String grossAnnualSalary = 'Salaire brut annuel';
+  static const String netMonthlySalary = 'Salaire net mensuel estimé';
+  static const String taxSystem = 'Mode d\'imposition';
+  static const String companyNameHint = 'Ex: Société ABC';
+  static const String jobTitleHint = 'Ex: Développeur web';
+  static const String salaryHint = 'En euros';
+  static const String professionalInfoMessage = 'Ces informations permettent de calculer précisément vos cotisations sociales et votre salaire net.';
+  static const String salaryInfoMessage = 'Le salaire net est estimé automatiquement. Vous pourrez l\'ajuster dans les paramètres avancés si nécessaire.';
+  static const String monthlyAmount = 'par mois';
+  static const String annualAmount = 'par an';
+  static const String euroSymbol = '€';
 }
