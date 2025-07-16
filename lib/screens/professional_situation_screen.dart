@@ -25,6 +25,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late TextEditingController _companyNameController;
   late TextEditingController _jobTitleController;
   late TextEditingController _salaryController;
+  late TextEditingController _hourlyRateController;
   late String _employmentStatus;
   late String _workTime;
   late String _taxSystem;
@@ -41,6 +42,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         ? _formatSalary(widget.profile.grossMonthlySalary.toStringAsFixed(0)) 
         : ''
     );
+    _hourlyRateController = TextEditingController();
     _employmentStatus = widget.profile.employmentStatus;
     _workTime = widget.profile.workTime;
     _taxSystem = widget.profile.taxSystem;
@@ -48,6 +50,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _companyNameController.addListener(_saveData);
     _jobTitleController.addListener(_saveData);
     _salaryController.addListener(_onSalaryChanged);
+    _hourlyRateController.addListener(_onHourlyRateChanged);
   }
 
   @override
@@ -55,6 +58,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _companyNameController.dispose();
     _jobTitleController.dispose();
     _salaryController.dispose();
+    _hourlyRateController.dispose();
     super.dispose();
   }
 
@@ -91,7 +95,27 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       );
     }
     
+    // Clear hourly rate when monthly salary is entered
+    if (_salaryController.text.isNotEmpty && _hourlyRateController.text.isNotEmpty) {
+      _hourlyRateController.clear();
+    }
+    
     _saveData();
+  }
+
+  void _onHourlyRateChanged() {
+    // Clear monthly salary when hourly rate is entered
+    if (_hourlyRateController.text.isNotEmpty && _salaryController.text.isNotEmpty) {
+      _salaryController.clear();
+    }
+    
+    _saveData();
+  }
+
+  double _calculateMonthlyFromHourly() {
+    final hourlyRate = double.tryParse(_hourlyRateController.text.replaceAll(' ', '')) ?? 0.0;
+    // Assume 35 hours/week by default, 4.33 weeks/month
+    return hourlyRate * 35 * 4.33;
   }
 
   double _parseSalary(String value) {
@@ -103,18 +127,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return monthlySalary * 12;
   }
 
-  double _estimateNetSalary(double grossSalary) {
-    if (_isIndependent()) {
-      return grossSalary * 0.65;
-    } else {
-      return grossSalary * 0.77;
-    }
-  }
-
-  bool _isIndependent() {
-    return _employmentStatus == 'Auto-entrepreneur' || 
-           _employmentStatus == 'Indépendant';
-  }
 
   bool _hasEmployment() {
     return _employmentStatus != 'Sans emploi' && 
@@ -130,7 +142,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
           companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
           jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
           workTime: _workTime,
-          grossMonthlySalary: _parseSalary(_salaryController.text),
+          grossMonthlySalary: _salaryController.text.isNotEmpty ? _parseSalary(_salaryController.text) : _calculateMonthlyFromHourly(),
           taxSystem: _taxSystem,
         );
 
@@ -143,11 +155,32 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     }
   }
 
+  String _getWeeklyHours() {
+    switch (_workTime) {
+      case 'Temps plein':
+        return '35 ${AppStrings.hoursPerWeek}';
+      case 'Temps partiel 80%':
+        return '28 ${AppStrings.hoursPerWeek}';
+      case 'Temps partiel 60%':
+        return '21 ${AppStrings.hoursPerWeek}';
+      case 'Temps partiel 50%':
+      case 'Mi-temps':
+        return '17.5 ${AppStrings.hoursPerWeek}';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final monthlySalary = _parseSalary(_salaryController.text);
+    double monthlySalary = _parseSalary(_salaryController.text);
+    
+    // Calculate monthly from hourly if no monthly salary is set
+    if (monthlySalary == 0 && _hourlyRateController.text.isNotEmpty) {
+      monthlySalary = _calculateMonthlyFromHourly();
+    }
+    
     final annualSalary = _calculateAnnualSalary(monthlySalary);
-    final netSalary = _estimateNetSalary(monthlySalary);
 
     return Scaffold(
       appBar: AppBar(
@@ -302,7 +335,53 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                 ],
-                textInputAction: TextInputAction.done,
+                textInputAction: TextInputAction.next,
+              ),
+              
+              const SizedBox(height: AppConstants.defaultPadding),
+              
+              Center(
+                child: Text(
+                  AppStrings.or,
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: AppConstants.defaultPadding),
+              
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _hourlyRateController,
+                      decoration: const InputDecoration(
+                        labelText: AppStrings.grossHourlyRate,
+                        hintText: AppStrings.hourlyRateHint,
+                        border: OutlineInputBorder(),
+                        suffixText: AppStrings.euroSymbol,
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                      textInputAction: TextInputAction.done,
+                    ),
+                  ),
+                  if (_workTime == 'Temps plein' || _workTime == 'Temps partiel 80%' || _workTime == 'Temps partiel 60%' || _workTime == 'Temps partiel 50%')
+                    Padding(
+                      padding: const EdgeInsets.only(left: AppConstants.smallPadding),
+                      child: Text(
+                        _getWeeklyHours(),
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                ],
               ),
               
               if (monthlySalary > 0) ...[
@@ -314,32 +393,13 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(AppStrings.grossAnnualSalary),
-                          Text(
-                            '${_formatSalary(annualSalary.toStringAsFixed(0))} ${AppStrings.euroSymbol}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppConstants.smallPadding),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(AppStrings.netMonthlySalary),
-                          Text(
-                            '${_formatSalary(netSalary.toStringAsFixed(0))} ${AppStrings.euroSymbol}',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green[700],
-                            ),
-                          ),
-                        ],
+                      const Text(AppStrings.grossAnnualSalary),
+                      Text(
+                        '${_formatSalary(annualSalary.toStringAsFixed(0))} ${AppStrings.euroSymbol}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
