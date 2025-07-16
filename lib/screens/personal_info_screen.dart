@@ -208,61 +208,26 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(4),
+              DropdownButtonFormField<int>(
+                value: _dependentChildren,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre d\'enfants à charge',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.child_care),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Enfants à charge',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(Icons.child_care, color: Colors.grey),
-                            const SizedBox(width: 8),
-                            Text(
-                              '$_dependentChildren',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.remove_circle_outline),
-                              onPressed: _dependentChildren > 0
-                                  ? () {
-                                      setState(() {
-                                        _dependentChildren--;
-                                      });
-                                    }
-                                  : null,
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.add_circle_outline),
-                              onPressed: () {
-                                setState(() {
-                                  _dependentChildren++;
-                                });
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                items: List.generate(11, (index) => index).map((int value) {
+                  return DropdownMenuItem<int>(
+                    value: value,
+                    child: Text(value == 0 ? 'Aucun' : '$value'),
+                  );
+                }).toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _dependentChildren = newValue;
+                    });
+                  }
+                },
               ),
               
               const SizedBox(height: 24),
