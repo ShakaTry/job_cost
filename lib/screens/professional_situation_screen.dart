@@ -60,22 +60,21 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       _hourlyRateController.text = _exactHourlyRate.toStringAsFixed(2);
     }
     
-    _companyNameController.addListener(_saveData);
-    _jobTitleController.addListener(_saveData);
+    // Sauvegarde automatique comme sur la page d'infos personnelles
+    _companyNameController.addListener(_updateProfile);
+    _jobTitleController.addListener(_updateProfile);
     _salaryController.addListener(() {
       if (!_isUpdating) {
-        _isUserInputting = true;
         _updateHourlyFromSalary();
         if (mounted) setState(() {});
-        _saveData();
-        _isUserInputting = false;
+        _updateProfile();
       }
     });
     _hourlyRateController.addListener(() {
-      if (!_isUpdating && !_isUserInputting) {
+      if (!_isUpdating) {
         _updateSalaryFromHourly();
         if (mounted) setState(() {});
-        _saveData();
+        _updateProfile();
       }
     });
     _weeklyHoursController.addListener(() {
@@ -88,7 +87,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
           _updateSalaryFromHourly();
         }
         if (mounted) setState(() {});
-        _saveData();
+        _updateProfile();
       }
     });
     
@@ -161,7 +160,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   }
 
   bool _isUpdating = false;
-  bool _isUserInputting = false;
   
   // Variables pour conserver la précision maximale (selon documentation)
   double _exactHourlyRate = 0.0;
@@ -232,8 +230,17 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final hourlyText = _hourlyRateController.text;
     final hourlyRate = double.tryParse(hourlyText);
     if (hourlyRate != null && hourlyRate > 0) {
-      // Utiliser la valeur exacte si disponible (évite double arrondi)
-      final exactRate = _exactHourlyRate > 0 ? _exactHourlyRate : hourlyRate;
+      // Si l'utilisateur a modifié manuellement le taux, utiliser cette nouvelle valeur
+      // Sinon utiliser la valeur exacte calculée précédemment
+      final currentDisplayed = _exactHourlyRate.toStringAsFixed(2);
+      final isUserModified = hourlyText != currentDisplayed;
+      
+      final exactRate = isUserModified ? hourlyRate : _exactHourlyRate;
+      
+      // Mettre à jour la valeur exacte si modifiée par l'utilisateur
+      if (isUserModified) {
+        _exactHourlyRate = hourlyRate;
+      }
       
       // Calcul avec coefficient de temps de travail selon la documentation officielle
       final coefficient = _getWorkTimeCoefficient();
@@ -267,27 +274,20 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
            _employmentStatus != 'Retraité(e)';
   }
 
-  void _saveData() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      try {
-        final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
-        _modifiedProfile = widget.profile.copyWith(
-          employmentStatus: _employmentStatus,
-          companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
-          jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
-          workTimePercentage: _workTimePercentage,
-          weeklyHours: weeklyHours,
-          grossMonthlySalary: _getCurrentMonthlySalary(),
-          taxSystem: _taxSystem,
-        );
-
-        await _profileService.updateProfile(_modifiedProfile);
-      } catch (e) {
-        if (mounted) {
-          debugPrint('Erreur lors de la sauvegarde: $e');
-        }
-      }
-    }
+  void _updateProfile() {
+    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
+    _modifiedProfile = _modifiedProfile.copyWith(
+      employmentStatus: _employmentStatus,
+      companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
+      jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
+      workTimePercentage: _workTimePercentage,
+      weeklyHours: weeklyHours,
+      grossMonthlySalary: _getCurrentMonthlySalary(),
+      taxSystem: _taxSystem,
+    );
+    
+    // Sauvegarder automatiquement le profil (comme sur la page d'infos personnelles)
+    _profileService.updateProfile(_modifiedProfile);
   }
 
 
@@ -367,8 +367,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 if (value != null) {
                   setState(() {
                     _employmentStatus = value;
-                    _saveData();
                   });
+                  _updateProfile();
                 }
               },
             ),
@@ -384,6 +384,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   border: OutlineInputBorder(),
                 ),
                 textInputAction: TextInputAction.next,
+                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
@@ -396,6 +397,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   border: OutlineInputBorder(),
                 ),
                 textInputAction: TextInputAction.next,
+                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
@@ -420,8 +422,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     _workTimePercentage = value;
                     _updateHoursFromPercentage();
                     _updateHourlyFromSalary();
-                    _saveData();
                   });
+                  _updateProfile();
                 },
               ),
               
@@ -441,6 +443,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                 ],
                 textInputAction: TextInputAction.next,
+                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: AppConstants.largePadding),
@@ -547,8 +550,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 if (value != null) {
                   setState(() {
                     _taxSystem = value;
-                    _saveData();
                   });
+                  _updateProfile();
                 }
               },
             ),
