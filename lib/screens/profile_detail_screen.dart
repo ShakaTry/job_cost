@@ -40,19 +40,19 @@ class ProfileDetailScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.amber.shade50,
+                  color: Colors.blue.shade50,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.amber.shade300),
+                  border: Border.all(color: Colors.blue.shade200),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.info_outline, color: Colors.amber.shade700),
+                    Icon(Icons.info_outline, color: Colors.blue.shade700),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'Votre situation actuelle',
                         style: TextStyle(
-                          color: Colors.amber.shade700,
+                          color: Colors.blue.shade700,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
