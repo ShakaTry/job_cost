@@ -73,6 +73,40 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
+  void _saveValidFieldsOnly() {
+    // Valider le téléphone
+    String phoneValue = _phoneController.text;
+    if (phoneValue.isNotEmpty) {
+      String cleaned = phoneValue.replaceAll(RegExp(r'[^\d+]'), '');
+      if (!RegExp(r'^(?:\+33|0)[1-9](?:[0-9]{8})$').hasMatch(cleaned)) {
+        phoneValue = ''; // Réinitialiser si invalide
+        _phoneController.text = '';
+      }
+    }
+
+    // Valider l'email
+    String emailValue = _emailController.text;
+    if (emailValue.isNotEmpty) {
+      final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+      if (!emailRegex.hasMatch(emailValue)) {
+        emailValue = ''; // Réinitialiser si invalide
+        _emailController.text = '';
+      }
+    }
+
+    // Sauvegarder avec les valeurs validées
+    _modifiedProfile = _modifiedProfile.copyWith(
+      lastName: _lastNameController.text,
+      firstName: _firstNameController.text,
+      address: _addressController.text,
+      phone: phoneValue,
+      email: emailValue,
+      maritalStatus: _maritalStatus,
+      dependentChildren: _dependentChildren,
+      birthDate: _birthDate,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -111,8 +145,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             );
             
             if (shouldExit == true && mounted) {
-              // Retourner le profil original sans modifications
-              Navigator.pop(context, widget.profile);
+              // Sauvegarder les champs valides et réinitialiser les invalides
+              _saveValidFieldsOnly();
+              Navigator.pop(context, _modifiedProfile);
             }
           }
         }
