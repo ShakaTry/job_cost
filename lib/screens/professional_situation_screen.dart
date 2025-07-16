@@ -50,22 +50,12 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _companyNameController.addListener(_saveData);
     _jobTitleController.addListener(_saveData);
     _salaryController.addListener(() {
-      if (!_updatingFromCode) {
-        // Always update hourly rate when salary changes
-        _updateHourlyRateFromSalary();
-        // Always refresh UI to update annual salary
-        if (mounted) setState(() {});
-        _saveData();
-      }
+      if (mounted) setState(() {});
+      _saveData();
     });
     _hourlyRateController.addListener(() {
-      if (!_updatingFromCode) {
-        // Always update salary when hourly rate changes
-        _updateSalaryFromHourlyRate();
-        // Always refresh UI to update annual salary
-        if (mounted) setState(() {});
-        _saveData();
-      }
+      if (mounted) setState(() {});
+      _saveData();
     });
   }
 
@@ -97,47 +87,17 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   }
 
 
-  bool _updatingFromCode = false;
-
-  void _updateHourlyRateFromSalary() {
-    final monthlySalary = _parseSalary(_salaryController.text);
-    if (monthlySalary > 0) {
-      final monthlyHours = _getMonthlyHours();
-      final hourlyRate = monthlySalary / monthlyHours;
-      
-      _updatingFromCode = true;
-      _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
-      _updatingFromCode = false;
-    } else if (_salaryController.text.isEmpty) {
-      _updatingFromCode = true;
-      _hourlyRateController.clear();
-      _updatingFromCode = false;
-    }
+  // Simple calculation methods without cross-updates
+  double _getCurrentMonthlySalary() {
+    final salaryText = _salaryController.text.replaceAll(' ', '');
+    return double.tryParse(salaryText) ?? 0.0;
   }
 
-  void _updateSalaryFromHourlyRate() {
-    final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
-    if (hourlyRate > 0) {
-      final monthlyHours = _getMonthlyHours();
-      final monthlySalary = hourlyRate * monthlyHours;
-      
-      _updatingFromCode = true;
-      _salaryController.text = monthlySalary.round().toString();
-      _updatingFromCode = false;
-    } else if (_hourlyRateController.text.isEmpty) {
-      _updatingFromCode = true;
-      _salaryController.clear();
-      _updatingFromCode = false;
-    }
+  double _getCurrentHourlyRate() {
+    return double.tryParse(_hourlyRateController.text) ?? 0.0;
   }
 
-  double _calculateMonthlyFromHourly() {
-    final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
-    final weeklyHours = _getWeeklyHoursNumber();
-    return hourlyRate * weeklyHours * 4.33;
-  }
-
-  double _getWeeklyHoursNumber() {
+  double _getWeeklyHours() {
     switch (_workTime) {
       case 'Temps plein':
         return 35;
@@ -149,21 +109,25 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       case 'Mi-temps':
         return 17.5;
       default:
-        return 35; // Default to full time
+        return 35;
     }
   }
 
-  double _getMonthlyHours() {
-    // Calcul direct des heures mensuelles pour éviter les erreurs d'arrondi
-    // Utilise 52 semaines / 12 mois = 4.333... mais avec des entiers
-    final weeklyHours = _getWeeklyHoursNumber();
-    return (weeklyHours * 52) / 12; // Plus précis que weeklyHours * 4.33
+  // Show calculated values without modifying input fields
+  double _getCalculatedHourlyFromSalary() {
+    final monthly = _getCurrentMonthlySalary();
+    if (monthly <= 0) return 0;
+    final weeklyHours = _getWeeklyHours();
+    return monthly / (weeklyHours * 52 / 12);
   }
 
-  double _parseSalary(String value) {
-    value = value.replaceAll(' ', '');
-    return double.tryParse(value) ?? 0.0;
+  double _getCalculatedSalaryFromHourly() {
+    final hourly = _getCurrentHourlyRate();
+    if (hourly <= 0) return 0;
+    final weeklyHours = _getWeeklyHours();
+    return hourly * (weeklyHours * 52 / 12);
   }
+
 
   double _calculateAnnualSalary(double monthlySalary) {
     return monthlySalary * 12;
@@ -184,7 +148,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
           companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
           jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
           workTime: _workTime,
-          grossMonthlySalary: _salaryController.text.isNotEmpty ? _parseSalary(_salaryController.text) : _calculateMonthlyFromHourly(),
+          grossMonthlySalary: _getCurrentMonthlySalary(),
           taxSystem: _taxSystem,
         );
 
@@ -197,31 +161,14 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     }
   }
 
-  String _getWeeklyHours() {
-    switch (_workTime) {
-      case 'Temps plein':
-        return '35 ${AppStrings.hoursPerWeek}';
-      case 'Temps partiel 80%':
-        return '28 ${AppStrings.hoursPerWeek}';
-      case 'Temps partiel 60%':
-        return '21 ${AppStrings.hoursPerWeek}';
-      case 'Temps partiel 50%':
-      case 'Mi-temps':
-        return '17.5 ${AppStrings.hoursPerWeek}';
-      default:
-        return '';
-    }
+  String _getWeeklyHoursText() {
+    final hours = _getWeeklyHours();
+    return '$hours ${AppStrings.hoursPerWeek}';
   }
 
   @override
   Widget build(BuildContext context) {
-    double monthlySalary = _parseSalary(_salaryController.text);
-    
-    // Calculate monthly from hourly if no monthly salary is set
-    if (monthlySalary == 0 && _hourlyRateController.text.isNotEmpty) {
-      monthlySalary = _calculateMonthlyFromHourly();
-    }
-    
+    final monthlySalary = _getCurrentMonthlySalary();
     final annualSalary = _calculateAnnualSalary(monthlySalary);
 
     return Scaffold(
@@ -344,12 +291,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   if (value != null) {
                     setState(() {
                       _workTime = value;
-                      // Recalculate when work time changes
-                      if (_salaryController.text.isNotEmpty) {
-                        _updateHourlyRateFromSalary();
-                      } else if (_hourlyRateController.text.isNotEmpty) {
-                        _updateSalaryFromHourlyRate();
-                      }
                       _saveData();
                     });
                   }
@@ -409,20 +350,64 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   ),
                 ],
               ),
-              if (_workTime != 'Autre')
-                Padding(
-                  padding: const EdgeInsets.only(top: AppConstants.smallPadding),
-                  child: Center(
-                    child: Text(
-                      'Base de calcul : ${_getWeeklyHours()}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
+              const SizedBox(height: AppConstants.smallPadding),
+              
+              // Affichage des équivalences calculées
+              if (_getCurrentMonthlySalary() > 0 || _getCurrentHourlyRate() > 0) ...[
+                Container(
+                  padding: const EdgeInsets.all(AppConstants.smallPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                  ),
+                  child: Column(
+                    children: [
+                      if (_getCurrentMonthlySalary() > 0)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Équivalent horaire:', style: TextStyle(fontSize: 12)),
+                            Text(
+                              '${_getCalculatedHourlyFromSalary().toStringAsFixed(2)} €/h',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (_getCurrentHourlyRate() > 0)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Équivalent mensuel:', style: TextStyle(fontSize: 12)),
+                            Text(
+                              '${_getCalculatedSalaryFromHourly().round()} €/mois',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      if (_workTime != 'Autre')
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            'Base: ${_getWeeklyHoursText()}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 10,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
+              ],
               
               if (monthlySalary > 0) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
