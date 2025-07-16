@@ -1,5 +1,18 @@
 # Job Cost - Guide de développement
 
+## Gestion Git
+**IMPORTANT : Claude gère entièrement Git pour ce projet**
+- Création et gestion des branches
+- Commits avec messages appropriés
+- Push vers GitHub
+- Indication quand créer les Pull Requests
+- Nettoyage des branches après merge
+
+L'utilisateur n'a qu'à :
+1. Indiquer les fonctionnalités à développer
+2. Créer les Pull Requests sur GitHub quand demandé
+3. Valider les merges
+
 ## Stratégie de branches Git
 
 ### Branches principales
