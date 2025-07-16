@@ -100,19 +100,19 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return double.tryParse(salaryText) ?? 0.0;
   }
 
-  double _getWeeklyHours() {
+  double _getMonthlyHours() {
     switch (_workTime) {
       case 'Temps plein':
-        return 35.0;
+        return 151.67; // 35h/semaine selon la réglementation française
       case 'Temps partiel 80%':
-        return 28.0;
+        return 121.33; // 28h/semaine (28 × 52 ÷ 12)
       case 'Temps partiel 60%':
-        return 21.0;
+        return 91.0; // 21h/semaine (21 × 52 ÷ 12)
       case 'Temps partiel 50%':
       case 'Mi-temps':
-        return 17.5;
+        return 75.83; // 17.5h/semaine (17.5 × 52 ÷ 12)
       default:
-        return 35.0;
+        return 151.67;
     }
   }
 
@@ -120,9 +120,9 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final salaryText = _salaryController.text.replaceAll(' ', '');
     final salary = int.tryParse(salaryText);
     if (salary != null && salary > 0) {
-      final weeklyHours = _getWeeklyHours();
-      // Calcul simple : salaire mensuel * 12 / (heures/semaine * 52)
-      final hourlyRate = (salary * 12) / (weeklyHours * 52);
+      final monthlyHours = _getMonthlyHours();
+      // Formule française officielle : salaire mensuel ÷ heures mensuelles
+      final hourlyRate = salary / monthlyHours;
       
       _isUpdating = true;
       _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
@@ -138,9 +138,9 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final hourlyText = _hourlyRateController.text;
     final hourlyRate = double.tryParse(hourlyText);
     if (hourlyRate != null && hourlyRate > 0) {
-      final weeklyHours = _getWeeklyHours();
-      // Calcul simple : taux horaire * heures/semaine * 52 / 12
-      final monthlySalary = (hourlyRate * weeklyHours * 52 / 12).round();
+      final monthlyHours = _getMonthlyHours();
+      // Formule française officielle : taux horaire × heures mensuelles
+      final monthlySalary = (hourlyRate * monthlyHours).round();
       
       _isUpdating = true;
       _salaryController.text = monthlySalary.toString();
