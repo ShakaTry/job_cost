@@ -95,27 +95,73 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       );
     }
     
-    // Clear hourly rate when monthly salary is entered
-    if (_salaryController.text.isNotEmpty && _hourlyRateController.text.isNotEmpty) {
-      _hourlyRateController.clear();
-    }
+    // Calculate hourly rate from monthly salary
+    _updateHourlyRateFromSalary();
     
     _saveData();
   }
 
   void _onHourlyRateChanged() {
-    // Clear monthly salary when hourly rate is entered
-    if (_hourlyRateController.text.isNotEmpty && _salaryController.text.isNotEmpty) {
-      _salaryController.clear();
-    }
+    // Calculate monthly salary from hourly rate
+    _updateSalaryFromHourlyRate();
     
     _saveData();
   }
 
+  void _updateHourlyRateFromSalary() {
+    final monthlySalary = _parseSalary(_salaryController.text);
+    if (monthlySalary > 0) {
+      final weeklyHours = _getWeeklyHoursNumber();
+      final hourlyRate = monthlySalary / (weeklyHours * 4.33);
+      
+      // Update hourly rate without triggering listener
+      _hourlyRateController.removeListener(_onHourlyRateChanged);
+      _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
+      _hourlyRateController.addListener(_onHourlyRateChanged);
+    } else {
+      _hourlyRateController.removeListener(_onHourlyRateChanged);
+      _hourlyRateController.clear();
+      _hourlyRateController.addListener(_onHourlyRateChanged);
+    }
+  }
+
+  void _updateSalaryFromHourlyRate() {
+    final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
+    if (hourlyRate > 0) {
+      final weeklyHours = _getWeeklyHoursNumber();
+      final monthlySalary = hourlyRate * weeklyHours * 4.33;
+      
+      // Update salary without triggering listener
+      _salaryController.removeListener(_onSalaryChanged);
+      _salaryController.text = _formatSalary(monthlySalary.toStringAsFixed(0));
+      _salaryController.addListener(_onSalaryChanged);
+    } else {
+      _salaryController.removeListener(_onSalaryChanged);
+      _salaryController.clear();
+      _salaryController.addListener(_onSalaryChanged);
+    }
+  }
+
   double _calculateMonthlyFromHourly() {
-    final hourlyRate = double.tryParse(_hourlyRateController.text.replaceAll(' ', '')) ?? 0.0;
-    // Assume 35 hours/week by default, 4.33 weeks/month
-    return hourlyRate * 35 * 4.33;
+    final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
+    final weeklyHours = _getWeeklyHoursNumber();
+    return hourlyRate * weeklyHours * 4.33;
+  }
+
+  double _getWeeklyHoursNumber() {
+    switch (_workTime) {
+      case 'Temps plein':
+        return 35;
+      case 'Temps partiel 80%':
+        return 28;
+      case 'Temps partiel 60%':
+        return 21;
+      case 'Temps partiel 50%':
+      case 'Mi-temps':
+        return 17.5;
+      default:
+        return 35; // Default to full time
+    }
   }
 
   double _parseSalary(String value) {
@@ -302,6 +348,12 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   if (value != null) {
                     setState(() {
                       _workTime = value;
+                      // Recalculate when work time changes
+                      if (_salaryController.text.isNotEmpty) {
+                        _updateHourlyRateFromSalary();
+                      } else if (_hourlyRateController.text.isNotEmpty) {
+                        _updateSalaryFromHourlyRate();
+                      }
                       _saveData();
                     });
                   }
