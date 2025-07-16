@@ -26,6 +26,10 @@
   - [x] Sauvegarde automatique avec pattern PopScope
   - [x] Support des décimales pour les salaires
   - [x] Calculs officiels selon durée légale 151,67h/mois
+  - [x] Heures supplémentaires (version basique)
+    - [x] Saisie heures fixes par semaine
+    - [x] Calcul automatique avec majoration légale (25%/50%)
+    - [x] Indicateur régulier/occasionnel
 
 **Améliorations futures (optionnel) :**
 - [ ] Upload photo de profil fonctionnel
@@ -116,6 +120,13 @@
 
 ### Version Premium (5€/mois ou 50€/an)
 - [ ] **Profils illimités**
+- [ ] **Heures supplémentaires avancées :**
+  - [ ] Gestion RTT / récupération
+  - [ ] Forfaits tout inclus (cadres)
+  - [ ] Heures variables par mois avec historique
+  - [ ] Accords d'entreprise personnalisés
+  - [ ] Calcul automatique des moyennes
+  - [ ] Distinction heures sup structurelles vs ponctuelles
 - [ ] **Automatisations intelligentes :**
   - [ ] Autocomplétion d'adresses (Google Maps API)
   - [ ] Calcul précis distance/temps avec trafic en temps réel

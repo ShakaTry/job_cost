@@ -91,18 +91,9 @@ docs/
 - Dropdown pour la nationalité (standardisation)
 - Formatage automatique du téléphone pour éviter les erreurs
 
-### Stratégie de monétisation (future)
-**Version gratuite :**
-- 3 profils maximum
-- Saisie manuelle des données
-- Calculs basiques
-
-**Version Premium (5€/mois ou 50€/an) :**
-- Profils illimités
-- Autocomplétion d'adresses (Google Maps)
-- Import automatique (LinkedIn, fiches de paie PDF)
-- Calculs précis avec données temps réel
-- Export PDF détaillé
+### Stratégie de monétisation
+Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
+Focus actuel : MVP/Version gratuite uniquement.
 
 ### Prochaines étapes
 1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT
