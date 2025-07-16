@@ -44,10 +44,16 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   void dispose() {
+    _saveData(); // Sauvegarder avant de quitter
     _lastNameController.dispose();
     _firstNameController.dispose();
     _addressController.dispose();
     super.dispose();
+  }
+
+  void _saveData() {
+    // TODO: Implémenter la vraie sauvegarde
+    debugPrint('Données sauvegardées automatiquement');
   }
 
   @override
@@ -56,18 +62,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       appBar: AppBar(
         title: const Text('Informations personnelles'),
         centerTitle: true,
-        actions: [
-          TextButton(
-            onPressed: _saveChanges,
-            child: const Text(
-              'Enregistrer',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -137,6 +131,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
+                onFieldSubmitted: (_) => _saveData(),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -157,6 +152,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 onChanged: (value) {
                   setState(() {});
                 },
+                onFieldSubmitted: (_) => _saveData(),
               ),
               
               const SizedBox(height: 32),
@@ -179,6 +175,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
+                onFieldSubmitted: (_) => _saveData(),
               ),
               
               const SizedBox(height: 32),
@@ -204,6 +201,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     setState(() {
                       _maritalStatus = newValue;
                     });
+                    _saveData();
                   }
                 },
               ),
@@ -226,6 +224,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     setState(() {
                       _dependentChildren = newValue;
                     });
+                    _saveData();
                   }
                 },
               ),
@@ -293,17 +292,4 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  void _saveChanges() {
-    if (_formKey.currentState!.validate()) {
-      // TODO: Implémenter la sauvegarde des données
-      // Pour l'instant, on affiche juste un message
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Modifications enregistrées'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Navigator.pop(context);
-    }
-  }
 }
