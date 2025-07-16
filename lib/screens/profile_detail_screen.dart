@@ -25,10 +25,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, profile);
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          Navigator.pop(context, profile);
+        }
       },
       child: Scaffold(
       appBar: AppBar(
@@ -199,7 +201,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
+            color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(

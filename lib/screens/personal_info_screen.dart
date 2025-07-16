@@ -75,11 +75,13 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _updateProfile();
-        Navigator.pop(context, _modifiedProfile);
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _updateProfile();
+          Navigator.pop(context, _modifiedProfile);
+        }
       },
       child: Scaffold(
       appBar: AppBar(
