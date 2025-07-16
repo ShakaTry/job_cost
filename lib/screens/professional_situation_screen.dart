@@ -100,8 +100,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   bool _updatingFromCode = false;
 
   void _updateHourlyRateFromSalary() {
-    if (_updatingFromCode) return;
-    
     final monthlySalary = _parseSalary(_salaryController.text);
     if (monthlySalary > 0) {
       final weeklyHours = _getWeeklyHoursNumber();
@@ -118,8 +116,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   }
 
   void _updateSalaryFromHourlyRate() {
-    if (_updatingFromCode) return;
-    
     final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
     if (hourlyRate > 0) {
       final weeklyHours = _getWeeklyHoursNumber();
