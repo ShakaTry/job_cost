@@ -6,6 +6,9 @@ class UserProfile {
   final String maritalStatus; // Célibataire, Marié(e), Divorcé(e), Veuf(ve)
   final int dependentChildren;
   final String? avatarUrl;
+  final String? phone;
+  final String? email;
+  final DateTime? birthDate;
   final DateTime createdAt;
 
   UserProfile({
@@ -16,6 +19,9 @@ class UserProfile {
     required this.maritalStatus,
     required this.dependentChildren,
     this.avatarUrl,
+    this.phone,
+    this.email,
+    this.birthDate,
     required this.createdAt,
   });
 
@@ -28,6 +34,9 @@ class UserProfile {
     String? maritalStatus,
     int? dependentChildren,
     String? avatarUrl,
+    String? phone,
+    String? email,
+    DateTime? birthDate,
   }) {
     return UserProfile(
       id: id,
@@ -37,6 +46,9 @@ class UserProfile {
       maritalStatus: maritalStatus ?? this.maritalStatus,
       dependentChildren: dependentChildren ?? this.dependentChildren,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      birthDate: birthDate ?? this.birthDate,
       createdAt: createdAt,
     );
   }
@@ -48,6 +60,9 @@ class UserProfile {
     String? maritalStatus,
     int? dependentChildren,
     String? avatarUrl,
+    String? phone,
+    String? email,
+    DateTime? birthDate,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -57,6 +72,9 @@ class UserProfile {
       maritalStatus: maritalStatus ?? 'Non renseigné',
       dependentChildren: dependentChildren ?? 0,
       avatarUrl: avatarUrl,
+      phone: phone,
+      email: email,
+      birthDate: birthDate,
       createdAt: DateTime.now(),
     );
   }
