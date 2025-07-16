@@ -102,8 +102,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   void _updateHourlyRateFromSalary() {
     final monthlySalary = _parseSalary(_salaryController.text);
     if (monthlySalary > 0) {
-      final weeklyHours = _getWeeklyHoursNumber();
-      final hourlyRate = monthlySalary / (weeklyHours * 4.33);
+      final monthlyHours = _getMonthlyHours();
+      final hourlyRate = monthlySalary / monthlyHours;
       
       _updatingFromCode = true;
       _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
@@ -118,11 +118,11 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   void _updateSalaryFromHourlyRate() {
     final hourlyRate = double.tryParse(_hourlyRateController.text) ?? 0.0;
     if (hourlyRate > 0) {
-      final weeklyHours = _getWeeklyHoursNumber();
-      final monthlySalary = hourlyRate * weeklyHours * 4.33;
+      final monthlyHours = _getMonthlyHours();
+      final monthlySalary = hourlyRate * monthlyHours;
       
       _updatingFromCode = true;
-      _salaryController.text = monthlySalary.toStringAsFixed(0);
+      _salaryController.text = monthlySalary.round().toString();
       _updatingFromCode = false;
     } else if (_hourlyRateController.text.isEmpty) {
       _updatingFromCode = true;
@@ -151,6 +151,13 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       default:
         return 35; // Default to full time
     }
+  }
+
+  double _getMonthlyHours() {
+    // Calcul direct des heures mensuelles pour éviter les erreurs d'arrondi
+    // Utilise 52 semaines / 12 mois = 4.333... mais avec des entiers
+    final weeklyHours = _getWeeklyHoursNumber();
+    return (weeklyHours * 52) / 12; // Plus précis que weeklyHours * 4.33
   }
 
   double _parseSalary(String value) {
