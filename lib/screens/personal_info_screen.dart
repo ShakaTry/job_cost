@@ -79,8 +79,18 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         if (!didPop) {
-          _updateProfile();
-          Navigator.pop(context, _modifiedProfile);
+          if (_formKey.currentState!.validate()) {
+            _updateProfile();
+            Navigator.pop(context, _modifiedProfile);
+          } else {
+            // Afficher un message d'erreur
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Veuillez corriger les erreurs avant de continuer'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       },
       child: Scaffold(
@@ -255,6 +265,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   prefixIcon: Icon(Icons.phone),
                 ),
                 keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    // Enlever tous les espaces et caractères spéciaux
+                    String cleaned = value.replaceAll(RegExp(r'[^\d+]'), '');
+                    // Vérifier le format français (10 chiffres ou format international)
+                    if (!RegExp(r'^(?:\+33|0)[1-9](?:[0-9]{8})$').hasMatch(cleaned)) {
+                      return 'Format invalide (ex: 06 12 34 56 78)';
+                    }
+                  }
+                  return null;
+                },
                 onChanged: (_) => _updateProfile(),
               ),
               const SizedBox(height: 16),
@@ -269,9 +290,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
-                    // Simple validation email
-                    if (!value.contains('@') || !value.contains('.')) {
-                      return 'Email invalide';
+                    // Validation email complète avec regex
+                    final emailRegex = RegExp(
+                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                    );
+                    if (!emailRegex.hasMatch(value)) {
+                      return 'Format email invalide';
                     }
                   }
                   return null;
