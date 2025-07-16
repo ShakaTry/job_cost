@@ -203,6 +203,16 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       setState(() {
         _profiles.add(newProfile);
       });
+      
+      // Naviguer directement vers le profil créé
+      if (mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileDetailScreen(profile: newProfile),
+          ),
+        );
+      }
     }
   }
 }
