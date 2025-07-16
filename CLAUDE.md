@@ -1,102 +1,131 @@
-# Job Cost - Guide de développement
+# Job Cost - Documentation Claude
+
+## Projet
+Application Android/iOS développée avec Flutter pour estimer le salaire réel net en déduisant tous les frais annexes pour un emploi ou recherche d'emploi.
 
 ## Gestion Git
-**IMPORTANT : Claude gère entièrement Git pour ce projet**
-- Création et gestion des branches
-- Commits avec messages appropriés
-- Push vers GitHub
-- Indication quand créer les Pull Requests
-- Nettoyage des branches après merge
+- Claude gère entièrement Git pour ce projet
+- Stratégie Git Flow : main, develop, feature/*, bugfix/*, hotfix/*
+- Commits réguliers avec messages descriptifs
+- URL du repo : https://github.com/ShakaTry/job_cost.git
+- Branche actuelle : feature/setup-base-structure
 
-L'utilisateur n'a qu'à :
-1. Indiquer les fonctionnalités à développer
-2. Créer les Pull Requests sur GitHub quand demandé
-3. Valider les merges
+## État actuel du projet
 
-## Stratégie de branches Git
+### Pages complétées
+1. **Sélection de profil** - Écran principal avec liste des profils
+2. **Création de profil** - Dialog simple (nom/prénom uniquement)
+3. **Vue détaillée du profil** - Affiche les sections disponibles
+4. **Informations personnelles** - Formulaire complet avec :
+   - Identité (nom, prénom, date de naissance, nationalité)
+   - Coordonnées (adresse, téléphone, email)
+   - Situation familiale (état civil, enfants à charge)
+   - Validation des formulaires
+   - Sauvegarde automatique
+   - Navigation clavier optimisée
 
-### Branches principales
-- **`main`** : Branche de production (protégée). Contient uniquement le code stable et testé.
-- **`develop`** : Branche de développement principal. Toutes les features sont intégrées ici.
+### Architecture du code
+```
+lib/
+├── constants/
+│   ├── app_constants.dart  # Constantes de l'app (valeurs par défaut, listes)
+│   └── app_strings.dart    # Toutes les chaînes de caractères
+├── models/
+│   └── user_profile.dart   # Modèle de données utilisateur
+├── screens/
+│   ├── profile_selection_screen.dart
+│   ├── profile_detail_screen.dart
+│   └── personal_info_screen.dart
+├── utils/
+│   └── validators.dart     # Validation centralisée des formulaires
+├── widgets/
+│   ├── profile_avatar.dart # Avatar réutilisable
+│   └── info_container.dart  # Container d'info bleu réutilisable
+└── main.dart
+```
 
-### Branches de travail
-- **`feature/*`** : Pour les nouvelles fonctionnalités
-  - Créée depuis : `develop`
-  - Merge vers : `develop`
-  - Exemple : `feature/add-job-form`, `feature/cost-calculator`
-  
-- **`bugfix/*`** : Pour les corrections de bugs non critiques
-  - Créée depuis : `develop`
-  - Merge vers : `develop`
-  - Exemple : `bugfix/fix-calculation-error`, `bugfix/ui-alignment`
-  
-- **`hotfix/*`** : Pour les corrections urgentes en production
-  - Créée depuis : `main`
-  - Merge vers : `main` ET `develop`
-  - Exemple : `hotfix/critical-crash-fix`
-  
-- **`release/*`** : Pour préparer une nouvelle version
-  - Créée depuis : `develop`
-  - Merge vers : `main` ET `develop`
-  - Exemple : `release/1.0.0`, `release/1.1.0`
+### Conventions de code
+- Utilisation de widgets réutilisables pour éviter la duplication
+- Constantes centralisées (pas de strings hardcodées)
+- Validation centralisée avec la classe Validators
+- Gestion d'erreurs avec try-catch sur les opérations async
+- Vérification mounted avant setState dans les contextes async
+- Formatage automatique du téléphone français
+- textInputAction pour navigation clavier entre champs
 
-### Workflow
-1. Toujours créer une nouvelle branche depuis `develop` (sauf hotfix)
-2. Faire des commits atomiques avec des messages clairs
-3. Tester localement avant de pousser
-4. Créer une Pull Request vers `develop`
-5. Code review avant merge
-6. Supprimer la branche après merge
+### Préférences UX de l'utilisateur
+- Pas de titres redondants
+- Dialogs centrés au lieu de snackbars en bas
+- Sauvegarde automatique (pas de bouton save)
+- Gestion intelligente des erreurs (préserver les données valides)
+- Navigation clavier entre les champs de formulaire (Tab/Entrée)
+- Dropdown pour la nationalité (standardisation)
+- Formatage automatique du téléphone pour éviter les erreurs
+
+### Stratégie de monétisation (future)
+**Version gratuite :**
+- 3 profils maximum
+- Saisie manuelle des données
+- Calculs basiques
+
+**Version Premium (5€/mois ou 50€/an) :**
+- Profils illimités
+- Autocomplétion d'adresses (Google Maps)
+- Import automatique (LinkedIn, fiches de paie PDF)
+- Calculs précis avec données temps réel
+- Export PDF détaillé
+
+### Prochaines étapes
+1. Créer la page "Situation professionnelle"
+2. Créer la page "Transport & Déplacements"
+3. Créer la page "Frais professionnels"
+4. Créer la page "Paramètres fiscaux"
+5. Implémenter l'écran de calcul
+6. Ajouter la persistance des données (SQLite)
+
+### Notes importantes
+- L'application est Android/iOS uniquement (pas de support desktop)
+- Focus sur les candidats/employés uniquement
+- Développement progressif sans précipitation
+- Les 3 profils d'exemple sont temporaires pour le développement
+- Toujours exécuter `flutter analyze` avant de commit/push
 
 ### Commandes utiles
 ```bash
-# Créer une nouvelle feature
-git checkout develop
-git pull origin develop
-git checkout -b feature/nom-de-la-feature
-
-# Pousser la branche
-git push -u origin feature/nom-de-la-feature
-
-# Après merge, nettoyer
-git branch -d feature/nom-de-la-feature
-git push origin --delete feature/nom-de-la-feature
-```
-
-## Conventions de code
-
-### Structure des fichiers
-- Un widget par fichier
-- Noms de fichiers en snake_case
-- Noms de classes en PascalCase
-- Constantes en UPPER_SNAKE_CASE
-
-### Organisation des imports
-1. Imports Dart (dart:*)
-2. Imports Flutter (flutter/*)
-3. Imports de packages externes
-4. Imports relatifs du projet
-
-### Tests
-- Toujours exécuter `flutter analyze` avant de commit
-- Exécuter `flutter test` pour vérifier les tests
-- Maintenir une couverture de test > 80%
-
-## Commandes de développement
-
-```bash
-# Analyser le code
+# Vérifier le code
 flutter analyze
 
-# Exécuter les tests
-flutter test
+# Lancer sur émulateur Android
+flutter run -d emulator-5554
 
-# Formater le code
-dart format .
-
-# Nettoyer le projet
-flutter clean
-
-# Générer les fichiers
-flutter pub get
+# Nettoyer et récupérer les dépendances
+flutter clean && flutter pub get
 ```
+
+## Gestion Git (rappel du workflow)
+
+### Branches principales
+- **`main`** : Branche de production (protégée)
+- **`develop`** : Branche de développement principal
+
+### Workflow type
+1. Créer une feature branch depuis develop
+2. Développer et tester
+3. Commits réguliers avec messages descriptifs
+4. Push vers GitHub
+5. Créer une Pull Request vers develop
+6. Merge après review
+
+### Format des commits
+```
+type: Description courte
+
+- Détail 1
+- Détail 2
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+Types : feat, fix, docs, style, refactor, test, chore
