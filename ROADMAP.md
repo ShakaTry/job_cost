@@ -9,7 +9,7 @@
 - [x] Informations personnelles (base)
 
 ### 📋 Pages à créer
-
+Vérif
 #### 1. 👤 Informations personnelles (améliorations)
 **À ajouter :**
 - [ ] Téléphone

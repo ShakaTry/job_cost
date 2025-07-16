@@ -150,6 +150,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                   textCapitalization: TextCapitalization.words,
+                  textInputAction: TextInputAction.next,
                   autofocus: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -170,6 +171,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                     prefixIcon: Icon(Icons.person),
                   ),
                   textCapitalization: TextCapitalization.words,
+                  textInputAction: TextInputAction.done,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Veuillez entrer un prénom';
@@ -178,6 +180,15 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                       return 'Le prénom doit contenir au moins 2 caractères';
                     }
                     return null;
+                  },
+                  onFieldSubmitted: (_) {
+                    if (formKey.currentState!.validate()) {
+                      final profile = UserProfile.create(
+                        lastName: lastNameController.text,
+                        firstName: firstNameController.text,
+                      );
+                      Navigator.of(context).pop(profile);
+                    }
                   },
                 ),
               ],

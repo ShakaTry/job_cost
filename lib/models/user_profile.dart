@@ -9,6 +9,7 @@ class UserProfile {
   final String? phone;
   final String? email;
   final DateTime? birthDate;
+  final String nationality;
   final DateTime createdAt;
 
   UserProfile({
@@ -22,6 +23,7 @@ class UserProfile {
     this.phone,
     this.email,
     this.birthDate,
+    required this.nationality,
     required this.createdAt,
   });
 
@@ -37,6 +39,7 @@ class UserProfile {
     String? phone,
     String? email,
     DateTime? birthDate,
+    String? nationality,
   }) {
     return UserProfile(
       id: id,
@@ -49,6 +52,7 @@ class UserProfile {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       birthDate: birthDate ?? this.birthDate,
+      nationality: nationality ?? this.nationality,
       createdAt: createdAt,
     );
   }
@@ -63,6 +67,7 @@ class UserProfile {
     String? phone,
     String? email,
     DateTime? birthDate,
+    String? nationality,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -75,6 +80,7 @@ class UserProfile {
       phone: phone,
       email: email,
       birthDate: birthDate,
+      nationality: nationality ?? 'France',
       createdAt: DateTime.now(),
     );
   }

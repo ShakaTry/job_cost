@@ -23,6 +23,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late String _maritalStatus;
   late int _dependentChildren;
   late DateTime? _birthDate;
+  late String _nationality;
   late UserProfile _modifiedProfile;
 
   final List<String> _maritalStatusOptions = [
@@ -32,6 +33,35 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     'Veuf(ve)',
     'Pacsé(e)',
     'Union libre',
+  ];
+
+  final List<String> _nationalityOptions = [
+    'France',
+    'Belgique',
+    'Suisse',
+    'Luxembourg',
+    'Canada',
+    'États-Unis',
+    'Royaume-Uni',
+    'Allemagne',
+    'Espagne',
+    'Italie',
+    'Portugal',
+    'Pays-Bas',
+    'Maroc',
+    'Algérie',
+    'Tunisie',
+    'Sénégal',
+    'Côte d\'Ivoire',
+    'Cameroun',
+    'Madagascar',
+    'Chine',
+    'Japon',
+    'Inde',
+    'Brésil',
+    'Argentine',
+    'Mexique',
+    'Autre',
   ];
 
   @override
@@ -48,6 +78,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         : widget.profile.maritalStatus;
     _dependentChildren = widget.profile.dependentChildren;
     _birthDate = widget.profile.birthDate;
+    _nationality = widget.profile.nationality;
   }
 
   @override
@@ -70,6 +101,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       maritalStatus: _maritalStatus,
       dependentChildren: _dependentChildren,
       birthDate: _birthDate,
+      nationality: _nationality,
     );
   }
 
@@ -104,6 +136,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       maritalStatus: _maritalStatus,
       dependentChildren: _dependentChildren,
       birthDate: _birthDate,
+      nationality: _nationality,
     );
   }
 
@@ -147,6 +180,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             if (shouldExit == true && mounted) {
               // Sauvegarder les champs valides et réinitialiser les invalides
               _saveValidFieldsOnly();
+              // ignore: use_build_context_synchronously
               Navigator.pop(context, _modifiedProfile);
             }
           }
@@ -219,6 +253,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   prefixIcon: Icon(Icons.person_outline),
                 ),
                 textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer votre nom';
@@ -237,6 +272,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   prefixIcon: Icon(Icons.person),
                 ),
                 textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer votre prénom';
@@ -247,23 +283,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   setState(() {});
                   _updateProfile();
                 },
+                onFieldSubmitted: (_) {
+                  // Ouvrir le date picker pour la date de naissance
+                  _selectBirthDate();
+                },
               ),
               const SizedBox(height: 16),
               InkWell(
-                onTap: () async {
-                  final DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 30)),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime.now(),
-                  );
-                  if (picked != null && picked != _birthDate) {
-                    setState(() {
-                      _birthDate = picked;
-                    });
-                    _updateProfile();
-                  }
-                },
+                onTap: _selectBirthDate,
                 child: InputDecorator(
                   decoration: const InputDecoration(
                     labelText: 'Date de naissance',
@@ -291,6 +318,29 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _nationality,
+                decoration: const InputDecoration(
+                  labelText: 'Nationalité',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.flag),
+                ),
+                items: _nationalityOptions.map((String country) {
+                  return DropdownMenuItem<String>(
+                    value: country,
+                    child: Text(country),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _nationality = newValue;
+                    });
+                    _updateProfile();
+                  }
+                },
+              ),
               
               const SizedBox(height: 32),
               
@@ -306,6 +356,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   prefixIcon: Icon(Icons.home),
                 ),
                 maxLines: 3,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer votre adresse';
@@ -324,6 +375,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   prefixIcon: Icon(Icons.phone),
                 ),
                 keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
                     // Enlever tous les espaces et caractères spéciaux
@@ -335,7 +387,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
-                onChanged: (_) => _updateProfile(),
+                onChanged: (value) {
+                  // Formater automatiquement le numéro
+                  final newValue = _formatPhoneNumber(value);
+                  if (newValue != value) {
+                    _phoneController.value = TextEditingValue(
+                      text: newValue,
+                      selection: TextSelection.collapsed(offset: newValue.length),
+                    );
+                  }
+                  _updateProfile();
+                },
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -347,6 +409,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   prefixIcon: Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.done,
                 validator: (value) {
                   if (value != null && value.isNotEmpty) {
                     // Validation email complète avec regex
@@ -466,6 +529,44 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       age--;
     }
     return age;
+  }
+
+  String _formatPhoneNumber(String value) {
+    // Enlever tous les caractères non numériques
+    String cleaned = value.replaceAll(RegExp(r'\D'), '');
+    
+    // Limiter à 10 chiffres pour les numéros français
+    if (cleaned.length > 10 && !cleaned.startsWith('33')) {
+      cleaned = cleaned.substring(0, 10);
+    }
+    
+    // Formater selon la longueur
+    if (cleaned.length <= 2) {
+      return cleaned;
+    } else if (cleaned.length <= 4) {
+      return '${cleaned.substring(0, 2)} ${cleaned.substring(2)}';
+    } else if (cleaned.length <= 6) {
+      return '${cleaned.substring(0, 2)} ${cleaned.substring(2, 4)} ${cleaned.substring(4)}';
+    } else if (cleaned.length <= 8) {
+      return '${cleaned.substring(0, 2)} ${cleaned.substring(2, 4)} ${cleaned.substring(4, 6)} ${cleaned.substring(6)}';
+    } else {
+      return '${cleaned.substring(0, 2)} ${cleaned.substring(2, 4)} ${cleaned.substring(4, 6)} ${cleaned.substring(6, 8)} ${cleaned.substring(8, cleaned.length > 10 ? 10 : cleaned.length)}';
+    }
+  }
+
+  void _selectBirthDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 30)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null && picked != _birthDate) {
+      setState(() {
+        _birthDate = picked;
+      });
+      _updateProfile();
+    }
   }
 
   void _pickImage() {
