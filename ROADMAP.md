@@ -21,6 +21,7 @@
 - [ ] Upload photo de profil fonctionnel
 - [ ] Extraction automatique du département depuis le code postal
 - [ ] Intégration avec l'appareil photo pour la photo de profil
+- [ ] Numéro de sécurité sociale (optionnel pour calculs précis)
 
 ### 📋 Pages à créer
 
@@ -33,11 +34,12 @@
 - [ ] Salaire brut mensuel actuel
 - [ ] Convention collective
 - [ ] Temps de travail (temps plein, temps partiel %)
+- [ ] Nombre de jours de présence par semaine (présentiel/télétravail)
 - [ ] Avantages actuels (mutuelle, tickets resto, etc.)
-- [ ] Numéro de sécurité sociale (pour calculs cotisations)
 
 #### 2. 🚗 Transport & Déplacements
 **Champs à inclure :**
+- [ ] Permis de conduire (types détenus)
 - [ ] Mode de transport principal (voiture, transport en commun, vélo, marche)
 - [ ] Distance domicile-travail (km)
 - [ ] Temps de trajet moyen (aller simple)
@@ -50,8 +52,6 @@
   - [ ] Type d'abonnement
   - [ ] Coût mensuel
   - [ ] Participation employeur
-- [ ] Nombre de jours de présence par semaine
-- [ ] Permis de conduire (types détenus)
 
 #### 3. 💰 Frais professionnels
 **Champs à inclure :**
@@ -100,7 +100,7 @@
 - [ ] Saisie d'une offre d'emploi
 - [ ] Calcul du salaire net après toutes charges
 - [ ] Comparaison avec situation actuelle
-- [ ] Export PDF du calcul détaillé
+- [ ] Export des résultats (basique)
 
 #### Gestion des données
 - [ ] Sauvegarde locale (SQLite)
