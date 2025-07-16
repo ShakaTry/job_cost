@@ -78,17 +78,19 @@ class ProfileService {
       id: json['id'] as String,
       lastName: json['lastName'] as String,
       firstName: json['firstName'] as String,
-      address: json['address'] as String,
-      maritalStatus: json['maritalStatus'] as String,
-      dependentChildren: json['dependentChildren'] as int,
+      address: json['address'] as String? ?? '',
+      maritalStatus: json['maritalStatus'] as String? ?? 'Non renseigné',
+      dependentChildren: (json['dependentChildren'] as int?) ?? 0,
       avatarUrl: json['avatarUrl'] as String?,
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       birthDate: json['birthDate'] != null 
           ? DateTime.parse(json['birthDate'] as String)
           : null,
-      nationality: json['nationality'] as String,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      nationality: json['nationality'] as String? ?? 'France',
+      createdAt: json['createdAt'] != null 
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(),
       employmentStatus: json['employmentStatus'] as String? ?? 'Sans emploi',
       companyName: json['companyName'] as String?,
       jobTitle: json['jobTitle'] as String?,
