@@ -18,8 +18,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late TextEditingController _lastNameController;
   late TextEditingController _firstNameController;
   late TextEditingController _addressController;
+  late TextEditingController _phoneController;
+  late TextEditingController _emailController;
   late String _maritalStatus;
   late int _dependentChildren;
+  late DateTime? _birthDate;
   late UserProfile _modifiedProfile;
 
   final List<String> _maritalStatusOptions = [
@@ -38,10 +41,13 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _lastNameController = TextEditingController(text: widget.profile.lastName);
     _firstNameController = TextEditingController(text: widget.profile.firstName);
     _addressController = TextEditingController(text: widget.profile.address);
+    _phoneController = TextEditingController(text: widget.profile.phone ?? '');
+    _emailController = TextEditingController(text: widget.profile.email ?? '');
     _maritalStatus = widget.profile.maritalStatus == 'Non renseigné' 
         ? 'Célibataire' 
         : widget.profile.maritalStatus;
     _dependentChildren = widget.profile.dependentChildren;
+    _birthDate = widget.profile.birthDate;
   }
 
   @override
@@ -49,6 +55,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _lastNameController.dispose();
     _firstNameController.dispose();
     _addressController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -57,8 +65,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       lastName: _lastNameController.text,
       firstName: _firstNameController.text,
       address: _addressController.text,
+      phone: _phoneController.text,
+      email: _emailController.text,
       maritalStatus: _maritalStatus,
       dependentChildren: _dependentChildren,
+      birthDate: _birthDate,
     );
   }
 
@@ -166,6 +177,37 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   _updateProfile();
                 },
               ),
+              const SizedBox(height: 16),
+              InkWell(
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 30)),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                    locale: const Locale('fr', 'FR'),
+                  );
+                  if (picked != null && picked != _birthDate) {
+                    setState(() {
+                      _birthDate = picked;
+                    });
+                    _updateProfile();
+                  }
+                },
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Date de naissance',
+                    hintText: 'Sélectionner une date',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.calendar_today),
+                  ),
+                  child: Text(
+                    _birthDate != null
+                        ? '${_birthDate!.day.toString().padLeft(2, '0')}/${_birthDate!.month.toString().padLeft(2, '0')}/${_birthDate!.year}'
+                        : 'Non renseignée',
+                  ),
+                ),
+              ),
               
               const SizedBox(height: 32),
               
@@ -184,6 +226,39 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Veuillez entrer votre adresse';
+                  }
+                  return null;
+                },
+                onChanged: (_) => _updateProfile(),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _phoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Téléphone',
+                  hintText: 'Ex: 06 12 34 56 78',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
+                onChanged: (_) => _updateProfile(),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  hintText: 'Ex: jean.dupont@email.com',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
+                ),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    // Simple validation email
+                    if (!value.contains('@') || !value.contains('.')) {
+                      return 'Email invalide';
+                    }
                   }
                   return null;
                 },
