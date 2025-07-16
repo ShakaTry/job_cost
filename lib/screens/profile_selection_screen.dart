@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
+import 'add_profile_screen.dart';
 
 class ProfileSelectionScreen extends StatefulWidget {
   const ProfileSelectionScreen({super.key});
@@ -113,23 +114,18 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
     debugPrint('Profil sélectionné: ${profile.name}');
   }
 
-  void _addNewProfile() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Nouveau profil'),
-          content: const Text('Cette fonctionnalité sera bientôt disponible.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
+  void _addNewProfile() async {
+    final UserProfile? newProfile = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AddProfileScreen(),
+      ),
     );
+
+    if (newProfile != null) {
+      setState(() {
+        _profiles.add(newProfile);
+      });
+    }
   }
 }
