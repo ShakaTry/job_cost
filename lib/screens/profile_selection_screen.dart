@@ -94,6 +94,18 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                               color: Colors.grey[500],
                             ),
                           ),
+                          const SizedBox(height: 32),
+                          OutlinedButton.icon(
+                            onPressed: _createDemoProfile,
+                            icon: const Icon(Icons.science),
+                            label: const Text('Créer un profil de démonstration'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     )
@@ -120,12 +132,36 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                             ),
                             const SizedBox(width: 16),
                             Expanded(
-                              child: Text(
-                                profile.fullName,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    profile.fullName,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (profile.email == 'sophie.martin@example.com')
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.shade100,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Text(
+                                        'Profil de démonstration',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             const Icon(
@@ -282,6 +318,64 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
           await _profileService.saveProfiles(_profiles);
         }
       }
+    }
+  }
+
+  void _createDemoProfile() async {
+    final demoProfile = UserProfile.create(
+      lastName: 'Martin',
+      firstName: 'Sophie',
+      address: '15 rue de la République, 75001 Paris',
+      maritalStatus: 'Marié(e)',
+      dependentChildren: 2,
+      phone: '06 12 34 56 78',
+      email: 'sophie.martin@example.com',
+      birthDate: DateTime(1985, 6, 15),
+      nationality: 'France',
+      employmentStatus: 'Salarié(e) CDI',
+      companyName: 'Tech Solutions SARL',
+      jobTitle: 'Développeuse Full Stack',
+      workTime: 'Temps plein',
+      grossMonthlySalary: 3500,
+      taxSystem: 'Prélèvement à la source',
+    );
+
+    setState(() {
+      _profiles.add(demoProfile);
+    });
+    
+    // Sauvegarder le profil
+    await _profileService.saveProfiles(_profiles);
+    
+    // Afficher un message de confirmation
+    if (mounted) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.green),
+                SizedBox(width: 8),
+                Text('Profil créé'),
+              ],
+            ),
+            content: const Text(
+              'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
+              'Vous pouvez maintenant explorer toutes les fonctionnalités de l\'application.',
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _selectProfile(demoProfile);
+                },
+                child: const Text('Ouvrir le profil'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }
