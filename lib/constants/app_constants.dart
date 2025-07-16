@@ -82,10 +82,14 @@ class AppConstants {
 
   static const List<String> workTimeOptions = [
     'Temps plein',
+    'Temps partiel 90%',
     'Temps partiel 80%',
+    'Temps partiel 70%',
     'Temps partiel 60%',
     'Temps partiel 50%',
     'Mi-temps',
+    'Temps partiel 30%',
+    'Temps partiel 20%',
     'Autre',
   ];
 

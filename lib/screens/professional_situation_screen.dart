@@ -104,13 +104,23 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     switch (_workTime) {
       case 'Temps plein':
         return 151.67; // 35h/semaine selon la réglementation française
+      case 'Temps partiel 90%':
+        return 136.5; // 31.5h/semaine (31.5 × 52 ÷ 12)
       case 'Temps partiel 80%':
         return 121.33; // 28h/semaine (28 × 52 ÷ 12)
+      case 'Temps partiel 70%':
+        return 106.17; // 24.5h/semaine (24.5 × 52 ÷ 12)
       case 'Temps partiel 60%':
         return 91.0; // 21h/semaine (21 × 52 ÷ 12)
       case 'Temps partiel 50%':
       case 'Mi-temps':
         return 75.83; // 17.5h/semaine (17.5 × 52 ÷ 12)
+      case 'Temps partiel 30%':
+        return 45.5; // 10.5h/semaine (10.5 × 52 ÷ 12)
+      case 'Temps partiel 20%':
+        return 30.33; // 7h/semaine (7 × 52 ÷ 12)
+      case 'Autre':
+        return 151.67; // Par défaut temps plein, l'utilisateur peut ajuster manuellement
       default:
         return 151.67;
     }
