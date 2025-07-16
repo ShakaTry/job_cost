@@ -30,7 +30,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late double _workTimePercentage;
   late TextEditingController _weeklyHoursController;
   late TextEditingController _overtimeHoursController;
-  late bool _overtimeRegular;
   late UserProfile _modifiedProfile;
   late FocusNode _salaryFocusNode;
 
@@ -50,7 +49,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _workTimePercentage = widget.profile.workTimePercentage;
     _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toString());
     _overtimeHoursController = TextEditingController(text: widget.profile.overtimeHours > 0 ? widget.profile.overtimeHours.toString() : '');
-    _overtimeRegular = widget.profile.overtimeRegular;
     _salaryFocusNode = FocusNode();
     
     // Initialiser les valeurs exactes
@@ -346,7 +344,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       workTimePercentage: _workTimePercentage,
       weeklyHours: weeklyHours,
       overtimeHours: overtimeHours,
-      overtimeRegular: _overtimeRegular,
       grossMonthlySalary: _getCurrentMonthlySalary(),
     );
     
@@ -569,28 +566,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 ],
               ),
               
-              if (monthlySalary > 0) ...[
-                const SizedBox(height: AppConstants.defaultPadding),
-                
-                Container(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(AppStrings.grossAnnualSalary),
-                      Text(
-                        '${_formatSalary(annualSalary.toStringAsFixed(2))} ${AppStrings.euroSymbol}',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              
               const SizedBox(height: AppConstants.largePadding),
               
               // Section Heures supplémentaires
@@ -618,32 +593,10 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 textInputAction: TextInputAction.done,
               ),
               
-              if (double.tryParse(_overtimeHoursController.text) != null && double.tryParse(_overtimeHoursController.text)! > 0) ...[
-                const SizedBox(height: AppConstants.defaultPadding),
-                SwitchListTile(
-                  title: const Text(AppStrings.regularOvertime),
-                  subtitle: Text(
-                    _overtimeRegular ? AppStrings.regularOvertimeHelper : AppStrings.occasionalOvertimeHelper,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _overtimeRegular ? Colors.green[700] : Colors.orange[700],
-                    ),
-                  ),
-                  value: _overtimeRegular,
-                  onChanged: (value) {
-                    setState(() {
-                      _overtimeRegular = value;
-                    });
-                    _updateProfile();
-                  },
-                  activeColor: Colors.green,
-                ),
-              ],
-              
-              if (_calculateOvertimeSalary() > 0) ...[
+              // Cadre récapitulatif unique
+              if (monthlySalary > 0) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
                 
-                // Affichage simple du montant
                 Container(
                   padding: const EdgeInsets.all(AppConstants.defaultPadding),
                   decoration: BoxDecoration(
@@ -652,24 +605,70 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   ),
                   child: Column(
                     children: [
+                      // Salaire annuel
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(AppStrings.overtimeMonthlyAmount),
+                          const Text(AppStrings.grossAnnualSalary),
                           Text(
-                            '${_formatSalary(_calculateOvertimeSalary().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                            '${_formatSalary(annualSalary.toStringAsFixed(2))} ${AppStrings.euroSymbol}',
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppConstants.smallPadding),
-                      Text(
-                        '${_getOvertimeHoursByRate()['hours25']!.toStringAsFixed(1)}h à 125% + ${_getOvertimeHoursByRate()['hours50']!.toStringAsFixed(1)}h à 150% par mois',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
+                      
+                      // Heures supplémentaires si présentes
+                      if (_calculateOvertimeSalary() > 0) ...[
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        const Divider(),
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(AppStrings.overtimeMonthlyAmount),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${_getOvertimeHoursByRate()['hours25']!.toStringAsFixed(1)}h à 125% + ${_getOvertimeHoursByRate()['hours50']!.toStringAsFixed(1)}h à 150%/mois',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '${_formatSalary(_calculateOvertimeSalary().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      ),
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        const Divider(),
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total annuel brut',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[800],
+                              ),
+                            ),
+                            Text(
+                              '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[800],
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),

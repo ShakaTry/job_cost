@@ -21,7 +21,6 @@ class UserProfile {
   final double workTimePercentage; // Pourcentage de temps de travail (10-100)
   final double weeklyHours; // Heures hebdomadaires
   final double overtimeHours; // Heures supplémentaires par semaine
-  final bool overtimeRegular; // true = régulières, false = occasionnelles/estimées
   final double grossMonthlySalary;
   final String taxSystem;
 
@@ -44,7 +43,6 @@ class UserProfile {
     required this.workTimePercentage,
     required this.weeklyHours,
     required this.overtimeHours,
-    required this.overtimeRegular,
     required this.grossMonthlySalary,
     required this.taxSystem,
   });
@@ -68,7 +66,6 @@ class UserProfile {
     double? workTimePercentage,
     double? weeklyHours,
     double? overtimeHours,
-    bool? overtimeRegular,
     double? grossMonthlySalary,
     String? taxSystem,
   }) {
@@ -91,7 +88,6 @@ class UserProfile {
       workTimePercentage: workTimePercentage ?? this.workTimePercentage,
       weeklyHours: weeklyHours ?? this.weeklyHours,
       overtimeHours: overtimeHours ?? this.overtimeHours,
-      overtimeRegular: overtimeRegular ?? this.overtimeRegular,
       grossMonthlySalary: grossMonthlySalary ?? this.grossMonthlySalary,
       taxSystem: taxSystem ?? this.taxSystem,
     );
@@ -114,7 +110,6 @@ class UserProfile {
     double? workTimePercentage,
     double? weeklyHours,
     double? overtimeHours,
-    bool? overtimeRegular,
     double? grossMonthlySalary,
     String? taxSystem,
   }) {
@@ -137,7 +132,6 @@ class UserProfile {
       workTimePercentage: workTimePercentage ?? AppConstants.defaultWorkTimePercentage,
       weeklyHours: weeklyHours ?? AppConstants.defaultWeeklyHours,
       overtimeHours: overtimeHours ?? 0.0,
-      overtimeRegular: overtimeRegular ?? true,
       grossMonthlySalary: grossMonthlySalary ?? AppConstants.defaultGrossSalary,
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
     );

@@ -70,7 +70,6 @@ class ProfileService {
       'workTimePercentage': profile.workTimePercentage,
       'weeklyHours': profile.weeklyHours,
       'overtimeHours': profile.overtimeHours,
-      'overtimeRegular': profile.overtimeRegular,
       'grossMonthlySalary': profile.grossMonthlySalary,
       'taxSystem': profile.taxSystem,
     };
@@ -151,7 +150,6 @@ class ProfileService {
       workTimePercentage: workTimePercentage,
       weeklyHours: weeklyHours,
       overtimeHours: (json['overtimeHours'] as num?)?.toDouble() ?? 0.0,
-      overtimeRegular: json['overtimeRegular'] as bool? ?? true,
       grossMonthlySalary: (json['grossMonthlySalary'] as num?)?.toDouble() ?? 0.0,
       taxSystem: json['taxSystem'] as String? ?? 'Prélèvement à la source',
     );
