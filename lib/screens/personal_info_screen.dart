@@ -202,10 +202,23 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.calendar_today),
                   ),
-                  child: Text(
-                    _birthDate != null
-                        ? '${_birthDate!.day.toString().padLeft(2, '0')}/${_birthDate!.month.toString().padLeft(2, '0')}/${_birthDate!.year}'
-                        : 'Non renseignée',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        _birthDate != null
+                            ? '${_birthDate!.day.toString().padLeft(2, '0')}/${_birthDate!.month.toString().padLeft(2, '0')}/${_birthDate!.year}'
+                            : 'Non renseignée',
+                      ),
+                      if (_birthDate != null)
+                        Text(
+                          '${_calculateAge()} ans',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 14,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -359,6 +372,17 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         color: Colors.black87,
       ),
     );
+  }
+
+  int _calculateAge() {
+    if (_birthDate == null) return 0;
+    final now = DateTime.now();
+    int age = now.year - _birthDate!.year;
+    if (now.month < _birthDate!.month || 
+        (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
+      age--;
+    }
+    return age;
   }
 
   void _pickImage() {
