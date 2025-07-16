@@ -10,25 +10,13 @@ class AddProfileScreen extends StatefulWidget {
 
 class _AddProfileScreenState extends State<AddProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _lastNameController = TextEditingController(text: 'Utilisateur');
-  final _firstNameController = TextEditingController(text: 'Nouveau');
-  final _addressController = TextEditingController(text: '1 rue de la République, 75001 Paris');
-  String _maritalStatus = 'Célibataire';
-  int _dependentChildren = 0;
-
-  final List<String> _maritalStatusOptions = [
-    'Célibataire',
-    'Marié(e)',
-    'Divorcé(e)',
-    'Veuf(ve)',
-    'Pacsé(e)',
-  ];
+  final _lastNameController = TextEditingController();
+  final _firstNameController = TextEditingController();
 
   @override
   void dispose() {
     _lastNameController.dispose();
     _firstNameController.dispose();
-    _addressController.dispose();
     super.dispose();
   }
 
@@ -46,12 +34,12 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
               Center(
                 child: Stack(
                   children: [
                     CircleAvatar(
-                      radius: 50,
+                      radius: 60,
                       backgroundColor: Theme.of(context).primaryColor,
                       child: Text(
                         _firstNameController.text.isNotEmpty
@@ -59,7 +47,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                             : '?',
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 36,
+                          fontSize: 48,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -73,14 +61,13 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: Colors.white,
-                            width: 2,
+                            width: 3,
                           ),
                         ),
                         child: IconButton(
                           icon: const Icon(
                             Icons.camera_alt,
                             color: Colors.white,
-                            size: 20,
                           ),
                           onPressed: _pickImage,
                         ),
@@ -89,7 +76,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 40),
               TextFormField(
                 controller: _lastNameController,
                 decoration: const InputDecoration(
@@ -132,93 +119,6 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   setState(() {});
                 },
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: 'Adresse',
-                  hintText: 'Ex: 123 rue de la Paix, 75001 Paris',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.home),
-                ),
-                maxLines: 2,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre adresse';
-                  }
-                  if (value.length < 10) {
-                    return 'L\'adresse semble incomplète';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _maritalStatus,
-                decoration: const InputDecoration(
-                  labelText: 'Situation matrimoniale',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.family_restroom),
-                ),
-                items: _maritalStatusOptions.map((String status) {
-                  return DropdownMenuItem<String>(
-                    value: status,
-                    child: Text(status),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    setState(() {
-                      _maritalStatus = newValue;
-                    });
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Enfants à charge',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.child_care),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '$_dependentChildren',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle_outline),
-                                onPressed: _dependentChildren > 0
-                                    ? () {
-                                        setState(() {
-                                          _dependentChildren--;
-                                        });
-                                      }
-                                    : null,
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline),
-                                onPressed: () {
-                                  setState(() {
-                                    _dependentChildren++;
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 24),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -233,7 +133,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Ces informations sont utilisées pour le calcul des charges sociales et fiscales',
+                        'Les autres informations seront à renseigner dans votre profil',
                         style: TextStyle(
                           color: Colors.blue.shade700,
                           fontSize: 13,
@@ -243,7 +143,7 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: _saveProfile,
                 style: ElevatedButton.styleFrom(
@@ -287,9 +187,6 @@ class _AddProfileScreenState extends State<AddProfileScreen> {
       final newProfile = UserProfile.create(
         lastName: _lastNameController.text,
         firstName: _firstNameController.text,
-        address: _addressController.text,
-        maritalStatus: _maritalStatus,
-        dependentChildren: _dependentChildren,
       );
       
       Navigator.of(context).pop(newProfile);

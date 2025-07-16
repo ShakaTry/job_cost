@@ -15,23 +15,14 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
     UserProfile.create(
       lastName: 'Dupont', 
       firstName: 'Jean',
-      address: '15 rue du Commerce, 75015 Paris',
-      maritalStatus: 'Marié(e)',
-      dependentChildren: 2,
     ),
     UserProfile.create(
       lastName: 'Martin', 
       firstName: 'Sophie',
-      address: '8 avenue Victor Hugo, 69002 Lyon',
-      maritalStatus: 'Célibataire',
-      dependentChildren: 0,
     ),
     UserProfile.create(
       lastName: 'Bernard', 
       firstName: 'Pierre',
-      address: '23 boulevard de la Liberté, 59000 Lille',
-      maritalStatus: 'Divorcé(e)',
-      dependentChildren: 1,
     ),
   ];
 

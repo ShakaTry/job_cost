@@ -24,18 +24,18 @@ class UserProfile {
   factory UserProfile.create({
     required String lastName,
     required String firstName,
-    required String address,
-    required String maritalStatus,
-    required int dependentChildren,
+    String? address,
+    String? maritalStatus,
+    int? dependentChildren,
     String? avatarUrl,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       lastName: lastName,
       firstName: firstName,
-      address: address,
-      maritalStatus: maritalStatus,
-      dependentChildren: dependentChildren,
+      address: address ?? '',
+      maritalStatus: maritalStatus ?? 'Non renseigné',
+      dependentChildren: dependentChildren ?? 0,
       avatarUrl: avatarUrl,
       createdAt: DateTime.now(),
     );
