@@ -100,23 +100,19 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return double.tryParse(salaryText) ?? 0.0;
   }
 
-  double _getCurrentHourlyRate() {
-    return double.tryParse(_hourlyRateController.text) ?? 0.0;
-  }
-
-  int _getWeeklyHours() {
+  double _getWeeklyHours() {
     switch (_workTime) {
       case 'Temps plein':
-        return 35;
+        return 35.0;
       case 'Temps partiel 80%':
-        return 28;
+        return 28.0;
       case 'Temps partiel 60%':
-        return 21;
+        return 21.0;
       case 'Temps partiel 50%':
       case 'Mi-temps':
-        return 175; // 17.5 * 10 pour éviter les décimales
+        return 17.5;
       default:
-        return 35;
+        return 35.0;
     }
   }
 
@@ -125,11 +121,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final salary = int.tryParse(salaryText);
     if (salary != null && salary > 0) {
       final weeklyHours = _getWeeklyHours();
-      // Calcul en centimes pour éviter les arrondis
-      final hourlyCents = (salary * 1200) ~/ (weeklyHours * 52);
-      final hourlyRate = (_workTime == 'Temps partiel 50%' || _workTime == 'Mi-temps') 
-          ? hourlyCents / 1000.0 // Division par 1000 pour le Mi-temps (175/10)
-          : hourlyCents / 100.0;
+      // Calcul simple : salaire mensuel * 12 / (heures/semaine * 52)
+      final hourlyRate = (salary * 12) / (weeklyHours * 52);
       
       _isUpdating = true;
       _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
@@ -146,11 +139,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final hourlyRate = double.tryParse(hourlyText);
     if (hourlyRate != null && hourlyRate > 0) {
       final weeklyHours = _getWeeklyHours();
-      // Calcul en centimes pour éviter les arrondis
-      final hourlyCents = (hourlyRate * 100).round();
-      final monthlySalary = (_workTime == 'Temps partiel 50%' || _workTime == 'Mi-temps')
-          ? (hourlyCents * weeklyHours * 52) ~/ 12000 // Division par 12000 pour Mi-temps
-          : (hourlyCents * weeklyHours * 52) ~/ 1200;
+      // Calcul simple : taux horaire * heures/semaine * 52 / 12
+      final monthlySalary = (hourlyRate * weeklyHours * 52 / 12).round();
       
       _isUpdating = true;
       _salaryController.text = monthlySalary.toString();
