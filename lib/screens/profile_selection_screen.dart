@@ -108,30 +108,9 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   }
 
   void _selectProfile(UserProfile profile) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Confirmation'),
-          content: Text('Voulez-vous continuer en tant que ${profile.name} ?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Annuler'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // TODO: Navigation vers l'écran principal
-              },
-              child: const Text('Confirmer'),
-            ),
-          ],
-        );
-      },
-    );
+    // TODO: Navigation vers l'écran principal avec le profil sélectionné
+    // Pour l'instant, on affiche juste un message temporaire
+    debugPrint('Profil sélectionné: ${profile.name}');
   }
 
   void _addNewProfile() {
