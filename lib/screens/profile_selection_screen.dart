@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
 import '../widgets/profile_avatar.dart';
-import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
 import '../utils/validators.dart';
 import 'profile_detail_screen.dart';
