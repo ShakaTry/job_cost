@@ -100,7 +100,7 @@ class AppStrings {
   static const String or = 'OU';
   static const String hoursPerWeek = 'heures/semaine';
   static const String professionalInfoMessage = 'Ces informations serviront de base pour le calcul de votre salaire réel net.';
-  static const String salaryInfoMessage = 'Indiquez votre salaire brut mensuel. Le calcul du net sera effectué dans la section dédiée.';
+  static const String salaryInfoMessage = 'Indiquez votre salaire brut mensuel ou votre taux horaire. Les deux champs se calculent automatiquement selon votre temps de travail.';
   static const String monthlyAmount = 'par mois';
   static const String annualAmount = 'par an';
   static const String euroSymbol = '€';
