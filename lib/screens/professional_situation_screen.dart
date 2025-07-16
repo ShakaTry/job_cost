@@ -32,6 +32,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late TextEditingController _weeklyHoursController;
   late String _taxSystem;
   late UserProfile _modifiedProfile;
+  late FocusNode _salaryFocusNode;
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _workTimePercentage = widget.profile.workTimePercentage;
     _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toString());
     _taxSystem = widget.profile.taxSystem;
+    _salaryFocusNode = FocusNode();
     
     _companyNameController.addListener(_saveData);
     _jobTitleController.addListener(_saveData);
@@ -74,6 +76,13 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         _saveData();
       }
     });
+    
+    // Formater le salaire quand l'utilisateur quitte le champ
+    _salaryFocusNode.addListener(() {
+      if (!_salaryFocusNode.hasFocus && !_isUpdating) {
+        _formatSalaryInput();
+      }
+    });
   }
 
   @override
@@ -83,6 +92,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _salaryController.dispose();
     _hourlyRateController.dispose();
     _weeklyHoursController.dispose();
+    _salaryFocusNode.dispose();
     super.dispose();
   }
 
@@ -90,20 +100,47 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     value = value.replaceAll(' ', '');
     if (value.isEmpty) return '';
     
-    int? number = int.tryParse(value);
+    double? number = double.tryParse(value);
     if (number == null) return value;
     
+    // Séparer partie entière et décimale
+    final parts = value.split('.');
+    final integerPart = parts[0];
+    final decimalPart = parts.length > 1 ? parts[1] : '';
+    
+    // Formater la partie entière avec espaces
     String result = '';
-    String numberStr = number.toString();
-    for (int i = 0; i < numberStr.length; i++) {
-      if (i > 0 && (numberStr.length - i) % 3 == 0) {
+    for (int i = 0; i < integerPart.length; i++) {
+      if (i > 0 && (integerPart.length - i) % 3 == 0) {
         result += ' ';
       }
-      result += numberStr[i];
+      result += integerPart[i];
     }
+    
+    // Ajouter la partie décimale si elle existe
+    if (decimalPart.isNotEmpty) {
+      result += '.$decimalPart';
+    }
+    
     return result;
   }
 
+  void _formatSalaryInput() {
+    final currentText = _salaryController.text.replaceAll(' ', '');
+    if (currentText.isNotEmpty) {
+      final salary = double.tryParse(currentText);
+      if (salary != null) {
+        _isUpdating = true;
+        // Formater avec 2 décimales si c'est un nombre entier
+        if (salary == salary.toInt()) {
+          _salaryController.text = salary.toStringAsFixed(2);
+        } else {
+          _salaryController.text = salary.toString();
+        }
+        _isUpdating = false;
+      }
+    }
+  }
 
   bool _isUpdating = false;
 
@@ -392,15 +429,16 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   Expanded(
                     child: TextFormField(
                       controller: _salaryController,
+                      focusNode: _salaryFocusNode,
                       decoration: const InputDecoration(
                         labelText: 'Salaire brut',
-                        hintText: 'En euros',
+                        hintText: 'Ex: 2500.00',
                         border: OutlineInputBorder(),
                         suffixText: '€/mois',
                       ),
-                      keyboardType: TextInputType.number,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
                       textInputAction: TextInputAction.next,
                     ),
@@ -445,7 +483,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     children: [
                       const Text(AppStrings.grossAnnualSalary),
                       Text(
-                        '${_formatSalary(annualSalary.toStringAsFixed(0))} ${AppStrings.euroSymbol}',
+                        '${_formatSalary(annualSalary.toStringAsFixed(2))} ${AppStrings.euroSymbol}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ],
