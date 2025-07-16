@@ -5,6 +5,7 @@ import '../widgets/info_container.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
 import '../utils/validators.dart';
+import '../services/profile_service.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   final UserProfile profile;
@@ -20,6 +21,7 @@ class PersonalInfoScreen extends StatefulWidget {
 
 class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   final _formKey = GlobalKey<FormState>();
+  final ProfileService _profileService = ProfileService();
   late TextEditingController _lastNameController;
   late TextEditingController _firstNameController;
   late TextEditingController _addressController;
@@ -71,6 +73,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       birthDate: _birthDate,
       nationality: _nationality,
     );
+    
+    // Sauvegarder automatiquement le profil
+    _profileService.updateProfile(_modifiedProfile);
   }
 
   void _saveValidFieldsOnly() {

@@ -3,6 +3,7 @@ import '../models/user_profile.dart';
 import '../widgets/profile_avatar.dart';
 import '../constants/app_strings.dart';
 import '../utils/validators.dart';
+import '../services/profile_service.dart';
 import 'profile_detail_screen.dart';
 
 class ProfileSelectionScreen extends StatefulWidget {
@@ -13,23 +14,48 @@ class ProfileSelectionScreen extends StatefulWidget {
 }
 
 class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
-  final List<UserProfile> _profiles = [
-    UserProfile.create(
-      lastName: 'Dupont', 
-      firstName: 'Jean',
-    ),
-    UserProfile.create(
-      lastName: 'Martin', 
-      firstName: 'Sophie',
-    ),
-    UserProfile.create(
-      lastName: 'Bernard', 
-      firstName: 'Pierre',
-    ),
-  ];
+  final ProfileService _profileService = ProfileService();
+  List<UserProfile> _profiles = [];
+  bool _isLoading = true;
+  
+  @override
+  void initState() {
+    super.initState();
+    _loadProfiles();
+  }
+  
+  Future<void> _loadProfiles() async {
+    try {
+      final profiles = await _profileService.loadProfiles();
+      if (mounted) {
+        setState(() {
+          _profiles = profiles;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(AppStrings.selectProfileTitle),
+          centerTitle: true,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text(AppStrings.selectProfileTitle),
@@ -42,7 +68,36 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
           children: [
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
+              child: _profiles.isEmpty
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.person_outline,
+                            size: 80,
+                            color: Colors.grey[400],
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Aucun profil créé',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Créez votre premier profil',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
                 itemCount: _profiles.length,
                 itemBuilder: (context, index) {
                   final profile = _profiles[index];
@@ -112,6 +167,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       setState(() {
         _profiles.remove(profile);
       });
+      await _profileService.saveProfiles(_profiles);
     } else if (result is UserProfile) {
       // Mettre à jour le profil dans la liste
       setState(() {
@@ -120,6 +176,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
           _profiles[index] = result;
         }
       });
+      await _profileService.saveProfiles(_profiles);
     }
   }
 
@@ -203,14 +260,27 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
         _profiles.add(newProfile);
       });
       
+      // Sauvegarder les profils
+      await _profileService.saveProfiles(_profiles);
+      
       // Naviguer directement vers le profil créé
       if (mounted) {
-        Navigator.push(
+        final updatedProfile = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProfileDetailScreen(profile: newProfile),
           ),
         );
+        
+        if (updatedProfile is UserProfile) {
+          setState(() {
+            final index = _profiles.indexWhere((p) => p.id == updatedProfile.id);
+            if (index != -1) {
+              _profiles[index] = updatedProfile;
+            }
+          });
+          await _profileService.saveProfiles(_profiles);
+        }
       }
     }
   }
