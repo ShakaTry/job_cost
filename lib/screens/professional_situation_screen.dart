@@ -56,13 +56,15 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _jobTitleController.addListener(_saveData);
     _salaryController.addListener(() {
       if (!_isUpdating) {
+        _isUserInputting = true;
         _updateHourlyFromSalary();
         if (mounted) setState(() {});
         _saveData();
+        _isUserInputting = false;
       }
     });
     _hourlyRateController.addListener(() {
-      if (!_isUpdating) {
+      if (!_isUpdating && !_isUserInputting) {
         _updateSalaryFromHourly();
         if (mounted) setState(() {});
         _saveData();
@@ -80,7 +82,10 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     // Formater le salaire quand l'utilisateur quitte le champ
     _salaryFocusNode.addListener(() {
       if (!_salaryFocusNode.hasFocus && !_isUpdating) {
-        _formatSalaryInput();
+        // Délai pour éviter les conflits avec les autres listeners
+        Future.delayed(const Duration(milliseconds: 50), () {
+          if (mounted) _formatSalaryInput();
+        });
       }
     });
   }
@@ -143,6 +148,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   }
 
   bool _isUpdating = false;
+  bool _isUserInputting = false;
 
   double _getCurrentMonthlySalary() {
     final salaryText = _salaryController.text.replaceAll(' ', '');
