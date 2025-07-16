@@ -370,85 +370,63 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               
-              InfoContainer(
-                text: AppStrings.salaryInfoMessage,
-              ),
-              const SizedBox(height: AppConstants.defaultPadding),
-              
-              Container(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _salaryController,
-                            decoration: InputDecoration(
-                              labelText: AppStrings.grossMonthlySalary,
-                              hintText: AppStrings.salaryHint,
-                              border: const OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              suffixText: '${AppStrings.euroSymbol}/${AppStrings.monthlyAmount.split(' ').last}',
-                            ),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            textInputAction: TextInputAction.next,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
-                          child: Icon(
-                            Icons.sync_alt,
-                            color: Colors.blue.shade600,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _hourlyRateController,
-                            decoration: InputDecoration(
-                              labelText: AppStrings.grossHourlyRate,
-                              hintText: AppStrings.hourlyRateHint,
-                              border: const OutlineInputBorder(),
-                              fillColor: Colors.white,
-                              filled: true,
-                              suffixText: '${AppStrings.euroSymbol}/h',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                            ],
-                            textInputAction: TextInputAction.done,
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (_workTime != 'Autre')
-                      Padding(
-                        padding: const EdgeInsets.only(top: AppConstants.smallPadding),
-                        child: Center(
-                          child: Text(
-                            'Base de calcul : ${_getWeeklyHours()}',
-                            style: TextStyle(
-                              color: Colors.blue.shade700,
-                              fontSize: 12,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        ),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _salaryController,
+                      decoration: const InputDecoration(
+                        labelText: 'Salaire brut',
+                        hintText: 'En euros',
+                        border: OutlineInputBorder(),
+                        suffixText: '€/mois',
                       ),
-                  ],
-                ),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      textInputAction: TextInputAction.next,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
+                    child: Icon(
+                      Icons.sync_alt,
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _hourlyRateController,
+                      decoration: const InputDecoration(
+                        labelText: 'Taux horaire',
+                        hintText: 'En euros',
+                        border: OutlineInputBorder(),
+                        suffixText: '€/h',
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                      textInputAction: TextInputAction.done,
+                    ),
+                  ),
+                ],
               ),
+              if (_workTime != 'Autre')
+                Padding(
+                  padding: const EdgeInsets.only(top: AppConstants.smallPadding),
+                  child: Center(
+                    child: Text(
+                      'Base de calcul : ${_getWeeklyHours()}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ),
               
               if (monthlySalary > 0) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
