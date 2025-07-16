@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/user_profile.dart';
@@ -111,35 +112,52 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return double.tryParse(salaryText) ?? 0.0;
   }
 
-  double _getMonthlyHours() {
-    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
-    return weeklyHours * 52 / 12; // Calcul basé sur les heures hebdomadaires saisies
+  // Constantes officielles selon la documentation
+  static const double _dureeLegaleMensuelle = 151.67; // heures/mois pour 35h/semaine
+  static const double _dureeLegaleHebdo = 35.0; // heures/semaine
+  static const int _precisionTauxHoraire = 4; // décimales pour taux horaire
+  static const int _precisionSalaire = 2; // décimales pour salaire
+
+  double _getWorkTimeCoefficient() {
+    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? _dureeLegaleHebdo;
+    // Coefficient = heures_réelles / 35h
+    return weeklyHours / _dureeLegaleHebdo;
   }
 
   void _updatePercentageFromHours() {
-    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
+    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? _dureeLegaleHebdo;
     _isUpdating = true;
-    _workTimePercentage = (weeklyHours / 35.0 * 100).clamp(10.0, 100.0);
+    _workTimePercentage = (weeklyHours / _dureeLegaleHebdo * 100).clamp(10.0, 100.0);
     _isUpdating = false;
   }
 
   void _updateHoursFromPercentage() {
-    final newWeeklyHours = (35.0 * _workTimePercentage / 100).toStringAsFixed(1);
+    final newWeeklyHours = (_dureeLegaleHebdo * _workTimePercentage / 100);
     _isUpdating = true;
-    _weeklyHoursController.text = newWeeklyHours;
+    _weeklyHoursController.text = newWeeklyHours.toStringAsFixed(1);
     _isUpdating = false;
+  }
+
+  // Fonction d'arrondi selon les spécifications officielles
+  double _roundToPrecision(double value, int decimals) {
+    final factor = pow(10, decimals);
+    return (value * factor).round() / factor;
   }
 
   void _updateHourlyFromSalary() {
     final salaryText = _salaryController.text.replaceAll(' ', '');
-    final salary = int.tryParse(salaryText);
+    final salary = double.tryParse(salaryText);
     if (salary != null && salary > 0) {
-      final monthlyHours = _getMonthlyHours();
-      // Formule française officielle : salaire mensuel ÷ heures mensuelles
-      final hourlyRate = salary / monthlyHours;
+      // Calcul avec coefficient de temps de travail selon la documentation officielle
+      final coefficient = _getWorkTimeCoefficient();
+      final dureeReelle = _dureeLegaleMensuelle * coefficient;
+      
+      // Formule officielle : Taux_Horaire_Brut = Salaire_Mensuel_Brut / Durée_Mensuelle_Travail
+      final hourlyRate = salary / dureeReelle;
       
       _isUpdating = true;
-      _hourlyRateController.text = hourlyRate.toStringAsFixed(2);
+      // Affichage avec précision recommandée (4 décimales pour taux horaire)
+      _hourlyRateController.text = _roundToPrecision(hourlyRate, _precisionTauxHoraire).toString();
       _isUpdating = false;
     } else if (salaryText.isEmpty) {
       _isUpdating = true;
@@ -152,12 +170,17 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final hourlyText = _hourlyRateController.text;
     final hourlyRate = double.tryParse(hourlyText);
     if (hourlyRate != null && hourlyRate > 0) {
-      final monthlyHours = _getMonthlyHours();
-      // Formule française officielle : taux horaire × heures mensuelles
-      final monthlySalary = (hourlyRate * monthlyHours).round();
+      // Calcul avec coefficient de temps de travail selon la documentation officielle
+      final coefficient = _getWorkTimeCoefficient();
+      final dureeReelle = _dureeLegaleMensuelle * coefficient;
+      
+      // Formule officielle : Salaire_Mensuel_Brut = Taux_Horaire_Brut × Durée_Mensuelle_Travail
+      final monthlySalary = hourlyRate * dureeReelle;
       
       _isUpdating = true;
-      _salaryController.text = monthlySalary.toString();
+      // Arrondir à 2 décimales (centimes) pour le salaire selon les spécifications
+      final roundedSalary = _roundToPrecision(monthlySalary, _precisionSalaire);
+      _salaryController.text = roundedSalary.toString();
       _isUpdating = false;
     } else if (hourlyText.isEmpty) {
       _isUpdating = true;
