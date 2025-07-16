@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
+import '../widgets/profile_avatar.dart';
+import '../constants/app_constants.dart';
+import '../constants/app_strings.dart';
+import '../utils/validators.dart';
 import 'profile_detail_screen.dart';
 
 class ProfileSelectionScreen extends StatefulWidget {
@@ -29,7 +33,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choisissez votre profil'),
+        title: const Text(AppStrings.selectProfileTitle),
         centerTitle: true,
       ),
       body: Padding(
@@ -55,17 +59,10 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
                           children: [
-                            CircleAvatar(
+                            ProfileAvatar(
+                              firstName: profile.firstName,
                               radius: 30,
-                              backgroundColor: Theme.of(context).primaryColor,
-                              child: Text(
-                                profile.firstName[0].toUpperCase(),
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              fontSize: 24,
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -93,7 +90,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
             ElevatedButton.icon(
               onPressed: _addNewProfile,
               icon: const Icon(Icons.add),
-              label: const Text('Ajouter un nouveau profil'),
+              label: const Text(AppStrings.addNewProfile),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
@@ -136,7 +133,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Nouveau profil'),
+          title: const Text(AppStrings.newProfileTitle),
           content: Form(
             key: formKey,
             child: Column(
@@ -145,42 +142,26 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                 TextFormField(
                   controller: lastNameController,
                   decoration: const InputDecoration(
-                    labelText: 'Nom',
-                    hintText: 'Ex: Dupont',
+                    labelText: AppStrings.lastName,
+                    hintText: AppStrings.lastNameHint,
                     prefixIcon: Icon(Icons.person_outline),
                   ),
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.next,
                   autofocus: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un nom';
-                    }
-                    if (value.length < 2) {
-                      return 'Le nom doit contenir au moins 2 caractères';
-                    }
-                    return null;
-                  },
+                  validator: (value) => Validators.validateName(value, AppStrings.lastName),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: firstNameController,
                   decoration: const InputDecoration(
-                    labelText: 'Prénom',
-                    hintText: 'Ex: Jean',
+                    labelText: AppStrings.firstName,
+                    hintText: AppStrings.firstNameHint,
                     prefixIcon: Icon(Icons.person),
                   ),
                   textCapitalization: TextCapitalization.words,
                   textInputAction: TextInputAction.done,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Veuillez entrer un prénom';
-                    }
-                    if (value.length < 2) {
-                      return 'Le prénom doit contenir au moins 2 caractères';
-                    }
-                    return null;
-                  },
+                  validator: (value) => Validators.validateName(value, AppStrings.firstName),
                   onFieldSubmitted: (_) {
                     if (formKey.currentState!.validate()) {
                       final profile = UserProfile.create(
@@ -199,7 +180,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('Annuler'),
+              child: const Text(AppStrings.cancel),
             ),
             ElevatedButton(
               onPressed: () {
@@ -211,7 +192,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                   Navigator.of(context).pop(profile);
                 }
               },
-              child: const Text('Créer'),
+              child: const Text(AppStrings.create),
             ),
           ],
         );

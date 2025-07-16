@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
+import '../widgets/profile_avatar.dart';
+import '../widgets/info_container.dart';
+import '../constants/app_strings.dart';
 import 'personal_info_screen.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
@@ -44,63 +47,45 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
-                child: CircleAvatar(
+                child: ProfileAvatar(
+                  firstName: profile.firstName,
                   radius: 50,
-                  backgroundColor: Theme.of(context).primaryColor,
-                  child: Text(
-                    profile.firstName[0].toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  fontSize: 36,
                 ),
               ),
               const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade700),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Votre situation actuelle',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              const InfoContainer(
+                text: AppStrings.currentSituation,
+                isBold: true,
               ),
               const SizedBox(height: 16),
               
               _buildSectionCard(
                 context,
                 icon: Icons.person,
-                title: 'Informations personnelles',
-                subtitle: 'Nom, adresse, situation familiale',
+                title: AppStrings.personalInfoSectionTitle,
+                subtitle: AppStrings.personalInfoSectionSubtitle,
                 onTap: () async {
-                  final updatedProfile = await Navigator.push<UserProfile>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => PersonalInfoScreen(profile: profile),
-                    ),
-                  );
-                  
-                  if (updatedProfile != null) {
-                    setState(() {
-                      profile = updatedProfile;
-                    });
+                  try {
+                    final updatedProfile = await Navigator.push<UserProfile>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PersonalInfoScreen(profile: profile),
+                      ),
+                    );
+                    
+                    if (updatedProfile != null && mounted) {
+                      setState(() {
+                        profile = updatedProfile;
+                      });
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erreur de navigation: $e')),
+                      );
+                    }
                   }
                 },
               ),
@@ -108,8 +93,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               _buildSectionCard(
                 context,
                 icon: Icons.work,
-                title: 'Situation professionnelle actuelle',
-                subtitle: 'Emploi actuel, statut, régime fiscal',
+                title: AppStrings.professionalSituationTitle,
+                subtitle: AppStrings.professionalSituationSubtitle,
                 onTap: () {
                   // TODO: Navigation
                 },
@@ -118,8 +103,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               _buildSectionCard(
                 context,
                 icon: Icons.directions_car,
-                title: 'Transport & Déplacements',
-                subtitle: 'Mode de transport, distance domicile-travail',
+                title: AppStrings.transportTitle,
+                subtitle: AppStrings.transportSubtitle,
                 onTap: () {
                   // TODO: Navigation
                 },
@@ -128,8 +113,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               _buildSectionCard(
                 context,
                 icon: Icons.receipt_long,
-                title: 'Frais professionnels',
-                subtitle: 'Repas, garde d\'enfants, équipements',
+                title: AppStrings.professionalExpensesTitle,
+                subtitle: AppStrings.professionalExpensesSubtitle,
                 onTap: () {
                   // TODO: Navigation
                 },
@@ -138,8 +123,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
               _buildSectionCard(
                 context,
                 icon: Icons.account_balance,
-                title: 'Paramètres fiscaux',
-                subtitle: 'Taux d\'imposition, crédits d\'impôt',
+                title: AppStrings.taxParametersTitle,
+                subtitle: AppStrings.taxParametersSubtitle,
                 onTap: () {
                   // TODO: Navigation
                 },
@@ -152,12 +137,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Supprimer le profil'),
-                      content: Text('Voulez-vous vraiment supprimer le profil de ${profile.fullName} ?'),
+                      title: const Text(AppStrings.deleteProfileTitle),
+                      content: Text('${AppStrings.deleteProfileMessage} ${profile.fullName} ?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),
-                          child: const Text('Annuler'),
+                          child: const Text(AppStrings.cancel),
                         ),
                         TextButton(
                           onPressed: () {
@@ -167,14 +152,14 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.red,
                           ),
-                          child: const Text('Supprimer'),
+                          child: const Text(AppStrings.delete),
                         ),
                       ],
                     ),
                   );
                 },
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
-                label: const Text('Supprimer ce profil'),
+                label: const Text(AppStrings.deleteProfile),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red,
                   side: const BorderSide(color: Colors.red),

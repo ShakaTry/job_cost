@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
+import '../widgets/profile_avatar.dart';
+import '../widgets/info_container.dart';
+import '../constants/app_constants.dart';
+import '../constants/app_strings.dart';
+import '../utils/validators.dart';
 
 class PersonalInfoScreen extends StatefulWidget {
   final UserProfile profile;
@@ -26,43 +31,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late String _nationality;
   late UserProfile _modifiedProfile;
 
-  final List<String> _maritalStatusOptions = [
-    'Célibataire',
-    'Marié(e)',
-    'Divorcé(e)',
-    'Veuf(ve)',
-    'Pacsé(e)',
-    'Union libre',
-  ];
-
-  final List<String> _nationalityOptions = [
-    'France',
-    'Belgique',
-    'Suisse',
-    'Luxembourg',
-    'Canada',
-    'États-Unis',
-    'Royaume-Uni',
-    'Allemagne',
-    'Espagne',
-    'Italie',
-    'Portugal',
-    'Pays-Bas',
-    'Maroc',
-    'Algérie',
-    'Tunisie',
-    'Sénégal',
-    'Côte d\'Ivoire',
-    'Cameroun',
-    'Madagascar',
-    'Chine',
-    'Japon',
-    'Inde',
-    'Brésil',
-    'Argentine',
-    'Mexique',
-    'Autre',
-  ];
 
   @override
   void initState() {
@@ -73,8 +41,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _addressController = TextEditingController(text: widget.profile.address);
     _phoneController = TextEditingController(text: widget.profile.phone ?? '');
     _emailController = TextEditingController(text: widget.profile.email ?? '');
-    _maritalStatus = widget.profile.maritalStatus == 'Non renseigné' 
-        ? 'Célibataire' 
+    _maritalStatus = widget.profile.maritalStatus == AppConstants.defaultMaritalStatus 
+        ? AppConstants.maritalStatusOptions.first 
         : widget.profile.maritalStatus;
     _dependentChildren = widget.profile.dependentChildren;
     _birthDate = widget.profile.birthDate;
@@ -108,22 +76,16 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   void _saveValidFieldsOnly() {
     // Valider le téléphone
     String phoneValue = _phoneController.text;
-    if (phoneValue.isNotEmpty) {
-      String cleaned = phoneValue.replaceAll(RegExp(r'[^\d+]'), '');
-      if (!RegExp(r'^(?:\+33|0)[1-9](?:[0-9]{8})$').hasMatch(cleaned)) {
-        phoneValue = ''; // Réinitialiser si invalide
-        _phoneController.text = '';
-      }
+    if (!Validators.isPhoneValid(phoneValue)) {
+      phoneValue = '';
+      _phoneController.text = '';
     }
 
     // Valider l'email
     String emailValue = _emailController.text;
-    if (emailValue.isNotEmpty) {
-      final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-      if (!emailRegex.hasMatch(emailValue)) {
-        emailValue = ''; // Réinitialiser si invalide
-        _emailController.text = '';
-      }
+    if (!Validators.isEmailValid(emailValue)) {
+      emailValue = '';
+      _emailController.text = '';
     }
 
     // Sauvegarder avec les valeurs validées
@@ -155,22 +117,21 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: const Text('Données invalides'),
+                  title: const Text(AppStrings.invalidDataTitle),
                   content: const Text(
-                    'Certaines informations ne sont pas valides.\n\n'
-                    'Voulez-vous quitter sans sauvegarder les modifications ?',
+                    AppStrings.invalidDataMessage,
                   ),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(false),
-                      child: const Text('Rester et corriger'),
+                      child: const Text(AppStrings.stayAndCorrect),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(true),
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.red,
                       ),
-                      child: const Text('Quitter sans sauvegarder'),
+                      child: const Text(AppStrings.exitWithoutSaving),
                     ),
                   ],
                 );
@@ -188,7 +149,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       },
       child: Scaffold(
       appBar: AppBar(
-        title: const Text('Informations personnelles'),
+        title: const Text(AppStrings.personalInfoTitle),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -199,88 +160,46 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 60,
-                      backgroundColor: Theme.of(context).primaryColor,
-                      child: Text(
-                        _firstNameController.text.isNotEmpty
-                            ? _firstNameController.text[0].toUpperCase()
-                            : '?',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 48,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).primaryColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 3,
-                          ),
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.camera_alt,
-                            color: Colors.white,
-                          ),
-                          onPressed: _pickImage,
-                        ),
-                      ),
-                    ),
-                  ],
+                child: ProfileAvatar(
+                  firstName: _firstNameController.text,
+                  radius: 60,
+                  fontSize: 48,
+                  showEditButton: true,
+                  onEditPressed: _pickImage,
                 ),
               ),
               const SizedBox(height: 32),
               
               // Section Identité
-              _buildSectionHeader('Identité'),
+              _buildSectionHeader(AppStrings.identitySection),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _lastNameController,
                 decoration: const InputDecoration(
-                  labelText: 'Nom',
-                  hintText: 'Ex: Dupont',
+                  labelText: AppStrings.lastName,
+                  hintText: AppStrings.lastNameHint,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person_outline),
                 ),
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre nom';
-                  }
-                  return null;
-                },
+                validator: (value) => Validators.validateName(value, AppStrings.lastName),
                 onChanged: (_) => _updateProfile(),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(
-                  labelText: 'Prénom',
-                  hintText: 'Ex: Jean',
+                  labelText: AppStrings.firstName,
+                  hintText: AppStrings.firstNameHint,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre prénom';
-                  }
-                  return null;
-                },
+                validator: (value) => Validators.validateName(value, AppStrings.firstName),
                 onChanged: (value) {
-                  setState(() {});
+                  if (mounted) setState(() {});
                   _updateProfile();
                 },
                 onFieldSubmitted: (_) {
@@ -293,8 +212,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 onTap: _selectBirthDate,
                 child: InputDecorator(
                   decoration: const InputDecoration(
-                    labelText: 'Date de naissance',
-                    hintText: 'Sélectionner une date',
+                    labelText: AppStrings.birthDate,
+                    hintText: AppStrings.selectDateHint,
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.calendar_today),
                   ),
@@ -304,11 +223,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       Text(
                         _birthDate != null
                             ? '${_birthDate!.day.toString().padLeft(2, '0')}/${_birthDate!.month.toString().padLeft(2, '0')}/${_birthDate!.year}'
-                            : 'Non renseignée',
+                            : AppStrings.notSpecifiedDate,
                       ),
                       if (_birthDate != null)
                         Text(
-                          '${_calculateAge()} ans',
+                          '${_calculateAge()} ${AppStrings.yearsOld}',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
@@ -322,11 +241,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               DropdownButtonFormField<String>(
                 value: _nationality,
                 decoration: const InputDecoration(
-                  labelText: 'Nationalité',
+                  labelText: AppStrings.nationality,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.flag),
                 ),
-                items: _nationalityOptions.map((String country) {
+                items: AppConstants.nationalityOptions.map((String country) {
                   return DropdownMenuItem<String>(
                     value: country,
                     child: Text(country),
@@ -334,9 +253,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    setState(() {
-                      _nationality = newValue;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        _nationality = newValue;
+                      });
+                    }
                     _updateProfile();
                   }
                 },
@@ -345,48 +266,33 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               const SizedBox(height: 32),
               
               // Section Coordonnées
-              _buildSectionHeader('Coordonnées'),
+              _buildSectionHeader(AppStrings.contactSection),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _addressController,
                 decoration: const InputDecoration(
-                  labelText: 'Adresse complète',
-                  hintText: 'Ex: 123 rue de la Paix, 75001 Paris',
+                  labelText: AppStrings.address,
+                  hintText: AppStrings.addressHint,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.home),
                 ),
                 maxLines: 3,
                 textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez entrer votre adresse';
-                  }
-                  return null;
-                },
+                validator: Validators.validateAddress,
                 onChanged: (_) => _updateProfile(),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _phoneController,
                 decoration: const InputDecoration(
-                  labelText: 'Téléphone',
-                  hintText: 'Ex: 06 12 34 56 78',
+                  labelText: AppStrings.phone,
+                  hintText: AppStrings.phoneHint,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.phone),
                 ),
                 keyboardType: TextInputType.phone,
                 textInputAction: TextInputAction.next,
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    // Enlever tous les espaces et caractères spéciaux
-                    String cleaned = value.replaceAll(RegExp(r'[^\d+]'), '');
-                    // Vérifier le format français (10 chiffres ou format international)
-                    if (!RegExp(r'^(?:\+33|0)[1-9](?:[0-9]{8})$').hasMatch(cleaned)) {
-                      return 'Format invalide (ex: 06 12 34 56 78)';
-                    }
-                  }
-                  return null;
-                },
+                validator: Validators.validatePhone,
                 onChanged: (value) {
                   // Formater automatiquement le numéro
                   final newValue = _formatPhoneNumber(value);
@@ -403,41 +309,30 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Ex: jean.dupont@email.com',
+                  labelText: AppStrings.email,
+                  hintText: AppStrings.emailHint,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
-                validator: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    // Validation email complète avec regex
-                    final emailRegex = RegExp(
-                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                    );
-                    if (!emailRegex.hasMatch(value)) {
-                      return 'Format email invalide';
-                    }
-                  }
-                  return null;
-                },
+                validator: Validators.validateEmail,
                 onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: 32),
               
               // Section Situation familiale
-              _buildSectionHeader('Situation familiale'),
+              _buildSectionHeader(AppStrings.familySection),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _maritalStatus,
                 decoration: const InputDecoration(
-                  labelText: 'État civil',
+                  labelText: AppStrings.maritalStatus,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.family_restroom),
                 ),
-                items: _maritalStatusOptions.map((String status) {
+                items: AppConstants.maritalStatusOptions.map((String status) {
                   return DropdownMenuItem<String>(
                     value: status,
                     child: Text(status),
@@ -445,9 +340,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 }).toList(),
                 onChanged: (String? newValue) {
                   if (newValue != null) {
-                    setState(() {
-                      _maritalStatus = newValue;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        _maritalStatus = newValue;
+                      });
+                    }
                     _updateProfile();
                   }
                 },
@@ -456,49 +353,31 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               DropdownButtonFormField<int>(
                 value: _dependentChildren,
                 decoration: const InputDecoration(
-                  labelText: 'Nombre d\'enfants à charge',
+                  labelText: AppStrings.dependentChildren,
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.child_care),
                 ),
                 items: List.generate(11, (index) => index).map((int value) {
                   return DropdownMenuItem<int>(
                     value: value,
-                    child: Text(value == 0 ? 'Aucun' : '$value'),
+                    child: Text(value == 0 ? AppStrings.none : '$value'),
                   );
                 }).toList(),
                 onChanged: (int? newValue) {
                   if (newValue != null) {
-                    setState(() {
-                      _dependentChildren = newValue;
-                    });
+                    if (mounted) {
+                      setState(() {
+                        _dependentChildren = newValue;
+                      });
+                    }
                     _updateProfile();
                   }
                 },
               ),
               
               const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue.shade700),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Ces informations sont essentielles pour calculer vos charges sociales et fiscales',
-                        style: TextStyle(
-                          color: Colors.blue.shade700,
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              const InfoContainer(
+                text: AppStrings.socialTaxInfo,
               ),
               const SizedBox(height: 32),
             ],
@@ -555,17 +434,27 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
   void _selectBirthDate() async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 30)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null && picked != _birthDate) {
-      setState(() {
-        _birthDate = picked;
-      });
-      _updateProfile();
+    try {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: _birthDate ?? DateTime.now().subtract(const Duration(days: 365 * 30)),
+        firstDate: DateTime(1900),
+        lastDate: DateTime.now(),
+      );
+      if (picked != null && picked != _birthDate) {
+        if (mounted) {
+          setState(() {
+            _birthDate = picked;
+          });
+        }
+        _updateProfile();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur lors de la sélection de la date: $e')),
+        );
+      }
     }
   }
 
@@ -574,14 +463,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Photo de profil'),
-          content: const Text('Cette fonctionnalité sera bientôt disponible.'),
+          title: const Text(AppStrings.profilePhotoTitle),
+          content: const Text(AppStrings.profilePhotoInfo),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: const Text(AppStrings.ok),
             ),
           ],
         );

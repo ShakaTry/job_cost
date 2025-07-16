@@ -1,3 +1,5 @@
+import '../constants/app_constants.dart';
+
 class UserProfile {
   final String id;
   final String lastName;
@@ -74,13 +76,13 @@ class UserProfile {
       lastName: lastName,
       firstName: firstName,
       address: address ?? '',
-      maritalStatus: maritalStatus ?? 'Non renseigné',
-      dependentChildren: dependentChildren ?? 0,
+      maritalStatus: maritalStatus ?? AppConstants.defaultMaritalStatus,
+      dependentChildren: dependentChildren ?? AppConstants.defaultDependentChildren,
       avatarUrl: avatarUrl,
       phone: phone,
       email: email,
       birthDate: birthDate,
-      nationality: nationality ?? 'France',
+      nationality: nationality ?? AppConstants.defaultNationality,
       createdAt: DateTime.now(),
     );
   }
