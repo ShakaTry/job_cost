@@ -47,8 +47,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _hourlyRateController = TextEditingController();
     _employmentStatus = widget.profile.employmentStatus;
     _workTimePercentage = widget.profile.workTimePercentage;
-    _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toString());
-    _overtimeHoursController = TextEditingController(text: widget.profile.overtimeHours > 0 ? widget.profile.overtimeHours.toString() : '');
+    _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toStringAsFixed(2));
+    _overtimeHoursController = TextEditingController(text: widget.profile.overtimeHours > 0 ? widget.profile.overtimeHours.toStringAsFixed(2) : '');
     _salaryFocusNode = FocusNode();
     
     // Initialiser les valeurs exactes
@@ -203,7 +203,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   void _updateHoursFromPercentage() {
     final newWeeklyHours = (_dureeLegaleHebdo * _workTimePercentage / 100);
     _isUpdating = true;
-    _weeklyHoursController.text = newWeeklyHours.toStringAsFixed(1);
+    _weeklyHoursController.text = newWeeklyHours.toStringAsFixed(2);
     _isUpdating = false;
   }
 
@@ -495,20 +495,45 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
               
               const SizedBox(height: AppConstants.defaultPadding),
               
-              // Champ heures hebdomadaires
-              TextFormField(
-                controller: _weeklyHoursController,
-                decoration: const InputDecoration(
-                  labelText: 'Heures hebdomadaires',
-                  hintText: 'Ex: 35.0',
-                  border: OutlineInputBorder(),
-                  suffixText: 'h/semaine',
-                ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+              // Heures hebdomadaires et supplémentaires côte à côte
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _weeklyHoursController,
+                      decoration: const InputDecoration(
+                        labelText: 'Heures/semaine',
+                        hintText: 'Ex: 35.00',
+                        border: OutlineInputBorder(),
+                        suffixText: 'h',
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                      textInputAction: TextInputAction.next,
+                    ),
+                  ),
+                  const SizedBox(width: AppConstants.defaultPadding),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _overtimeHoursController,
+                      decoration: const InputDecoration(
+                        labelText: 'Heures sup.',
+                        hintText: 'Ex: 4.00',
+                        border: OutlineInputBorder(),
+                        suffixText: 'h/sem',
+                        helperText: '+25% ou +50%',
+                        helperMaxLines: 1,
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                      textInputAction: TextInputAction.next,
+                    ),
+                  ),
                 ],
-                textInputAction: TextInputAction.next,
               ),
               
               const SizedBox(height: AppConstants.largePadding),
@@ -566,34 +591,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 ],
               ),
               
-              const SizedBox(height: AppConstants.largePadding),
-              
-              // Section Heures supplémentaires
-              Text(
-                AppStrings.overtimeSection,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: AppConstants.defaultPadding),
-              
-              TextFormField(
-                controller: _overtimeHoursController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.overtimeHours,
-                  hintText: AppStrings.overtimeHoursHint,
-                  border: OutlineInputBorder(),
-                  suffixText: 'h/semaine',
-                  helperText: 'Au-delà de 35h : +25% (36-43h), +50% (>43h)',
-                ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                ],
-                textInputAction: TextInputAction.done,
-              ),
-              
-              // Cadre récapitulatif unique
+              // Cadre récapitulatif
               if (monthlySalary > 0) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
                 
