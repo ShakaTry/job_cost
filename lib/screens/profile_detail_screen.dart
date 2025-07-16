@@ -3,6 +3,7 @@ import '../models/user_profile.dart';
 import '../widgets/profile_avatar.dart';
 import '../widgets/info_container.dart';
 import '../constants/app_strings.dart';
+import '../constants/app_constants.dart';
 import 'personal_info_screen.dart';
 import 'professional_situation_screen.dart';
 
@@ -38,8 +39,28 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
       },
       child: Scaffold(
       appBar: AppBar(
-        title: Text(profile.fullName),
-        centerTitle: true,
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: Row(
+          children: [
+            ProfileAvatar(
+              firstName: profile.firstName,
+              radius: AppConstants.smallAvatarRadius,
+              fontSize: AppConstants.smallAvatarFontSize,
+            ),
+            const SizedBox(width: AppConstants.defaultPadding),
+            Expanded(
+              child: Text(
+                profile.fullName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         child: Padding(

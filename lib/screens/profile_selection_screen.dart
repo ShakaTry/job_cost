@@ -47,6 +47,9 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 0,
           title: const Text(AppStrings.selectProfileTitle),
           centerTitle: true,
         ),
@@ -58,6 +61,9 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
     
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        elevation: 0,
         title: const Text(AppStrings.selectProfileTitle),
         centerTitle: true,
       ),

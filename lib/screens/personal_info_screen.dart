@@ -154,8 +154,40 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       },
       child: Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.personalInfoTitle),
-        centerTitle: true,
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: Row(
+          children: [
+            ProfileAvatar(
+              firstName: _modifiedProfile.firstName,
+              radius: AppConstants.smallAvatarRadius,
+              fontSize: AppConstants.smallAvatarFontSize,
+            ),
+            const SizedBox(width: AppConstants.defaultPadding),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _modifiedProfile.fullName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    AppStrings.personalInfoTitle,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
