@@ -20,6 +20,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late TextEditingController _addressController;
   late String _maritalStatus;
   late int _dependentChildren;
+  late UserProfile _modifiedProfile;
 
   final List<String> _maritalStatusOptions = [
     'Célibataire',
@@ -33,6 +34,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   @override
   void initState() {
     super.initState();
+    _modifiedProfile = widget.profile;
     _lastNameController = TextEditingController(text: widget.profile.lastName);
     _firstNameController = TextEditingController(text: widget.profile.firstName);
     _addressController = TextEditingController(text: widget.profile.address);
@@ -44,21 +46,33 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   void dispose() {
-    _saveData(); // Sauvegarder avant de quitter
+    // Retourner le profil modifié en quittant
+    Navigator.pop(context, _modifiedProfile);
     _lastNameController.dispose();
     _firstNameController.dispose();
     _addressController.dispose();
     super.dispose();
   }
 
-  void _saveData() {
-    // TODO: Implémenter la vraie sauvegarde
-    debugPrint('Données sauvegardées automatiquement');
+  void _updateProfile() {
+    _modifiedProfile = _modifiedProfile.copyWith(
+      lastName: _lastNameController.text,
+      firstName: _firstNameController.text,
+      address: _addressController.text,
+      maritalStatus: _maritalStatus,
+      dependentChildren: _dependentChildren,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        _updateProfile();
+        Navigator.pop(context, _modifiedProfile);
+        return false;
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Informations personnelles'),
         centerTitle: true,
@@ -131,7 +145,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
-                onFieldSubmitted: (_) => _saveData(),
+                onFieldSubmitted: (_) => _updateProfile(),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -152,7 +166,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 onChanged: (value) {
                   setState(() {});
                 },
-                onFieldSubmitted: (_) => _saveData(),
+                onFieldSubmitted: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: 32),
@@ -175,7 +189,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
-                onFieldSubmitted: (_) => _saveData(),
+                onFieldSubmitted: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: 32),
@@ -201,7 +215,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     setState(() {
                       _maritalStatus = newValue;
                     });
-                    _saveData();
+                    _updateProfile();
                   }
                 },
               ),
@@ -224,7 +238,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     setState(() {
                       _dependentChildren = newValue;
                     });
-                    _saveData();
+                    _updateProfile();
                   }
                 },
               ),
@@ -257,6 +271,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -21,6 +21,26 @@ class UserProfile {
 
   String get fullName => '$firstName $lastName';
 
+  UserProfile copyWith({
+    String? lastName,
+    String? firstName,
+    String? address,
+    String? maritalStatus,
+    int? dependentChildren,
+    String? avatarUrl,
+  }) {
+    return UserProfile(
+      id: id,
+      lastName: lastName ?? this.lastName,
+      firstName: firstName ?? this.firstName,
+      address: address ?? this.address,
+      maritalStatus: maritalStatus ?? this.maritalStatus,
+      dependentChildren: dependentChildren ?? this.dependentChildren,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      createdAt: createdAt,
+    );
+  }
+
   factory UserProfile.create({
     required String lastName,
     required String firstName,

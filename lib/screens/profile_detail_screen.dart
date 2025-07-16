@@ -2,13 +2,26 @@ import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
 import 'personal_info_screen.dart';
 
-class ProfileDetailScreen extends StatelessWidget {
+class ProfileDetailScreen extends StatefulWidget {
   final UserProfile profile;
   
   const ProfileDetailScreen({
     super.key,
     required this.profile,
   });
+
+  @override
+  State<ProfileDetailScreen> createState() => _ProfileDetailScreenState();
+}
+
+class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
+  late UserProfile profile;
+
+  @override
+  void initState() {
+    super.initState();
+    profile = widget.profile;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,13 +82,19 @@ class ProfileDetailScreen extends StatelessWidget {
                 icon: Icons.person,
                 title: 'Informations personnelles',
                 subtitle: 'Nom, adresse, situation familiale',
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  final updatedProfile = await Navigator.push<UserProfile>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => PersonalInfoScreen(profile: profile),
                     ),
                   );
+                  
+                  if (updatedProfile != null) {
+                    setState(() {
+                      profile = updatedProfile;
+                    });
+                  }
                 },
               ),
               
