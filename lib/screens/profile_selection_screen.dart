@@ -129,7 +129,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   void _selectProfile(UserProfile profile) {
     // TODO: Navigation vers l'écran principal avec le profil sélectionné
     // Pour l'instant, on affiche juste un message temporaire
-    debugPrint('Profil sélectionné: ${profile.name}');
+    debugPrint('Profil sélectionné: ${profile.fullName}');
   }
 
   void _addNewProfile() async {
