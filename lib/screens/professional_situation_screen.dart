@@ -50,16 +50,20 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _companyNameController.addListener(_saveData);
     _jobTitleController.addListener(_saveData);
     _salaryController.addListener(() {
-      // Update hourly rate and refresh UI
-      _updateHourlyRateFromSalary();
-      if (mounted) setState(() {});
-      _saveData();
+      if (!_updatingFromCode) {
+        // Update hourly rate and refresh UI
+        _updateHourlyRateFromSalary();
+        if (mounted) setState(() {});
+        _saveData();
+      }
     });
     _hourlyRateController.addListener(() {
-      // Update salary and refresh UI  
-      _updateSalaryFromHourlyRate();
-      if (mounted) setState(() {});
-      _saveData();
+      if (!_updatingFromCode) {
+        // Update salary and refresh UI  
+        _updateSalaryFromHourlyRate();
+        if (mounted) setState(() {});
+        _saveData();
+      }
     });
   }
 
