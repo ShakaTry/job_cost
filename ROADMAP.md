@@ -6,17 +6,20 @@
 - [x] Sélection de profil
 - [x] Création de profil (dialogue)
 - [x] Vue détaillée du profil
-- [x] Informations personnelles (base)
+- [x] Informations personnelles (complète)
+  - [x] Nom/Prénom avec validation
+  - [x] Adresse complète
+  - [x] Téléphone avec formatage automatique
+  - [x] Email avec validation
+  - [x] Date de naissance avec calcul d'âge
+  - [x] Nationalité (dropdown)
+  - [x] Situation familiale (état civil, enfants)
+  - [x] Navigation clavier entre champs
+  - [x] Sauvegarde automatique
 
 ### 📋 Pages à créer
-Vérif
-#### 1. 👤 Informations personnelles (améliorations)
-**À ajouter :**
-- [ ] Téléphone
-- [ ] Email
-- [ ] Date de naissance (pour calcul âge et impacts fiscaux)
 
-#### 2. 💼 Situation professionnelle actuelle
+#### 1. 💼 Situation professionnelle actuelle
 **Champs à inclure :**
 - [ ] Statut professionnel (CDI, CDD, Intérim, Chômage, Étudiant, Indépendant)
 - [ ] Nom de l'employeur actuel
@@ -27,7 +30,7 @@ Vérif
 - [ ] Temps de travail (temps plein, temps partiel %)
 - [ ] Avantages actuels (mutuelle, tickets resto, etc.)
 
-#### 3. 🚗 Transport & Déplacements
+#### 2. 🚗 Transport & Déplacements
 **Champs à inclure :**
 - [ ] Mode de transport principal (voiture, transport en commun, vélo, marche)
 - [ ] Distance domicile-travail (km)
@@ -43,7 +46,7 @@ Vérif
   - [ ] Participation employeur
 - [ ] Nombre de jours de présence par semaine
 
-#### 4. 💰 Frais professionnels
+#### 3. 💰 Frais professionnels
 **Champs à inclure :**
 - [ ] Repas :
   - [ ] Cantine entreprise (oui/non, prix)
@@ -65,7 +68,7 @@ Vérif
   - [ ] Formations suivies
   - [ ] Coûts non pris en charge
 
-#### 5. 🏦 Paramètres fiscaux
+#### 4. 🏦 Paramètres fiscaux
 **Champs à inclure :**
 - [ ] Taux marginal d'imposition
 - [ ] Nombre de parts fiscales
@@ -80,7 +83,7 @@ Vérif
   - [ ] Pension alimentaire
   - [ ] Épargne retraite
 
-### 🎯 Fonctionnalités futures
+### 🎯 Fonctionnalités principales
 
 #### Écran de calcul
 - [ ] Saisie d'une offre d'emploi
@@ -91,24 +94,80 @@ Vérif
 #### Gestion des données
 - [ ] Sauvegarde locale (SQLite)
 - [ ] Export/Import de profil
-- [ ] Multiple profils actifs
+- [ ] Synchronisation cloud (version Premium)
 
-#### Améliorations UX
-- [ ] Mode sombre
-- [ ] Tutoriel première utilisation
-- [ ] Aide contextuelle sur les champs
+## 💎 Fonctionnalités Premium (Monétisation)
+
+### Version Gratuite
+- ✅ 3 profils maximum
+- ✅ Saisie manuelle des données
+- ✅ Calculs de base (distance approximative par code postal)
+- ✅ Export simple des résultats
+
+### Version Premium (5€/mois ou 50€/an)
+- [ ] **Profils illimités**
+- [ ] **Automatisations intelligentes :**
+  - [ ] Autocomplétion d'adresses (Google Maps API)
+  - [ ] Calcul précis distance/temps avec trafic en temps réel
+  - [ ] Import automatique depuis :
+    - [ ] LinkedIn (profil professionnel)
+    - [ ] Pôle Emploi (historique)
+    - [ ] Fiches de paie PDF (OCR)
+  - [ ] Détection automatique convention collective
+- [ ] **Suggestions contextuelles :**
+  - [ ] Frais de repas moyens selon la zone
+  - [ ] Coût parking selon le quartier
+  - [ ] Mode de transport optimal
+  - [ ] Estimation frais de garde selon département
+- [ ] **Données actualisées :**
+  - [ ] Prix carburant en temps réel
+  - [ ] Tarifs transport en commun à jour
+  - [ ] Barèmes fiscaux actualisés
+- [ ] **Fonctionnalités avancées :**
+  - [ ] Comparaison multi-offres simultanée
+  - [ ] Simulation sur 5 ans
+  - [ ] Export PDF détaillé avec graphiques
+  - [ ] Historique des comparaisons
+  - [ ] Notifications de changements fiscaux
+
+### Intégrations API Premium
+- [ ] Google Maps (Places, Distance Matrix)
+- [ ] INSEE (données statistiques)
+- [ ] API prix carburant gouvernementale
+- [ ] Services de transport locaux
+- [ ] OCR pour lecture documents
 
 ## 📊 Priorités de développement
 
-1. **Haute priorité** : Pages essentielles au calcul
+### Phase 1 - MVP (Version gratuite)
+1. **Haute priorité** : Pages essentielles
    - Situation professionnelle
    - Transport & Déplacements
+   - Écran de calcul basique
    
-2. **Priorité moyenne** : Précision du calcul
+2. **Priorité moyenne** : Précision
    - Frais professionnels
    - Paramètres fiscaux
-   
-3. **Basse priorité** : Confort et fonctionnalités annexes
-   - Améliorations UX
-   - Export/Import
+   - Sauvegarde locale
+
+### Phase 2 - Monétisation
+1. **Système de paiement**
+   - Intégration Stripe/PayPal
+   - Gestion des abonnements
+   - Écran de souscription
+
+2. **Fonctionnalités Premium**
+   - APIs externes
+   - Automatisations
+   - Export avancé
+
+### Phase 3 - Croissance
+1. **Marketing**
+   - Page de présentation des features Premium
+   - Période d'essai gratuite
+   - Programme de parrainage
+
+2. **Améliorations UX**
    - Mode sombre
+   - Tutoriel interactif
+   - Support multi-langues
