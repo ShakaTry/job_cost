@@ -67,13 +67,65 @@ class ProfileService {
       'employmentStatus': profile.employmentStatus,
       'companyName': profile.companyName,
       'jobTitle': profile.jobTitle,
-      'workTime': profile.workTime,
+      'workTimePercentage': profile.workTimePercentage,
+      'weeklyHours': profile.weeklyHours,
       'grossMonthlySalary': profile.grossMonthlySalary,
       'taxSystem': profile.taxSystem,
     };
   }
   
   UserProfile _profileFromJson(Map<String, dynamic> json) {
+    // Migration des anciennes données workTime vers workTimePercentage/weeklyHours
+    double workTimePercentage = 100.0;
+    double weeklyHours = 35.0;
+    
+    // Si les nouvelles données existent, les utiliser
+    if (json['workTimePercentage'] != null && json['weeklyHours'] != null) {
+      workTimePercentage = (json['workTimePercentage'] as num).toDouble();
+      weeklyHours = (json['weeklyHours'] as num).toDouble();
+    } else if (json['workTime'] != null) {
+      // Migration depuis l'ancien format workTime
+      final oldWorkTime = json['workTime'] as String;
+      switch (oldWorkTime) {
+        case 'Temps plein':
+          workTimePercentage = 100.0;
+          weeklyHours = 35.0;
+          break;
+        case 'Temps partiel 90%':
+          workTimePercentage = 90.0;
+          weeklyHours = 31.5;
+          break;
+        case 'Temps partiel 80%':
+          workTimePercentage = 80.0;
+          weeklyHours = 28.0;
+          break;
+        case 'Temps partiel 70%':
+          workTimePercentage = 70.0;
+          weeklyHours = 24.5;
+          break;
+        case 'Temps partiel 60%':
+          workTimePercentage = 60.0;
+          weeklyHours = 21.0;
+          break;
+        case 'Temps partiel 50%':
+        case 'Mi-temps':
+          workTimePercentage = 50.0;
+          weeklyHours = 17.5;
+          break;
+        case 'Temps partiel 30%':
+          workTimePercentage = 30.0;
+          weeklyHours = 10.5;
+          break;
+        case 'Temps partiel 20%':
+          workTimePercentage = 20.0;
+          weeklyHours = 7.0;
+          break;
+        default:
+          workTimePercentage = 100.0;
+          weeklyHours = 35.0;
+      }
+    }
+    
     return UserProfile(
       id: json['id'] as String,
       lastName: json['lastName'] as String,
@@ -94,7 +146,8 @@ class ProfileService {
       employmentStatus: json['employmentStatus'] as String? ?? 'Sans emploi',
       companyName: json['companyName'] as String?,
       jobTitle: json['jobTitle'] as String?,
-      workTime: json['workTime'] as String? ?? 'Temps plein',
+      workTimePercentage: workTimePercentage,
+      weeklyHours: weeklyHours,
       grossMonthlySalary: (json['grossMonthlySalary'] as num?)?.toDouble() ?? 0.0,
       taxSystem: json['taxSystem'] as String? ?? 'Prélèvement à la source',
     );

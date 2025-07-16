@@ -27,7 +27,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late TextEditingController _salaryController;
   late TextEditingController _hourlyRateController;
   late String _employmentStatus;
-  late String _workTime;
+  late double _workTimePercentage;
+  late TextEditingController _weeklyHoursController;
   late String _taxSystem;
   late UserProfile _modifiedProfile;
 
@@ -44,7 +45,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     );
     _hourlyRateController = TextEditingController();
     _employmentStatus = widget.profile.employmentStatus;
-    _workTime = widget.profile.workTime;
+    _workTimePercentage = widget.profile.workTimePercentage;
+    _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toString());
     _taxSystem = widget.profile.taxSystem;
     
     _companyNameController.addListener(_saveData);
@@ -63,6 +65,14 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         _saveData();
       }
     });
+    _weeklyHoursController.addListener(() {
+      if (!_isUpdating) {
+        _updatePercentageFromHours();
+        _updateHourlyFromSalary();
+        if (mounted) setState(() {});
+        _saveData();
+      }
+    });
   }
 
   @override
@@ -71,6 +81,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _jobTitleController.dispose();
     _salaryController.dispose();
     _hourlyRateController.dispose();
+    _weeklyHoursController.dispose();
     super.dispose();
   }
 
@@ -101,29 +112,22 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   }
 
   double _getMonthlyHours() {
-    switch (_workTime) {
-      case 'Temps plein':
-        return 151.67; // 35h/semaine selon la réglementation française
-      case 'Temps partiel 90%':
-        return 136.5; // 31.5h/semaine (31.5 × 52 ÷ 12)
-      case 'Temps partiel 80%':
-        return 121.33; // 28h/semaine (28 × 52 ÷ 12)
-      case 'Temps partiel 70%':
-        return 106.17; // 24.5h/semaine (24.5 × 52 ÷ 12)
-      case 'Temps partiel 60%':
-        return 91.0; // 21h/semaine (21 × 52 ÷ 12)
-      case 'Temps partiel 50%':
-      case 'Mi-temps':
-        return 75.83; // 17.5h/semaine (17.5 × 52 ÷ 12)
-      case 'Temps partiel 30%':
-        return 45.5; // 10.5h/semaine (10.5 × 52 ÷ 12)
-      case 'Temps partiel 20%':
-        return 30.33; // 7h/semaine (7 × 52 ÷ 12)
-      case 'Autre':
-        return 151.67; // Par défaut temps plein, l'utilisateur peut ajuster manuellement
-      default:
-        return 151.67;
-    }
+    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
+    return weeklyHours * 52 / 12; // Calcul basé sur les heures hebdomadaires saisies
+  }
+
+  void _updatePercentageFromHours() {
+    final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
+    _isUpdating = true;
+    _workTimePercentage = (weeklyHours / 35.0 * 100).clamp(10.0, 100.0);
+    _isUpdating = false;
+  }
+
+  void _updateHoursFromPercentage() {
+    final newWeeklyHours = (35.0 * _workTimePercentage / 100).toStringAsFixed(1);
+    _isUpdating = true;
+    _weeklyHoursController.text = newWeeklyHours;
+    _isUpdating = false;
   }
 
   void _updateHourlyFromSalary() {
@@ -177,11 +181,13 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   void _saveData() async {
     if (_formKey.currentState?.validate() ?? false) {
       try {
+        final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
         _modifiedProfile = widget.profile.copyWith(
           employmentStatus: _employmentStatus,
           companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
           jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
-          workTime: _workTime,
+          workTimePercentage: _workTimePercentage,
+          weeklyHours: weeklyHours,
           grossMonthlySalary: _getCurrentMonthlySalary(),
           taxSystem: _taxSystem,
         );
@@ -305,26 +311,47 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
               
               const SizedBox(height: AppConstants.defaultPadding),
               
-              DropdownButtonFormField<String>(
-                value: _workTime,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.workTime,
-                  border: OutlineInputBorder(),
+              // Curseur de pourcentage de temps de travail
+              Text(
+                'Temps de travail: ${_workTimePercentage.round()}%',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
                 ),
-                items: AppConstants.workTimeOptions
-                    .map((time) => DropdownMenuItem(
-                          value: time,
-                          child: Text(time),
-                        ))
-                    .toList(),
+              ),
+              const SizedBox(height: AppConstants.smallPadding),
+              
+              Slider(
+                value: _workTimePercentage,
+                min: 10.0,
+                max: 100.0,
+                divisions: 9, // 10%, 20%, 30%, ..., 100%
+                label: '${_workTimePercentage.round()}%',
                 onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _workTime = value;
-                      _saveData();
-                    });
-                  }
+                  setState(() {
+                    _workTimePercentage = value;
+                    _updateHoursFromPercentage();
+                    _updateHourlyFromSalary();
+                    _saveData();
+                  });
                 },
+              ),
+              
+              const SizedBox(height: AppConstants.defaultPadding),
+              
+              // Champ heures hebdomadaires
+              TextFormField(
+                controller: _weeklyHoursController,
+                decoration: const InputDecoration(
+                  labelText: 'Heures hebdomadaires',
+                  hintText: 'Ex: 35.0',
+                  border: OutlineInputBorder(),
+                  suffixText: 'h/semaine',
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                ],
+                textInputAction: TextInputAction.next,
               ),
               
               const SizedBox(height: AppConstants.largePadding),

@@ -101,7 +101,8 @@ class AppConstants {
 
   // Default professional values
   static const String defaultEmploymentStatus = 'Sans emploi';
-  static const String defaultWorkTime = 'Temps plein';
+  static const double defaultWorkTimePercentage = 100.0; // 100% temps plein
+  static const double defaultWeeklyHours = 35.0; // 35h par semaine
   static const String defaultTaxSystem = 'Prélèvement à la source';
   static const double defaultGrossSalary = 0.0;
 }

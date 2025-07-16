@@ -18,7 +18,8 @@ class UserProfile {
   final String employmentStatus;
   final String? companyName;
   final String? jobTitle;
-  final String workTime;
+  final double workTimePercentage; // Pourcentage de temps de travail (10-100)
+  final double weeklyHours; // Heures hebdomadaires
   final double grossMonthlySalary;
   final String taxSystem;
 
@@ -38,7 +39,8 @@ class UserProfile {
     required this.employmentStatus,
     this.companyName,
     this.jobTitle,
-    required this.workTime,
+    required this.workTimePercentage,
+    required this.weeklyHours,
     required this.grossMonthlySalary,
     required this.taxSystem,
   });
@@ -59,7 +61,8 @@ class UserProfile {
     String? employmentStatus,
     String? companyName,
     String? jobTitle,
-    String? workTime,
+    double? workTimePercentage,
+    double? weeklyHours,
     double? grossMonthlySalary,
     String? taxSystem,
   }) {
@@ -79,7 +82,8 @@ class UserProfile {
       employmentStatus: employmentStatus ?? this.employmentStatus,
       companyName: companyName ?? this.companyName,
       jobTitle: jobTitle ?? this.jobTitle,
-      workTime: workTime ?? this.workTime,
+      workTimePercentage: workTimePercentage ?? this.workTimePercentage,
+      weeklyHours: weeklyHours ?? this.weeklyHours,
       grossMonthlySalary: grossMonthlySalary ?? this.grossMonthlySalary,
       taxSystem: taxSystem ?? this.taxSystem,
     );
@@ -99,7 +103,8 @@ class UserProfile {
     String? employmentStatus,
     String? companyName,
     String? jobTitle,
-    String? workTime,
+    double? workTimePercentage,
+    double? weeklyHours,
     double? grossMonthlySalary,
     String? taxSystem,
   }) {
@@ -119,7 +124,8 @@ class UserProfile {
       employmentStatus: employmentStatus ?? AppConstants.defaultEmploymentStatus,
       companyName: companyName,
       jobTitle: jobTitle,
-      workTime: workTime ?? AppConstants.defaultWorkTime,
+      workTimePercentage: workTimePercentage ?? AppConstants.defaultWorkTimePercentage,
+      weeklyHours: weeklyHours ?? AppConstants.defaultWeeklyHours,
       grossMonthlySalary: grossMonthlySalary ?? AppConstants.defaultGrossSalary,
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
     );

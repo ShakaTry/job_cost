@@ -341,7 +341,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       employmentStatus: 'Salarié(e) CDI',
       companyName: 'Tech Solutions SARL',
       jobTitle: 'Développeuse Full Stack',
-      workTime: 'Temps plein',
+      workTimePercentage: 100.0,
+      weeklyHours: 35.0,
       grossMonthlySalary: 3500,
       taxSystem: 'Prélèvement à la source',
     );
