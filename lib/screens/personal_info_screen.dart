@@ -46,8 +46,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
   @override
   void dispose() {
-    // Retourner le profil modifié en quittant
-    Navigator.pop(context, _modifiedProfile);
     _lastNameController.dispose();
     _firstNameController.dispose();
     _addressController.dispose();
@@ -145,7 +143,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
-                onFieldSubmitted: (_) => _updateProfile(),
+                onChanged: (_) => _updateProfile(),
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -165,8 +163,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 },
                 onChanged: (value) {
                   setState(() {});
+                  _updateProfile();
                 },
-                onFieldSubmitted: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: 32),
@@ -189,7 +187,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                   }
                   return null;
                 },
-                onFieldSubmitted: (_) => _updateProfile(),
+                onChanged: (_) => _updateProfile(),
               ),
               
               const SizedBox(height: 32),

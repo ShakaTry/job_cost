@@ -116,6 +116,14 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       setState(() {
         _profiles.remove(profile);
       });
+    } else if (result is UserProfile) {
+      // Mettre à jour le profil dans la liste
+      setState(() {
+        final index = _profiles.indexWhere((p) => p.id == result.id);
+        if (index != -1) {
+          _profiles[index] = result;
+        }
+      });
     }
   }
 

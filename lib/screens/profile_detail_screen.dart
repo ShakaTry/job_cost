@@ -25,7 +25,12 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, profile);
+        return false;
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Text(profile.fullName),
         centerTitle: true,
@@ -176,6 +181,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             ],
           ),
         ),
+      ),
       ),
     );
   }
