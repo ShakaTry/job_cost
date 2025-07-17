@@ -38,6 +38,11 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late TextEditingController _mutualCostController;
   DateTime? _companyEntryDate;
 
+  // États d'expansion des sections
+  bool _employmentExpanded = false;
+  bool _workTimeExpanded = false;
+  bool _benefitsExpanded = false;
+
   @override
   void initState() {
     super.initState();
@@ -472,21 +477,27 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         child: ListView(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),
           children: [
-            // Card Emploi actuel
+            // Section 1 - Emploi actuel
             Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.currentEmploymentSection,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.defaultPadding),
+              child: ExpansionTile(
+                initiallyExpanded: _employmentExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    _employmentExpanded = expanded;
+                  });
+                },
+                title: Text(
+                  AppStrings.currentEmploymentSection,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                    child: Column(
+                      children: [
                     
                     DropdownButtonFormField<String>(
                       value: _employmentStatus,
@@ -566,28 +577,36 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                         contentPadding: EdgeInsets.zero,
                       ),
                     ],
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
               
             const SizedBox(height: AppConstants.defaultPadding),
             
-            // Card Temps de travail et salaire
+            // Section 2 - Temps de travail et rémunération
             Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Temps de travail et rémunération',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.defaultPadding),
+              child: ExpansionTile(
+                initiallyExpanded: _workTimeExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    _workTimeExpanded = expanded;
+                  });
+                },
+                title: const Text(
+                  'Temps de travail et rémunération',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                    child: Column(
+                      children: [
                     
                     // Curseur de pourcentage de temps de travail
                     Text(
@@ -739,28 +758,36 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                       ),
                       textAlign: TextAlign.center,
                     ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
               
             const SizedBox(height: AppConstants.defaultPadding),
             
-            // Card Avantages sociaux
+            // Section 3 - Avantages sociaux
             Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Avantages sociaux',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.defaultPadding),
+              child: ExpansionTile(
+                initiallyExpanded: _benefitsExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() {
+                    _benefitsExpanded = expanded;
+                  });
+                },
+                title: const Text(
+                  'Avantages sociaux',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                    child: Column(
+                      children: [
                     
                     // Date d'entrée dans l'entreprise
                     GestureDetector(
@@ -817,8 +844,10 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                       ],
                       textInputAction: TextInputAction.next,
                     ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
