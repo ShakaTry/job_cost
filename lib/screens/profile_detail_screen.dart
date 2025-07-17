@@ -52,12 +52,24 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
             ),
             const SizedBox(width: AppConstants.defaultPadding),
             Expanded(
-              child: Text(
-                profile.fullName,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    profile.fullName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'Vue d\'ensemble du profil',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
