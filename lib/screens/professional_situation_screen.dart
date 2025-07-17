@@ -372,29 +372,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return overtimeSalary;
   }
   
-  // Calcul des heures supplémentaires mensuelles par taux
-  Map<String, double> _getOvertimeHoursByRate() {
-    final overtimeHours = double.tryParse(_overtimeHoursController.text) ?? 0.0;
-    
-    if (overtimeHours <= 0) {
-      return {'hours25': 0.0, 'hours50': 0.0};
-    }
-    
-    // Conversion hebdo -> mensuel
-    const weeksPerMonth = 52.0 / 12.0;
-    
-    if (overtimeHours <= 8) {
-      return {
-        'hours25': overtimeHours * weeksPerMonth,
-        'hours50': 0.0,
-      };
-    } else {
-      return {
-        'hours25': 8.0 * weeksPerMonth,
-        'hours50': (overtimeHours - 8) * weeksPerMonth,
-      };
-    }
-  }
 
 
   bool _hasEmployment() {
@@ -852,112 +829,24 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
                   ),
-                  child: Column(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Salaire annuel
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(AppStrings.grossAnnualSalary),
-                          Text(
-                            '${_formatSalary(annualSalary.toStringAsFixed(2))} ${AppStrings.euroSymbol}',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      Text(
+                        'Total annuel brut',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
+                        ),
                       ),
-                      
-                      // Heures supplémentaires si présentes
-                      if (_calculateOvertimeSalary() > 0) ...[
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        const Divider(),
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(AppStrings.overtimeMonthlyAmount),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${_getOvertimeHoursByRate()['hours25']!.toStringAsFixed(1)}h à 125% + ${_getOvertimeHoursByRate()['hours50']!.toStringAsFixed(1)}h à 150%/mois',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${_formatSalary(_calculateOvertimeSalary().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                      Text(
+                        '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12 + conventionalBonus).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
+                          fontSize: 16,
                         ),
-                      ],
-                      
-                      // Prime conventionnelle si présente
-                      if (conventionalBonus > 0) ...[
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        const Divider(),
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('Prime conventionnelle'),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${_bonusMonths.round()} mois supplémentaire(s)',
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: Colors.grey[600],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              '${_formatSalary(conventionalBonus.toStringAsFixed(2))} ${AppStrings.euroSymbol}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ],
-                      
-                      // Total final
-                      if (_calculateOvertimeSalary() > 0 || conventionalBonus > 0) ...[
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        const Divider(),
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Total annuel brut',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue[800],
-                              ),
-                            ),
-                            Text(
-                              '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12 + conventionalBonus).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue[800],
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
