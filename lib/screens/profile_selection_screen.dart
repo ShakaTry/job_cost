@@ -351,21 +351,34 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       conventionalBonusMonths: 1.0,
       companyEntryDate: DateTime(2020, 3, 15), // Il y a ~4 ans
       mutualEmployeeCost: 35.0, // Part salarié mutuelle
-      mealVoucherValue: 9.0, // Valeur titre-restaurant
-      mealVouchersPerMonth: 19, // Nombre de titres par mois
       transport: {
         'mode': 'Voiture personnelle',
         'vehicleType': 'Voiture',
         'fuelType': 'Essence',
         'fiscalPower': 5,
         'dailyDistance': 25.0,
-        'workDaysPerWeek': 5,
-        'teleworkDaysPerWeek': 2,
         'publicTransportCost': null,
         'parkingCost': 120.0,
         'tollsCost': 45.0,
         'employerReimbursement': 50.0,
       },
+      // Frais professionnels - COMPLET
+      mealTicketValue: 9.50, // Valeur titre-restaurant (classique)
+      mealTicketsPerMonth: 19, // 19 jours travaillés au bureau
+      mealExpenses: 120.0, // Frais de repas hors titres (6€/jour * 20 jours)
+      mealAllowance: 0.0, // Pas d'indemnité repas supplémentaire
+      childcareType: 'Assistant(e) maternel(le)',
+      childcareCost: 850.0, // Coût mensuel garde (2 enfants)
+      childcareAids: 294.0, // Aides CAF pour 2 enfants
+      workDaysPerWeek: 5, // 5 jours par semaine
+      remoteDaysPerWeek: 2, // 2 jours de télétravail
+      remoteAllowance: 50.0, // Forfait télétravail employeur (2.5€/jour)
+      remoteExpenses: 45.0, // Internet + électricité (estimation)
+      remoteEquipment: 20.0, // Amortissement bureau/chaise (1000€ sur 4 ans)
+      workClothing: 30.0, // Vêtements professionnels
+      professionalEquipment: 15.0, // Souris/clavier ergonomiques
+      trainingCost: 50.0, // Formation en ligne non remboursée
+      unionFees: 18.0, // Cotisations syndicales CGT
     );
 
     setState(() {
@@ -388,9 +401,19 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                 Text('Profil créé'),
               ],
             ),
-            content: const Text(
-              'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
-              'Vous pouvez maintenant explorer toutes les fonctionnalités de l\'application.',
+            content: const SingleChildScrollView(
+              child: Text(
+                'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
+                'Ce profil contient des données complètes :\n'
+                '• Salariée CDI non cadre avec 4h d\'heures sup/semaine\n'
+                '• 13ème mois et mutuelle d\'entreprise\n'
+                '• Titres-restaurant : 9,50€ x 19/mois\n'
+                '• 2 enfants en garde (assistant maternel)\n'
+                '• Télétravail 2j/semaine avec forfait employeur\n'
+                '• Frais de transport : voiture + parking + péages\n'
+                '• Frais professionnels divers (formation, syndicat...)\n\n'
+                'Explorez toutes les sections pour découvrir l\'application !',
+              ),
             ),
             actions: [
               ElevatedButton(

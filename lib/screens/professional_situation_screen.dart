@@ -36,8 +36,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late FocusNode _weeklyHoursFocusNode;
   late FocusNode _overtimeHoursFocusNode;
   late TextEditingController _mutualCostController;
-  late TextEditingController _mealVoucherValueController;
-  late TextEditingController _mealVouchersCountController;
   DateTime? _companyEntryDate;
 
   @override
@@ -62,16 +60,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _mutualCostController = TextEditingController(
       text: widget.profile.mutualEmployeeCost > 0 
         ? widget.profile.mutualEmployeeCost.toStringAsFixed(2) 
-        : ''
-    );
-    _mealVoucherValueController = TextEditingController(
-      text: widget.profile.mealVoucherValue != null 
-        ? widget.profile.mealVoucherValue!.toStringAsFixed(2) 
-        : ''
-    );
-    _mealVouchersCountController = TextEditingController(
-      text: widget.profile.mealVouchersPerMonth != null 
-        ? widget.profile.mealVouchersPerMonth.toString() 
         : ''
     );
     _salaryFocusNode = FocusNode();
@@ -131,12 +119,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _mutualCostController.addListener(() {
       _updateProfile();
     });
-    _mealVoucherValueController.addListener(() {
-      _updateProfile();
-    });
-    _mealVouchersCountController.addListener(() {
-      _updateProfile();
-    });
     
     // Formater le salaire quand l'utilisateur quitte le champ
     _salaryFocusNode.addListener(() {
@@ -176,8 +158,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _weeklyHoursController.dispose();
     _overtimeHoursController.dispose();
     _mutualCostController.dispose();
-    _mealVoucherValueController.dispose();
-    _mealVouchersCountController.dispose();
     _salaryFocusNode.dispose();
     _weeklyHoursFocusNode.dispose();
     _overtimeHoursFocusNode.dispose();
@@ -330,8 +310,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final weeklyHours = double.tryParse(_weeklyHoursController.text) ?? 35.0;
     final overtimeHours = double.tryParse(_overtimeHoursController.text) ?? 0.0;
     final mutualCost = double.tryParse(_mutualCostController.text) ?? 0.0;
-    final mealVoucherValue = double.tryParse(_mealVoucherValueController.text);
-    final mealVouchersCount = int.tryParse(_mealVouchersCountController.text);
     
     _modifiedProfile = _modifiedProfile.copyWith(
       employmentStatus: _employmentStatus,
@@ -345,8 +323,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       conventionalBonusMonths: _bonusMonths,
       companyEntryDate: _companyEntryDate,
       mutualEmployeeCost: mutualCost,
-      mealVoucherValue: mealVoucherValue,
-      mealVouchersPerMonth: mealVouchersCount,
     );
     
     // Sauvegarder automatiquement le profil (comme sur la page d'infos personnelles)
@@ -840,47 +816,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
                       textInputAction: TextInputAction.next,
-                    ),
-                    
-                    const SizedBox(height: AppConstants.defaultPadding),
-                    
-                    // Titres-restaurant
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            controller: _mealVoucherValueController,
-                            decoration: const InputDecoration(
-                              labelText: 'Valeur titre-restaurant',
-                              hintText: 'Ex: 9.00',
-                              border: OutlineInputBorder(),
-                              suffixText: '€',
-                            ),
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                            ],
-                            textInputAction: TextInputAction.next,
-                          ),
-                        ),
-                        const SizedBox(width: AppConstants.defaultPadding),
-                        Expanded(
-                          child: TextFormField(
-                            controller: _mealVouchersCountController,
-                            decoration: const InputDecoration(
-                              labelText: 'Nombre/mois',
-                              hintText: 'Ex: 19',
-                              border: OutlineInputBorder(),
-                              suffixText: 'titres',
-                            ),
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            textInputAction: TextInputAction.done,
-                          ),
-                        ),
-                      ],
                     ),
                   ],
                 ),

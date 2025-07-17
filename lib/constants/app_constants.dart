@@ -119,4 +119,14 @@ class AppConstants {
     'Électrique',
     'GPL',
   ];
+  
+  // Childcare types
+  static const List<String> childcareTypes = [
+    'Assistant(e) maternel(le)',
+    'Crèche',
+    'Garde à domicile',
+    'Périscolaire',
+    'Centre de loisirs',
+    'Autre',
+  ];
 }

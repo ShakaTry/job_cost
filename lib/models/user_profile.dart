@@ -28,11 +28,27 @@ class UserProfile {
   final double conventionalBonusMonths; // Nombre de mois de prime conventionnelle
   final DateTime? companyEntryDate; // Date d'entrée dans l'entreprise (pour prime d'ancienneté)
   final double mutualEmployeeCost; // Part salarié de la mutuelle (€/mois)
-  final double? mealVoucherValue; // Valeur faciale des titres-restaurant
-  final int? mealVouchersPerMonth; // Nombre de titres-restaurant par mois
   
   // Transport fields
   final Map<String, dynamic>? transport;
+
+  // Professional expenses fields
+  final double? mealExpenses; // Frais de repas mensuels (hors titres)
+  final double? mealAllowance; // Indemnité repas employeur
+  final double? mealTicketValue; // Valeur des titres-restaurant
+  final int? mealTicketsPerMonth; // Nombre de titres-restaurant par mois
+  final String? childcareType; // Type de garde d'enfants
+  final double? childcareCost; // Coût mensuel de la garde
+  final double? childcareAids; // Aides reçues (CAF, employeur)
+  final double? workDaysPerWeek; // Jours travaillés par semaine
+  final double? remoteDaysPerWeek; // Jours de télétravail par semaine
+  final double? remoteAllowance; // Forfait télétravail employeur
+  final double? remoteExpenses; // Frais réels télétravail
+  final double? remoteEquipment; // Équipement télétravail (amortissement)
+  final double? workClothing; // Vêtements de travail
+  final double? professionalEquipment; // Matériel professionnel
+  final double? trainingCost; // Formation non remboursée
+  final double? unionFees; // Cotisations syndicales
 
   UserProfile({
     required this.id,
@@ -60,9 +76,23 @@ class UserProfile {
     required this.conventionalBonusMonths,
     this.companyEntryDate,
     required this.mutualEmployeeCost,
-    this.mealVoucherValue,
-    this.mealVouchersPerMonth,
     this.transport,
+    this.mealExpenses,
+    this.mealAllowance,
+    this.mealTicketValue,
+    this.mealTicketsPerMonth,
+    this.childcareType,
+    this.childcareCost,
+    this.childcareAids,
+    this.workDaysPerWeek,
+    this.remoteDaysPerWeek,
+    this.remoteAllowance,
+    this.remoteExpenses,
+    this.remoteEquipment,
+    this.workClothing,
+    this.professionalEquipment,
+    this.trainingCost,
+    this.unionFees,
   });
 
   String get fullName => '$firstName $lastName';
@@ -91,9 +121,23 @@ class UserProfile {
     double? conventionalBonusMonths,
     DateTime? companyEntryDate,
     double? mutualEmployeeCost,
-    double? mealVoucherValue,
-    int? mealVouchersPerMonth,
     Map<String, dynamic>? transport,
+    double? mealExpenses,
+    double? mealAllowance,
+    double? mealTicketValue,
+    int? mealTicketsPerMonth,
+    String? childcareType,
+    double? childcareCost,
+    double? childcareAids,
+    double? workDaysPerWeek,
+    double? remoteDaysPerWeek,
+    double? remoteAllowance,
+    double? remoteExpenses,
+    double? remoteEquipment,
+    double? workClothing,
+    double? professionalEquipment,
+    double? trainingCost,
+    double? unionFees,
   }) {
     return UserProfile(
       id: id,
@@ -121,9 +165,23 @@ class UserProfile {
       conventionalBonusMonths: conventionalBonusMonths ?? this.conventionalBonusMonths,
       companyEntryDate: companyEntryDate ?? this.companyEntryDate,
       mutualEmployeeCost: mutualEmployeeCost ?? this.mutualEmployeeCost,
-      mealVoucherValue: mealVoucherValue ?? this.mealVoucherValue,
-      mealVouchersPerMonth: mealVouchersPerMonth ?? this.mealVouchersPerMonth,
       transport: transport ?? this.transport,
+      mealExpenses: mealExpenses ?? this.mealExpenses,
+      mealAllowance: mealAllowance ?? this.mealAllowance,
+      mealTicketValue: mealTicketValue ?? this.mealTicketValue,
+      mealTicketsPerMonth: mealTicketsPerMonth ?? this.mealTicketsPerMonth,
+      childcareType: childcareType ?? this.childcareType,
+      childcareCost: childcareCost ?? this.childcareCost,
+      childcareAids: childcareAids ?? this.childcareAids,
+      workDaysPerWeek: workDaysPerWeek ?? this.workDaysPerWeek,
+      remoteDaysPerWeek: remoteDaysPerWeek ?? this.remoteDaysPerWeek,
+      remoteAllowance: remoteAllowance ?? this.remoteAllowance,
+      remoteExpenses: remoteExpenses ?? this.remoteExpenses,
+      remoteEquipment: remoteEquipment ?? this.remoteEquipment,
+      workClothing: workClothing ?? this.workClothing,
+      professionalEquipment: professionalEquipment ?? this.professionalEquipment,
+      trainingCost: trainingCost ?? this.trainingCost,
+      unionFees: unionFees ?? this.unionFees,
     );
   }
 
@@ -151,9 +209,23 @@ class UserProfile {
     double? conventionalBonusMonths,
     DateTime? companyEntryDate,
     double? mutualEmployeeCost,
-    double? mealVoucherValue,
-    int? mealVouchersPerMonth,
     Map<String, dynamic>? transport,
+    double? mealExpenses,
+    double? mealAllowance,
+    double? mealTicketValue,
+    int? mealTicketsPerMonth,
+    String? childcareType,
+    double? childcareCost,
+    double? childcareAids,
+    double? workDaysPerWeek,
+    double? remoteDaysPerWeek,
+    double? remoteAllowance,
+    double? remoteExpenses,
+    double? remoteEquipment,
+    double? workClothing,
+    double? professionalEquipment,
+    double? trainingCost,
+    double? unionFees,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -181,9 +253,23 @@ class UserProfile {
       conventionalBonusMonths: conventionalBonusMonths ?? 0.0,
       companyEntryDate: companyEntryDate,
       mutualEmployeeCost: mutualEmployeeCost ?? 0.0,
-      mealVoucherValue: mealVoucherValue,
-      mealVouchersPerMonth: mealVouchersPerMonth,
       transport: transport,
+      mealExpenses: mealExpenses,
+      mealAllowance: mealAllowance,
+      mealTicketValue: mealTicketValue,
+      mealTicketsPerMonth: mealTicketsPerMonth,
+      childcareType: childcareType,
+      childcareCost: childcareCost,
+      childcareAids: childcareAids,
+      workDaysPerWeek: workDaysPerWeek,
+      remoteDaysPerWeek: remoteDaysPerWeek,
+      remoteAllowance: remoteAllowance,
+      remoteExpenses: remoteExpenses,
+      remoteEquipment: remoteEquipment,
+      workClothing: workClothing,
+      professionalEquipment: professionalEquipment,
+      trainingCost: trainingCost,
+      unionFees: unionFees,
     );
   }
 }

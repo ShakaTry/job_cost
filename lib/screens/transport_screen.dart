@@ -21,8 +21,6 @@ class _TransportScreenState extends State<TransportScreen> {
   
   // Controllers
   final _distanceController = TextEditingController();
-  final _workDaysController = TextEditingController();
-  final _teleworkDaysController = TextEditingController();
   final _parkingController = TextEditingController();
   final _tollsController = TextEditingController();
   final _employerReimbursementController = TextEditingController();
@@ -48,8 +46,6 @@ class _TransportScreenState extends State<TransportScreen> {
       _fuelType = transport['fuelType'] ?? 'Essence';
       _fiscalPower = transport['fiscalPower'] ?? 5;
       _distanceController.text = transport['dailyDistance']?.toString() ?? '';
-      _workDaysController.text = transport['workDaysPerWeek']?.toString() ?? '';
-      _teleworkDaysController.text = transport['teleworkDaysPerWeek']?.toString() ?? '';
       _parkingController.text = transport['parkingCost']?.toString() ?? '';
       _tollsController.text = transport['tollsCost']?.toString() ?? '';
       _employerReimbursementController.text = transport['employerReimbursement']?.toString() ?? '';
@@ -58,8 +54,6 @@ class _TransportScreenState extends State<TransportScreen> {
 
   void _setupListeners() {
     _distanceController.addListener(_onDataChanged);
-    _workDaysController.addListener(_onDataChanged);
-    _teleworkDaysController.addListener(_onDataChanged);
     _parkingController.addListener(_onDataChanged);
     _tollsController.addListener(_onDataChanged);
     _employerReimbursementController.addListener(_onDataChanged);
@@ -76,8 +70,6 @@ class _TransportScreenState extends State<TransportScreen> {
   @override
   void dispose() {
     _distanceController.dispose();
-    _workDaysController.dispose();
-    _teleworkDaysController.dispose();
     _parkingController.dispose();
     _tollsController.dispose();
     _employerReimbursementController.dispose();
@@ -98,8 +90,6 @@ class _TransportScreenState extends State<TransportScreen> {
           'fuelType': _fuelType,
           'fiscalPower': _fiscalPower,
           'dailyDistance': double.tryParse(_distanceController.text),
-          'workDaysPerWeek': int.tryParse(_workDaysController.text),
-          'teleworkDaysPerWeek': int.tryParse(_teleworkDaysController.text),
           'parkingCost': double.tryParse(_parkingController.text),
           'tollsCost': double.tryParse(_tollsController.text),
           'employerReimbursement': double.tryParse(_employerReimbursementController.text),
@@ -326,42 +316,6 @@ class _TransportScreenState extends State<TransportScreen> {
                             labelText: 'Distance domicile-travail (km aller simple)',
                             border: OutlineInputBorder(),
                             suffixText: 'km',
-                          ),
-                          textInputAction: TextInputAction.next,
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Jours travaillés par semaine
-                        TextFormField(
-                          controller: _workDaysController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(1),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Jours travaillés par semaine',
-                            border: OutlineInputBorder(),
-                            suffixText: 'jours',
-                          ),
-                          textInputAction: TextInputAction.next,
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Jours de télétravail
-                        TextFormField(
-                          controller: _teleworkDaysController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(1),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Jours de télétravail par semaine',
-                            border: OutlineInputBorder(),
-                            suffixText: 'jours',
                           ),
                           textInputAction: TextInputAction.next,
                         ),
