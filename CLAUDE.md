@@ -24,10 +24,14 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - Badge "Profil de démonstration" pour Sophie Martin
 2. **Création de profil** - Dialog simple (nom/prénom uniquement)
 3. **Vue détaillée du profil** - Affiche les sections disponibles
-4. **Informations personnelles** - Formulaire complet avec :
-   - Identité (nom, prénom, date de naissance, nationalité)
-   - Coordonnées (adresse, téléphone, email)
-   - Situation familiale (état civil, enfants à charge)
+   - Avatar avec bouton d'édition préparé pour future implémentation
+   - Sous-titre "Vue d'ensemble du profil" dans l'AppBar
+4. **Informations personnelles** - Formulaire restructuré avec Cards :
+   - **Card 1 - Identité** : nom, prénom, date de naissance (avec UX mobile double-clic), nationalité
+   - **Card 2 - Coordonnées** : adresse, téléphone, email
+   - **Card 3 - Situation familiale** : état civil, enfants à charge
+   - Interface épurée : avatar seulement dans l'AppBar, pas de texte d'âge
+   - InfoContainer supprimé (future option globale prévue)
    - Validation des formulaires
    - Sauvegarde automatique avec pattern PopScope
    - Navigation clavier optimisée
@@ -79,7 +83,8 @@ lib/
 │   ├── profile_selection_screen.dart
 │   ├── profile_detail_screen.dart
 │   ├── personal_info_screen.dart
-│   └── professional_situation_screen.dart
+│   ├── professional_situation_screen.dart
+│   └── transport_expenses_screen.dart
 ├── services/
 │   └── profile_service.dart  # Service de gestion des profils (CRUD)
 ├── utils/
@@ -163,6 +168,9 @@ Approche de développement adoptée :
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
 - Pattern de sauvegarde automatique avec PopScope obligatoire pour toutes les pages de formulaire
 - Bug d'overflow sur mobile corrigé avec widgets Flexible dans les récapitulatifs
+- Pages organisées avec Cards pour une meilleure lisibilité
+- UX mobile : double-clic sur les champs de date pour saisie manuelle
+- Future option globale pour activer/désactiver tous les InfoContainers prévue
 - **IMPORTANT** : Après chaque nouvelle page, réviser et adapter les pages existantes
 
 ### Commandes utiles
