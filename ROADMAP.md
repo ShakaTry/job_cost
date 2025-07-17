@@ -33,9 +33,9 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
    - UX optimisée mobile (saisie de date manuelle)
    
 3. **Transport & Déplacements** ✅
-   - Mode de transport
-   - Distance et frais
-   - Barème kilométrique 2024
+   - Véhicule personnel uniquement (MVP)
+   - Type de véhicule et carburant
+   - Distance et frais (parking, péages)
 
 ### 🚧 Pages à compléter
 
@@ -44,6 +44,7 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - [ ] Taux de prélèvement personnalisé
 - [ ] Nombre de parts fiscales
 - [ ] Crédits et réductions d'impôt basiques
+- [ ] Barème kilométrique (déplacé depuis Transport)
 
 #### 2. Frais professionnels essentiels (PRIORITÉ 2)
 - [ ] Repas (cantine, tickets restaurant, panier)
@@ -100,7 +101,6 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - Sauvegarde automatique (pattern PopScope)
 - Calculs salaire brut/horaire bidirectionnels
 - Heures supplémentaires (25%/50%)
-- Barème kilométrique 2024
 - Validation et formatage des données
 - Navigation entre pages
 - Avantages sociaux (ancienneté, mutuelle, titres-restaurant)

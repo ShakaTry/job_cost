@@ -4,7 +4,6 @@ import '../models/user_profile.dart';
 import '../services/profile_service.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
-import '../widgets/info_container.dart';
 
 class TransportScreen extends StatefulWidget {
   final UserProfile profile;
@@ -22,13 +21,12 @@ class _TransportScreenState extends State<TransportScreen> {
   // Controllers
   final _distanceController = TextEditingController();
   final _workDaysController = TextEditingController();
-  final _publicTransportController = TextEditingController();
   final _parkingController = TextEditingController();
   final _tollsController = TextEditingController();
   
   // State
-  String _transportMode = 'Voiture personnelle';
   String _vehicleType = 'Voiture';
+  String _fuelType = 'Essence';
   int _fiscalPower = 5;
   bool _hasModifications = false;
   bool _isSaving = false;
@@ -43,12 +41,11 @@ class _TransportScreenState extends State<TransportScreen> {
   void _initializeControllers() {
     final transport = widget.profile.transport;
     if (transport != null) {
-      _transportMode = transport['mode'] ?? 'Voiture personnelle';
       _vehicleType = transport['vehicleType'] ?? 'Voiture';
+      _fuelType = transport['fuelType'] ?? 'Essence';
       _fiscalPower = transport['fiscalPower'] ?? 5;
       _distanceController.text = transport['dailyDistance']?.toString() ?? '';
       _workDaysController.text = transport['workDaysPerWeek']?.toString() ?? '';
-      _publicTransportController.text = transport['publicTransportCost']?.toString() ?? '';
       _parkingController.text = transport['parkingCost']?.toString() ?? '';
       _tollsController.text = transport['tollsCost']?.toString() ?? '';
     }
@@ -57,7 +54,6 @@ class _TransportScreenState extends State<TransportScreen> {
   void _setupListeners() {
     _distanceController.addListener(_onDataChanged);
     _workDaysController.addListener(_onDataChanged);
-    _publicTransportController.addListener(_onDataChanged);
     _parkingController.addListener(_onDataChanged);
     _tollsController.addListener(_onDataChanged);
   }
@@ -74,7 +70,6 @@ class _TransportScreenState extends State<TransportScreen> {
   void dispose() {
     _distanceController.dispose();
     _workDaysController.dispose();
-    _publicTransportController.dispose();
     _parkingController.dispose();
     _tollsController.dispose();
     super.dispose();
@@ -90,12 +85,11 @@ class _TransportScreenState extends State<TransportScreen> {
     try {
       final updatedProfile = widget.profile.copyWith(
         transport: {
-          'mode': _transportMode,
           'vehicleType': _vehicleType,
+          'fuelType': _fuelType,
           'fiscalPower': _fiscalPower,
           'dailyDistance': double.tryParse(_distanceController.text),
           'workDaysPerWeek': int.tryParse(_workDaysController.text),
-          'publicTransportCost': double.tryParse(_publicTransportController.text),
           'parkingCost': double.tryParse(_parkingController.text),
           'tollsCost': double.tryParse(_tollsController.text),
         },
@@ -136,45 +130,6 @@ class _TransportScreenState extends State<TransportScreen> {
     );
   }
 
-  double _calculateMileageRate() {
-    // Barème kilométrique 2024 (simplifié)
-    if (_vehicleType == 'Voiture') {
-      if (_fiscalPower <= 3) return 0.529;
-      if (_fiscalPower == 4) return 0.606;
-      if (_fiscalPower == 5) return 0.636;
-      if (_fiscalPower == 6) return 0.665;
-      return 0.697; // 7 CV et plus
-    } else if (_vehicleType == 'Moto') {
-      return 0.395; // Tarif moyen moto
-    }
-    return 0.529; // Défaut
-  }
-
-  double _calculateAnnualKilometers() {
-    final distance = double.tryParse(_distanceController.text) ?? 0;
-    final workDays = int.tryParse(_workDaysController.text) ?? 0;
-    return distance * workDays * 47; // 47 semaines travaillées
-  }
-
-  double _calculateAnnualMileageCost() {
-    return _calculateAnnualKilometers() * _calculateMileageRate();
-  }
-
-  double _calculateTotalAnnualCost() {
-    double total = 0;
-    
-    if (_transportMode == 'Voiture personnelle' || _transportMode == 'Moto personnelle') {
-      total += _calculateAnnualMileageCost();
-    } else if (_transportMode == 'Transports en commun') {
-      total += (double.tryParse(_publicTransportController.text) ?? 0) * 12;
-    }
-    
-    // Ajouter parking et péages
-    total += (double.tryParse(_parkingController.text) ?? 0) * 12;
-    total += (double.tryParse(_tollsController.text) ?? 0) * 12;
-    
-    return total;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -199,65 +154,70 @@ class _TransportScreenState extends State<TransportScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Mode de transport
-                const Text(
-                  'Mode de transport principal',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 8),
-                DropdownButtonFormField<String>(
-                  value: _transportMode,
-                  items: AppConstants.transportModes.map((mode) {
-                    return DropdownMenuItem(
-                      value: mode,
-                      child: Text(mode),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _transportMode = value!;
-                      _hasModifications = true;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                
-                // Section véhicule personnel
-                if (_transportMode == 'Voiture personnelle' || _transportMode == 'Moto personnelle') ...[
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Informations véhicule',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(height: 16),
+                // Card 1 - Véhicule
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Véhicule',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Type de véhicule
+                        DropdownButtonFormField<String>(
+                          value: _vehicleType,
+                          items: ['Voiture', 'Moto'].map((type) {
+                            return DropdownMenuItem(
+                              value: type,
+                              child: Text(type),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _vehicleType = value!;
+                              _hasModifications = true;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Type de véhicule',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Type de carburant
+                        DropdownButtonFormField<String>(
+                          value: _fuelType,
+                          items: AppConstants.fuelTypes.map((fuel) {
+                            return DropdownMenuItem(
+                              value: fuel,
+                              child: Text(fuel),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _fuelType = value!;
+                              _hasModifications = true;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Carburant',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 16),
                   
-                  // Type de véhicule
-                  DropdownButtonFormField<String>(
-                    value: _vehicleType,
-                    items: ['Voiture', 'Moto'].map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(type),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _vehicleType = value!;
-                        _hasModifications = true;
-                      });
-                    },
-                    decoration: const InputDecoration(
-                      labelText: 'Type de véhicule',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Puissance fiscale
-                  if (_vehicleType == 'Voiture') ...[
+                        // Puissance fiscale
+                        if (_vehicleType == 'Voiture') ...[
                     const Text('Puissance fiscale (CV)'),
                     const SizedBox(height: 8),
                     Row(
@@ -287,233 +247,121 @@ class _TransportScreenState extends State<TransportScreen> {
                         ),
                       ],
                     ),
-                  ],
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Distance domicile-travail
-                  TextFormField(
-                    controller: _distanceController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: 'Distance domicile-travail (km aller simple)',
-                      border: OutlineInputBorder(),
-                      suffixText: 'km',
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  
-                  const SizedBox(height: 16),
-                  
-                  // Jours travaillés par semaine
-                  TextFormField(
-                    controller: _workDaysController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(1),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: 'Jours travaillés par semaine',
-                      border: OutlineInputBorder(),
-                      suffixText: 'jours',
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  
-                  // Info barème kilométrique
-                  const SizedBox(height: 16),
-                  const InfoContainer(
-                    text: 'Barème kilométrique 2024',
-                    isBold: true,
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Taux applicable : ${_calculateMileageRate().toStringAsFixed(3)} €/km'),
-                        if (_calculateAnnualKilometers() > 0) ...[
-                          const SizedBox(height: 4),
-                          Text('Distance annuelle : ${_calculateAnnualKilometers().toStringAsFixed(0)} km'),
-                          Text('Frais annuels : ${_calculateAnnualMileageCost().toStringAsFixed(2)} €'),
                         ],
                       ],
                     ),
                   ),
-                ],
-                
-                // Section transports en commun
-                if (_transportMode == 'Transports en commun') ...[
-                  const SizedBox(height: 24),
-                  TextFormField(
-                    controller: _publicTransportController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: 'Coût mensuel des transports',
-                      border: OutlineInputBorder(),
-                      suffixText: '€/mois',
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                ],
-                
-                // Frais additionnels
-                const SizedBox(height: 24),
-                const Text(
-                  'Frais additionnels',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 16),
-                
-                // Parking
-                TextFormField(
-                  controller: _parkingController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                  ],
-                  decoration: const InputDecoration(
-                    labelText: 'Frais de parking mensuel',
-                    border: OutlineInputBorder(),
-                    suffixText: '€/mois',
-                  ),
-                  textInputAction: TextInputAction.next,
                 ),
                 
                 const SizedBox(height: 16),
                 
-                // Péages
-                TextFormField(
-                  controller: _tollsController,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                  ],
-                  decoration: const InputDecoration(
-                    labelText: 'Frais de péages mensuel',
-                    border: OutlineInputBorder(),
-                    suffixText: '€/mois',
-                  ),
-                  textInputAction: TextInputAction.done,
-                ),
-                
-                // Récapitulatif
-                if (_calculateTotalAnnualCost() > 0) ...[
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
+                // Card 2 - Trajet
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Récapitulatif annuel',
+                          'Trajet',
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         
-                        if (_transportMode == 'Voiture personnelle' || _transportMode == 'Moto personnelle') ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Frais kilométriques :'),
-                              Text(
-                                '${_calculateAnnualMileageCost().toStringAsFixed(2)} €',
-                                style: const TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                        
-                        if (_transportMode == 'Transports en commun' && _publicTransportController.text.isNotEmpty) ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Transports en commun :'),
-                              Text(
-                                '${((double.tryParse(_publicTransportController.text) ?? 0) * 12).toStringAsFixed(2)} €',
-                                style: const TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                        
-                        if (_parkingController.text.isNotEmpty) ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Parking :'),
-                              Text(
-                                '${((double.tryParse(_parkingController.text) ?? 0) * 12).toStringAsFixed(2)} €',
-                                style: const TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                        
-                        if (_tollsController.text.isNotEmpty) ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text('Péages :'),
-                              Text(
-                                '${((double.tryParse(_tollsController.text) ?? 0) * 12).toStringAsFixed(2)} €',
-                                style: const TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                        
-                        const Divider(),
-                        const SizedBox(height: 8),
-                        
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Total annuel :',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              '${_calculateTotalAnnualCost().toStringAsFixed(2)} €',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.red,
-                              ),
-                            ),
+                        // Distance domicile-travail
+                        TextFormField(
+                          controller: _distanceController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                           ],
+                          decoration: const InputDecoration(
+                            labelText: 'Distance domicile-travail (km aller simple)',
+                            border: OutlineInputBorder(),
+                            suffixText: 'km',
+                          ),
+                          textInputAction: TextInputAction.next,
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Jours travaillés par semaine
+                        TextFormField(
+                          controller: _workDaysController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(1),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Jours travaillés par semaine',
+                            border: OutlineInputBorder(),
+                            suffixText: 'jours',
+                          ),
+                          textInputAction: TextInputAction.next,
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Card 3 - Frais additionnels
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Frais additionnels',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Parking
+                        TextFormField(
+                          controller: _parkingController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Frais de parking mensuel',
+                            border: OutlineInputBorder(),
+                            suffixText: '€/mois',
+                          ),
+                          textInputAction: TextInputAction.next,
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Péages
+                        TextFormField(
+                          controller: _tollsController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Frais de péages mensuel',
+                            border: OutlineInputBorder(),
+                            suffixText: '€/mois',
+                          ),
+                          textInputAction: TextInputAction.done,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
                 
                 const SizedBox(height: 80), // Espace en bas
               ],

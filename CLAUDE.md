@@ -55,21 +55,19 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - Sauvegarde automatique avec pattern PopScope
    - UX mobile : double-clic pour saisie manuelle de date avec formatage automatique
    - Note: Le régime fiscal a été déplacé vers "Paramètres fiscaux"
-6. **Transport & Déplacements** - Formulaire complet avec :
-   - Mode de transport principal (dropdown)
-   - Pour véhicule personnel :
+6. **Transport & Déplacements** - Formulaire simplifié avec Cards :
+   - **Card 1 - Véhicule** :
      - Type de véhicule (voiture/moto)
+     - Carburant (essence, diesel, hybride, électrique, GPL)
      - Puissance fiscale (slider 3-10 CV pour voiture)
+   - **Card 2 - Trajet** :
      - Distance domicile-travail aller simple
      - Jours travaillés par semaine
-     - Calcul automatique du barème kilométrique 2024
-   - Pour transports en commun :
-     - Coût mensuel
-   - Frais additionnels :
+   - **Card 3 - Frais additionnels** :
      - Parking mensuel
      - Péages mensuels
-   - Récapitulatif annuel avec total des frais
    - Sauvegarde automatique avec pattern PopScope
+   - Note: Barème kilométrique déplacé vers "Paramètres fiscaux" (à venir)
 
 ### Architecture du code
 ```
@@ -84,7 +82,7 @@ lib/
 │   ├── profile_detail_screen.dart
 │   ├── personal_info_screen.dart
 │   ├── professional_situation_screen.dart
-│   └── transport_expenses_screen.dart
+│   └── transport_screen.dart
 ├── services/
 │   └── profile_service.dart  # Service de gestion des profils (CRUD)
 ├── utils/
@@ -166,6 +164,7 @@ Approche de développement adoptée :
 - Calculs de salaire basés sur 151,67h/mois (durée légale officielle)
 - Précision maximale en interne, arrondi seulement pour l'affichage
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
+- Le barème kilométrique a été déplacé de "Transport" vers "Paramètres fiscaux" (à implémenter)
 - Pattern de sauvegarde automatique avec PopScope obligatoire pour toutes les pages de formulaire
 - Bug d'overflow sur mobile corrigé avec widgets Flexible dans les récapitulatifs
 - Pages organisées avec Cards pour une meilleure lisibilité
