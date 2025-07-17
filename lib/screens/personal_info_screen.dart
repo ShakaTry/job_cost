@@ -194,17 +194,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),
           children: [
-              Center(
-                child: ProfileAvatar(
-                  firstName: _firstNameController.text,
-                  radius: 60,
-                  fontSize: 48,
-                  showEditButton: true,
-                  onEditPressed: _pickImage,
-                ),
-              ),
-              const SizedBox(height: 32),
-              
               // Card Identité
               Card(
                 elevation: 2,
@@ -265,10 +254,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           onTap: _selectBirthDate,
                           decoration: const InputDecoration(
                             labelText: AppStrings.birthDate,
-                            hintText: 'Appuyez ou double-cliquez pour saisir',
+                            hintText: AppStrings.selectDateHint,
                             border: OutlineInputBorder(),
                             suffixIcon: Icon(Icons.calendar_today),
-                            helperText: 'Double-clic pour saisie manuelle',
                           ),
                           controller: TextEditingController(
                             text: _birthDate != null
@@ -277,17 +265,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           ),
                         ),
                       ),
-                      if (_birthDate != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            '${_calculateAge()} ${AppStrings.yearsOld}',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
                       const SizedBox(height: 16),
                       DropdownButtonFormField<String>(
                         value: _nationality,
@@ -475,16 +452,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   }
 
 
-  int _calculateAge() {
-    if (_birthDate == null) return 0;
-    final now = DateTime.now();
-    int age = now.year - _birthDate!.year;
-    if (now.month < _birthDate!.month || 
-        (now.month == _birthDate!.month && now.day < _birthDate!.day)) {
-      age--;
-    }
-    return age;
-  }
 
   String _formatPhoneNumber(String value) {
     // Enlever tous les caractères non numériques
