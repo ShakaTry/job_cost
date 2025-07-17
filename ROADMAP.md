@@ -27,6 +27,7 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
    
 2. **Situation professionnelle** ✅
    - Salaire actuel (pour comparaison)
+   - Adresse de l'entreprise
    - Heures supplémentaires
    - Prime conventionnelle
    - Avantages sociaux (ancienneté, mutuelle, titres-restaurant)
@@ -36,6 +37,8 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
    - Véhicule personnel uniquement (MVP)
    - Type de véhicule et carburant
    - Distance et frais (parking, péages)
+   - Jours de télétravail par semaine
+   - Remboursement transport employeur
 
 ### 🚧 Pages à compléter
 
@@ -106,6 +109,8 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - Avantages sociaux (ancienneté, mutuelle, titres-restaurant)
 - UX mobile optimisée (saisie de date manuelle)
 - Organisation visuelle avec Cards
+- Adresse entreprise dans situation professionnelle
+- Jours de télétravail et remboursement transport
 
 ### 🚧 Fonctionnalités manquantes critiques
 - Paramètres fiscaux (BLOQUANT pour calculs)
@@ -194,5 +199,5 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 
 ---
 
-*Dernière mise à jour : 17 décembre 2024*
+*Dernière mise à jour : 19 décembre 2024*
 *Note : Stratégie révisée pour collecter d'abord toutes les données nécessaires*

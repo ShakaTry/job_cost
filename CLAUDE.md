@@ -39,6 +39,7 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - **Card 1 - Emploi actuel** :
      - Statut d'emploi (CDI seulement dans MVP)
      - Entreprise et poste
+     - Adresse de l'entreprise
      - Case à cocher "Salarié non cadre"
    - **Card 2 - Temps de travail et rémunération** :
      - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles côte à côte avec heures sup)
@@ -63,9 +64,11 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - **Card 2 - Trajet** :
      - Distance domicile-travail aller simple
      - Jours travaillés par semaine
+     - Jours de télétravail par semaine
    - **Card 3 - Frais additionnels** :
      - Parking mensuel
      - Péages mensuels
+     - Remboursement transport employeur
    - Sauvegarde automatique avec pattern PopScope
    - Note: Barème kilométrique déplacé vers "Paramètres fiscaux" (à venir)
 
@@ -160,7 +163,10 @@ Approche de développement adoptée :
   - 4h d'heures sup
   - Statut non cadre
   - Prime 13ème mois
-  - Transport : voiture 5CV, 25km/jour, parking 120€/mois
+  - Adresse entreprise : 50 avenue des Champs-Élysées, 75008 Paris
+  - Transport : voiture essence 5CV, 25km/jour, 2j télétravail/semaine
+  - Frais : parking 120€/mois, péages 45€/mois
+  - Remboursement employeur : 50€/mois
 - Calculs de salaire basés sur 151,67h/mois (durée légale officielle)
 - Précision maximale en interne, arrondi seulement pour l'affichage
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
