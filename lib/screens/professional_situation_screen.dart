@@ -431,6 +431,13 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return double.tryParse(_mutualCostController.text) ?? 0.0;
   }
 
+  // Helper pour calculer et formater l'impact net
+  String _getFormattedNetImpact() {
+    final netImpact = _calculateMealVoucherAdvantage() - _getMutualDeduction();
+    final sign = netImpact >= 0 ? '+' : '';
+    return '$sign${_formatSalary(netImpact.toStringAsFixed(2))} ${AppStrings.euroSymbol}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final monthlySalary = _getCurrentMonthlySalary();
@@ -959,7 +966,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                               ),
                             ),
                             Text(
-                              '${(_calculateMealVoucherAdvantage() - _getMutualDeduction()) >= 0 ? '+' : ''}${_formatSalary((_calculateMealVoucherAdvantage() - _getMutualDeduction()).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                              _getFormattedNetImpact(),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue[800],
