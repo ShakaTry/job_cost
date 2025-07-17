@@ -98,6 +98,13 @@ class AppConstants {
   static const double defaultWeeklyHours = 35.0; // 35h par semaine
   static const String defaultTaxSystem = 'Prélèvement à la source';
   static const double defaultGrossSalary = 0.0;
+  static const double defaultMutualEmployeeCost = 0.0; // Part salarié mutuelle
+  
+  // Meal vouchers constants
+  static const double maxMealVoucherExemption = 7.18; // 2024
+  static const double defaultMealVoucherValue = 9.0; // Valeur moyenne
+  static const int defaultMealVouchersPerMonth = 19; // Moyenne mensuelle
+  static const double defaultEmployerMealVoucherRate = 0.6; // 60%
   
   // Transport
   static const List<String> transportModes = [

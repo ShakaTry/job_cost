@@ -348,6 +348,10 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       taxSystem: 'Prélèvement à la source',
       isNonCadre: true,
       conventionalBonusMonths: 1.0,
+      companyEntryDate: DateTime(2020, 3, 15), // Il y a ~4 ans
+      mutualEmployeeCost: 35.0, // Part salarié mutuelle
+      mealVoucherValue: 9.0, // Valeur titre-restaurant
+      mealVouchersPerMonth: 19, // Nombre de titres par mois
       transport: {
         'mode': 'Voiture personnelle',
         'vehicleType': 'Voiture',

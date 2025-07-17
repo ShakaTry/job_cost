@@ -25,6 +25,10 @@ class UserProfile {
   final String taxSystem;
   final bool? isNonCadre; // Statut salarié non cadre
   final double conventionalBonusMonths; // Nombre de mois de prime conventionnelle
+  final DateTime? companyEntryDate; // Date d'entrée dans l'entreprise (pour prime d'ancienneté)
+  final double mutualEmployeeCost; // Part salarié de la mutuelle (€/mois)
+  final double? mealVoucherValue; // Valeur faciale des titres-restaurant
+  final int? mealVouchersPerMonth; // Nombre de titres-restaurant par mois
   
   // Transport fields
   final Map<String, dynamic>? transport;
@@ -52,6 +56,10 @@ class UserProfile {
     required this.taxSystem,
     this.isNonCadre,
     required this.conventionalBonusMonths,
+    this.companyEntryDate,
+    required this.mutualEmployeeCost,
+    this.mealVoucherValue,
+    this.mealVouchersPerMonth,
     this.transport,
   });
 
@@ -78,6 +86,10 @@ class UserProfile {
     String? taxSystem,
     bool? isNonCadre,
     double? conventionalBonusMonths,
+    DateTime? companyEntryDate,
+    double? mutualEmployeeCost,
+    double? mealVoucherValue,
+    int? mealVouchersPerMonth,
     Map<String, dynamic>? transport,
   }) {
     return UserProfile(
@@ -103,6 +115,10 @@ class UserProfile {
       taxSystem: taxSystem ?? this.taxSystem,
       isNonCadre: isNonCadre ?? this.isNonCadre,
       conventionalBonusMonths: conventionalBonusMonths ?? this.conventionalBonusMonths,
+      companyEntryDate: companyEntryDate ?? this.companyEntryDate,
+      mutualEmployeeCost: mutualEmployeeCost ?? this.mutualEmployeeCost,
+      mealVoucherValue: mealVoucherValue ?? this.mealVoucherValue,
+      mealVouchersPerMonth: mealVouchersPerMonth ?? this.mealVouchersPerMonth,
       transport: transport ?? this.transport,
     );
   }
@@ -128,6 +144,10 @@ class UserProfile {
     String? taxSystem,
     bool? isNonCadre,
     double? conventionalBonusMonths,
+    DateTime? companyEntryDate,
+    double? mutualEmployeeCost,
+    double? mealVoucherValue,
+    int? mealVouchersPerMonth,
     Map<String, dynamic>? transport,
   }) {
     return UserProfile(
@@ -153,6 +173,10 @@ class UserProfile {
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
       isNonCadre: isNonCadre ?? false,
       conventionalBonusMonths: conventionalBonusMonths ?? 0.0,
+      companyEntryDate: companyEntryDate,
+      mutualEmployeeCost: mutualEmployeeCost ?? 0.0,
+      mealVoucherValue: mealVoucherValue,
+      mealVouchersPerMonth: mealVouchersPerMonth,
       transport: transport,
     );
   }
