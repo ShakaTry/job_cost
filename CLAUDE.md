@@ -13,10 +13,10 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 ## État actuel du projet
 
 ### Résumé de progression
-- **Pages complétées** : 6 sur ~10 pages prévues
-- **Fonctionnalités MVP** : ~60% complétées
-- **Prochaine étape** : Page Frais professionnels
-- **État** : Application fonctionnelle et testée sur mobile Android
+- **Pages complétées** : 5 sur 8 pages prévues
+- **Fonctionnalités MVP** : 57.5% complétées (11.5/20 fonctionnalités)
+- **Prochaine étape** : 🚨 ÉCRAN DE CALCUL (priorité absolue)
+- **État** : Base solide mais il manque la fonctionnalité principale
 
 ### Pages complétées
 1. **Sélection de profil** - Écran principal avec liste des profils
@@ -120,13 +120,19 @@ docs/
 Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
 Focus actuel : MVP/Version gratuite uniquement.
 
-### Prochaines étapes
-1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT (100% fonctionnel)
-2. ~~Créer la page "Transport & Déplacements"~~ ✅ FAIT (100% fonctionnel)
-3. Créer la page "Frais professionnels" 🎯 **PROCHAINE ÉTAPE**
-4. Créer la page "Paramètres fiscaux" (inclure le régime fiscal)
-5. Implémenter l'écran de calcul
-6. Ajouter la persistance des données (SQLite)
+### 🚨 CHANGEMENT DE STRATÉGIE (17/12/2024)
+Suite à une analyse complète du projet, la priorité a été réorganisée :
+- **PROBLÈME** : Nous développions des pages de saisie sans avoir l'écran de calcul
+- **SOLUTION** : Développer d'abord l'écran de calcul (fonctionnalité principale)
+- **NOUVELLE PRIORITÉ** : Écran de calcul → Paramètres fiscaux → Frais essentiels
+
+### Prochaines étapes (ordre révisé)
+1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT
+2. ~~Créer la page "Transport & Déplacements"~~ ✅ FAIT
+3. **🚨 Créer l'écran de calcul** 🎯 **PRIORITÉ ABSOLUE**
+4. Créer la page "Paramètres fiscaux" simplifiée
+5. Créer la page "Frais professionnels" (essentiels uniquement)
+6. Implémenter l'export des résultats
 
 ### Notes importantes
 - L'application est Android/iOS uniquement (pas de support desktop)

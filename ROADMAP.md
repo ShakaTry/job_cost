@@ -1,215 +1,151 @@
-# Job Cost - Roadmap des fonctionnalités
+# 🎯 Job Cost - Roadmap
 
-## 📱 Pages et sections à développer
+## 📱 Vue d'ensemble
+Application Flutter pour calculer le salaire réel net en déduisant tous les frais liés à un emploi.
 
-### ✅ Pages complétées
-- [x] Sélection de profil
-- [x] Création de profil (dialogue)
-- [x] Vue détaillée du profil
-- [x] Informations personnelles (complète)
-  - [x] Nom/Prénom avec validation
-  - [x] Adresse complète
-  - [x] Téléphone avec formatage automatique
-  - [x] Email avec validation
-  - [x] Date de naissance avec calcul d'âge
-  - [x] Nationalité (dropdown)
-  - [x] Situation familiale (état civil, enfants)
-  - [x] Navigation clavier entre champs
-  - [x] Sauvegarde automatique
-- [x] Situation professionnelle
-  - [x] Statut professionnel (dropdown)
-  - [x] Nom de l'entreprise
-  - [x] Poste/Fonction occupée
-  - [x] Temps de travail (curseur 10-100% + heures hebdomadaires)
-  - [x] Salaire brut mensuel / Taux horaire (calcul bidirectionnel)
-  - [x] Salaire annuel (affichage automatique)
-  - [x] Sauvegarde automatique avec pattern PopScope
-  - [x] Support des décimales pour les salaires (format 2 chiffres après virgule)
-  - [x] Calculs officiels selon durée légale 151,67h/mois
-  - [x] Heures supplémentaires (version MVP)
-    - [x] Saisie heures fixes par semaine (champ côte à côte avec heures hebdo)
-    - [x] Calcul automatique avec majoration légale (25%/50%)
-    - [x] Cadre récapitulatif unifié (salaire annuel + heures sup + total)
-    - [x] Profil démo avec 4h d'heures sup pour tests
-  - [x] Case à cocher "Salarié non cadre" (prise en compte dans les calculs)
-  - [x] Prime conventionnelle (slider 0-4 mois)
-    - [x] Slider intuitif pour sélection du nombre de mois
-    - [x] Calcul automatique et affichage dans le récapitulatif
-    - [x] Profil démo avec 13ème mois
-  - [x] Formatage automatique des champs heures (2 décimales)
+## 🚨 PRIORITÉ CRITIQUE : MVP Minimal Fonctionnel
 
-**Statuts professionnels futurs (Premium) :**
-- [ ] Salarié cadre (forfait jours, heures sup spécifiques)
-- [ ] Fonction publique (grilles indiciaires, primes)
-- [ ] Profession libérale (BNC, charges sociales)
-- [ ] Portage salarial (frais de gestion, TJM)
+### Phase 1 : Fonctionnalités Essentielles (2-3 semaines)
+**Sans ces fonctionnalités, l'application n'a AUCUNE valeur**
 
-**Améliorations futures (optionnel) :**
-- [ ] Upload photo de profil fonctionnel
-- [ ] Extraction automatique du département depuis le code postal
-- [ ] Intégration avec l'appareil photo pour la photo de profil
-- [ ] Numéro de sécurité sociale (optionnel pour calculs précis)
+#### 1. 🧮 Écran de calcul (PRIORITÉ ABSOLUE)
+- [ ] Interface de saisie d'offre d'emploi
+  - [ ] Salaire proposé (brut/net)
+  - [ ] Localisation du poste
+  - [ ] Avantages (tickets resto, mutuelle, etc.)
+- [ ] Moteur de calcul complet
+  - [ ] Calcul du net après charges sociales
+  - [ ] Déduction des frais de transport
+  - [ ] Déduction des frais professionnels
+  - [ ] Calcul du "vrai net" final
+- [ ] Affichage des résultats détaillés
+  - [ ] Décomposition ligne par ligne
+  - [ ] Comparaison avec situation actuelle
+  - [ ] Gain/perte mensuel et annuel
 
-### 📋 Pages à créer
-
-#### 1. 🚗 Transport & Déplacements
-**Champs à inclure :**
-- [ ] Permis de conduire (types détenus)
-- [ ] Mode de transport principal (voiture, transport en commun, vélo, marche) 
-- [ ] Distance domicile-travail (km)
-- [ ] Temps de trajet moyen (aller simple)
-- [ ] Si voiture :
-  - [ ] Type de véhicule
-  - [ ] Carburant (essence, diesel, électrique, hybride)
-  - [ ] Consommation moyenne
-  - [ ] Frais de stationnement
-- [ ] Si transport en commun :
-  - [ ] Type d'abonnement
-  - [ ] Coût mensuel
-  - [ ] Participation employeur
-
-#### 2. 💰 Frais professionnels
-**Champs à inclure :**
-- [ ] Repas :
-  - [ ] Cantine entreprise (oui/non, prix)
-  - [ ] Tickets restaurant (valeur, participation)
-  - [ ] Frais de repas moyens
-- [ ] Télétravail :
-  - [ ] Nombre de jours par semaine
-  - [ ] Indemnité télétravail
-  - [ ] Frais internet/électricité
-- [ ] Équipements :
-  - [ ] Téléphone professionnel
-  - [ ] Ordinateur
-  - [ ] Vêtements de travail obligatoires
-- [ ] Garde d'enfants :
-  - [ ] Mode de garde
-  - [ ] Coût mensuel
-  - [ ] Aides employeur
-- [ ] Formation :
-  - [ ] Formations suivies
-  - [ ] Coûts non pris en charge
-
-#### 3. 🏦 Paramètres fiscaux
-**Champs à inclure :**
-- [ ] Régime fiscal (Prélèvement à la source, Acomptes provisionnels, Non imposable)
-- [ ] Taux marginal d'imposition
+#### 2. 📊 Paramètres fiscaux simplifiés
+- [ ] Régime fiscal (prélèvement à la source)
+- [ ] Taux de prélèvement personnalisé
 - [ ] Nombre de parts fiscales
-- [ ] Régime (réel ou forfaitaire)
-- [ ] Statut handicap/RQTH (abattements)
-- [ ] Crédits et réductions d'impôt :
-  - [ ] Emploi à domicile
-  - [ ] Dons aux associations
-  - [ ] Frais de garde
-- [ ] Déductions :
-  - [ ] Intérêts prêt immobilier
-  - [ ] Pension alimentaire
-  - [ ] Épargne retraite
-- [ ] Numéro fiscal
-- [ ] Centre des impôts de rattachement
-- [ ] Revenus du conjoint (si déclaration commune)
-- [ ] Autres personnes à charge (parents, etc.)
+- [ ] Crédits d'impôt basiques
 
-### 🎯 Fonctionnalités principales
+#### 3. 🍽️ Frais professionnels essentiels
+- [ ] Repas (cantine d'entreprise vs tickets restaurant vs rien)
+- [ ] Garde d'enfants (si enfants à charge détectés)
+- [ ] Forfait télétravail de base
 
-#### Écran de calcul
-- [ ] Saisie d'une offre d'emploi
-- [ ] Calcul du salaire net après toutes charges
-- [ ] Comparaison avec situation actuelle
-- [ ] Export des résultats (basique)
+#### 4. 📤 Export basique
+- [ ] Export texte simple des calculs
+- [ ] Partage via apps natives (WhatsApp, email, etc.)
 
-#### Gestion des données
-- [ ] Sauvegarde locale (SQLite)
-- [ ] Export/Import de profil
-- [ ] Synchronisation cloud (version Premium)
+### Phase 2 : MVP Complet (1-2 semaines)
 
-## 🎯 État actuel du projet
-- ✅ Pages complétées : 6/10
-- ✅ Informations personnelles : 100% fonctionnel
-- ✅ Situation professionnelle : 100% fonctionnel avec toutes les features MVP
-- ✅ Transport & Déplacements : 100% fonctionnel avec barème kilométrique 2024
-- 🚧 Prochaine étape : Frais professionnels
-- 📱 Application testée et fonctionnelle sur mobile
+#### 5. 💼 Frais professionnels complets
+- [ ] Équipements professionnels
+- [ ] Formations obligatoires
+- [ ] Vêtements de travail
+- [ ] Frais de déménagement
 
-## 💎 Fonctionnalités Premium (Monétisation)
+#### 6. 💾 Persistance SQLite
+- [ ] Migration depuis SharedPreferences
+- [ ] Historique des calculs
+- [ ] Sauvegarde des offres comparées
+
+#### 7. 📈 Comparaison avancée
+- [ ] Comparaison simultanée de 3 offres
+- [ ] Graphiques de comparaison
+- [ ] Simulation sur 12 mois
+
+## 📊 État actuel du projet (Décembre 2024)
+
+### ✅ Complété (57.5%)
+1. **Pages terminées (5/8)**
+   - ✅ Sélection de profil
+   - ✅ Informations personnelles
+   - ✅ Situation professionnelle
+   - ✅ Transport & Déplacements
+   - ✅ Vue détail du profil
+
+2. **Fonctionnalités implémentées**
+   - ✅ Profil de démonstration "Sophie Martin"
+   - ✅ Sauvegarde automatique (pattern PopScope)
+   - ✅ Calculs salaire brut/horaire bidirectionnels
+   - ✅ Heures supplémentaires (25%/50%)
+   - ✅ Barème kilométrique 2024
+   - ✅ Validation et formatage des données
+
+### 🚧 En cours / À faire (42.5%)
+1. **Fonctionnalités critiques manquantes**
+   - ❌ Écran de calcul (BLOQUANT)
+   - ❌ Paramètres fiscaux
+   - ❌ Frais professionnels
+   - ❌ Export des résultats
+
+2. **Améliorations techniques**
+   - ❌ Persistance SQLite
+   - ❌ Tests unitaires
+   - ❌ State management avancé
+
+## 💎 Fonctionnalités Premium (Post-MVP)
 
 ### Version Gratuite
 - ✅ 3 profils maximum
 - ✅ Saisie manuelle des données
-- ✅ Calculs de base (distance approximative par code postal)
-- ✅ Export simple des résultats
+- ✅ Calculs de base
+- ✅ Export texte simple
 
 ### Version Premium (5€/mois ou 50€/an)
-- [ ] **Profils illimités**
-- [ ] **Heures supplémentaires avancées :**
-  - [ ] Gestion RTT / récupération
-  - [ ] Forfaits tout inclus (cadres)
-  - [ ] Heures variables par mois avec historique
-  - [ ] Accords d'entreprise personnalisés
-  - [ ] Calcul automatique des moyennes
-  - [ ] Distinction heures sup structurelles vs ponctuelles
-- [ ] **Automatisations intelligentes :**
-  - [ ] Autocomplétion d'adresses (Google Maps API)
-  - [ ] Calcul précis distance/temps avec trafic en temps réel
-  - [ ] Import automatique depuis :
-    - [ ] LinkedIn (profil professionnel)
-    - [ ] Pôle Emploi (historique)
-    - [ ] Fiches de paie PDF (OCR)
-  - [ ] Détection automatique convention collective
-- [ ] **Suggestions contextuelles :**
-  - [ ] Frais de repas moyens selon la zone
-  - [ ] Coût parking selon le quartier
-  - [ ] Mode de transport optimal
-  - [ ] Estimation frais de garde selon département
-- [ ] **Données actualisées :**
-  - [ ] Prix carburant en temps réel
-  - [ ] Tarifs transport en commun à jour
-  - [ ] Barèmes fiscaux actualisés
-- [ ] **Fonctionnalités avancées :**
-  - [ ] Comparaison multi-offres simultanée
-  - [ ] Simulation sur 5 ans
-  - [ ] Export PDF détaillé avec graphiques
-  - [ ] Historique des comparaisons
-  - [ ] Notifications de changements fiscaux
+- [ ] Profils illimités
+- [ ] Import automatique (LinkedIn, fiches de paie PDF)
+- [ ] API Google Maps pour distances précises
+- [ ] Prix carburant en temps réel
+- [ ] Détection convention collective
+- [ ] Export PDF professionnel
+- [ ] Simulations sur 5 ans
+- [ ] Notifications changements fiscaux
 
-### Intégrations API Premium
-- [ ] Google Maps (Places, Distance Matrix)
-- [ ] INSEE (données statistiques)
-- [ ] API prix carburant gouvernementale
-- [ ] Services de transport locaux
-- [ ] OCR pour lecture documents
+## 🔧 Recommandations techniques urgentes
 
-## 📊 Priorités de développement
+### Court terme (pour le MVP)
+1. **Créer le moteur de calcul**
+   ```dart
+   class SalaryCalculator {
+     static CalculationResult calculate(UserProfile profile, JobOffer offer)
+   }
+   ```
 
-### Phase 1 - MVP (Version gratuite)
-1. **Haute priorité** : Pages essentielles
-   - ✅ Situation professionnelle (TERMINÉ - 100% fonctionnel)
-   - Transport & Déplacements (PROCHAINE ÉTAPE)
-   - Écran de calcul basique
-   
-2. **Priorité moyenne** : Précision
-   - Frais professionnels
-   - Paramètres fiscaux
-   - Sauvegarde locale (SQLite)
+2. **Refactorer le modèle transport**
+   ```dart
+   // Remplacer Map<String, dynamic>? par
+   TransportData? transport;
+   ```
 
-### Phase 2 - Monétisation
-1. **Système de paiement**
-   - Intégration Stripe/PayPal
-   - Gestion des abonnements
-   - Écran de souscription
+3. **Ajouter des tests critiques**
+   - Tests des calculs de salaire
+   - Tests des majorations heures sup
+   - Tests du barème kilométrique
 
-2. **Fonctionnalités Premium**
-   - APIs externes
-   - Automatisations
-   - Export avancé
+## ⏱️ Timeline réaliste
 
-### Phase 3 - Croissance
-1. **Marketing**
-   - Page de présentation des features Premium
-   - Période d'essai gratuite
-   - Programme de parrainage
+### MVP Minimal (3 semaines)
+- **Semaine 1** : Écran de calcul + moteur
+- **Semaine 2** : Paramètres fiscaux + frais essentiels  
+- **Semaine 3** : Export + tests + finalisation
 
-2. **Améliorations UX**
-   - Mode sombre
-   - Tutoriel interactif
-   - Support multi-langues
+### MVP Complet (+2 semaines)
+- **Semaine 4** : Frais pro complets + SQLite
+- **Semaine 5** : Comparaison + polish final
+
+**Total : 5 semaines pour un MVP commercialisable**
+
+## 🎯 Prochaines étapes immédiates
+
+1. **ARRÊTER** le développement de nouvelles pages de saisie
+2. **COMMENCER** l'écran de calcul immédiatement
+3. **TESTER** avec des cas réels (Sophie Martin)
+4. **VALIDER** les calculs avec des fiches de paie réelles
+
+---
+
+*Dernière mise à jour : 17 décembre 2024*
+*Progression réelle : 57.5% (11.5/20 fonctionnalités MVP)*
