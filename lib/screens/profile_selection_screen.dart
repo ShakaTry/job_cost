@@ -366,7 +366,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       mealTicketValue: 9.50, // Valeur titre-restaurant (classique)
       mealTicketsPerMonth: 19, // 19 jours travaillés au bureau
       mealExpenses: 120.0, // Frais de repas hors titres (6€/jour * 20 jours)
-      mealAllowance: 0.0, // Pas d'indemnité repas supplémentaire
+      mealAllowance: 80.0, // Indemnité repas employeur (4€/jour * 20 jours)
       childcareType: 'Assistant(e) maternel(le)',
       childcareCost: 850.0, // Coût mensuel garde (2 enfants)
       childcareAids: 294.0, // Aides CAF pour 2 enfants
