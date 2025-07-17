@@ -12,6 +12,12 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 
 ## État actuel du projet
 
+### Résumé de progression
+- **Pages complétées** : 5 sur ~10 pages prévues
+- **Fonctionnalités MVP** : ~50% complétées
+- **Prochaine étape** : Page Transport & Déplacements
+- **État** : Application fonctionnelle et testée sur mobile Android
+
 ### Pages complétées
 1. **Sélection de profil** - Écran principal avec liste des profils
    - Bouton création de profil de démonstration
@@ -100,8 +106,8 @@ Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
 Focus actuel : MVP/Version gratuite uniquement.
 
 ### Prochaines étapes
-1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT
-2. Créer la page "Transport & Déplacements"
+1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT (100% fonctionnel)
+2. Créer la page "Transport & Déplacements" 🎯 **PROCHAINE ÉTAPE**
 3. Créer la page "Frais professionnels"
 4. Créer la page "Paramètres fiscaux" (inclure le régime fiscal)
 5. Implémenter l'écran de calcul
@@ -118,6 +124,7 @@ Focus actuel : MVP/Version gratuite uniquement.
 - Précision maximale en interne, arrondi seulement pour l'affichage
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
 - Pattern de sauvegarde automatique avec PopScope obligatoire pour toutes les pages de formulaire
+- Bug d'overflow sur mobile corrigé avec widgets Flexible dans les récapitulatifs
 
 ### Commandes utiles
 ```bash

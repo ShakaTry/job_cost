@@ -123,6 +123,13 @@
 - [ ] Export/Import de profil
 - [ ] Synchronisation cloud (version Premium)
 
+## 🎯 État actuel du projet
+- ✅ Pages complétées : 5/10
+- ✅ Informations personnelles : 100% fonctionnel
+- ✅ Situation professionnelle : 100% fonctionnel avec toutes les features MVP
+- 🚧 Prochaine étape : Transport & Déplacements
+- 📱 Application testée et fonctionnelle sur mobile
+
 ## 💎 Fonctionnalités Premium (Monétisation)
 
 ### Version Gratuite
@@ -175,14 +182,14 @@
 
 ### Phase 1 - MVP (Version gratuite)
 1. **Haute priorité** : Pages essentielles
-   - ✅ Situation professionnelle (TERMINÉ)
-   - Transport & Déplacements (EN COURS)
+   - ✅ Situation professionnelle (TERMINÉ - 100% fonctionnel)
+   - Transport & Déplacements (PROCHAINE ÉTAPE)
    - Écran de calcul basique
    
 2. **Priorité moyenne** : Précision
    - Frais professionnels
    - Paramètres fiscaux
-   - Sauvegarde locale
+   - Sauvegarde locale (SQLite)
 
 ### Phase 2 - Monétisation
 1. **Système de paiement**
