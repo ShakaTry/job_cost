@@ -147,7 +147,7 @@ class ProfileService {
       createdAt: json['createdAt'] != null 
           ? DateTime.parse(json['createdAt'] as String)
           : DateTime.now(),
-      employmentStatus: json['employmentStatus'] as String? ?? 'Sans emploi',
+      employmentStatus: json['employmentStatus'] as String? ?? 'Salarié(e) CDI',
       companyName: json['companyName'] as String?,
       jobTitle: json['jobTitle'] as String?,
       workTimePercentage: workTimePercentage,

@@ -366,9 +366,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
 
 
   bool _hasEmployment() {
-    return _employmentStatus != 'Sans emploi' && 
-           _employmentStatus != 'Étudiant(e)' && 
-           _employmentStatus != 'Retraité(e)';
+    // Tous les statuts disponibles dans le MVP correspondent à des emplois
+    return true;
   }
 
   void _updateProfile() {

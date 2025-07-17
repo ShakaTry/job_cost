@@ -71,13 +71,6 @@ class AppConstants {
   // Professional situation
   static const List<String> employmentStatusOptions = [
     'Salarié(e) CDI',
-    'Salarié(e) CDD',
-    'Intérimaire',
-    'Auto-entrepreneur',
-    'Indépendant',
-    'Sans emploi',
-    'Étudiant(e)',
-    'Retraité(e)',
   ];
 
   static const List<String> workTimeOptions = [
@@ -100,7 +93,7 @@ class AppConstants {
   ];
 
   // Default professional values
-  static const String defaultEmploymentStatus = 'Sans emploi';
+  static const String defaultEmploymentStatus = 'Salarié(e) CDI';
   static const double defaultWorkTimePercentage = 100.0; // 100% temps plein
   static const double defaultWeeklyHours = 35.0; // 35h par semaine
   static const String defaultTaxSystem = 'Prélèvement à la source';

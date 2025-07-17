@@ -132,16 +132,22 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 ### Version Gratuite
 - ✅ 3 profils maximum
 - ✅ Saisie manuelle
-- ✅ Calculs complets
+- ✅ Calculs complets pour CDI uniquement
 - ✅ Export texte
 
 ### Version Premium (5€/mois)
 - Profils illimités
+- **Statuts professionnels avancés** :
+  - Salarié(e) CDD (prime précarité 10%)
+  - Intérimaire (IFM + ICCP)
+  - Auto-entrepreneur (cotisations spécifiques)
+  - Indépendant/Freelance
 - Import automatique (LinkedIn, PDF)
 - API distances précises
 - Prix carburant temps réel
 - Export PDF professionnel
 - Simulations 5 ans
+- Comparaison multi-statuts
 
 ## 🎯 Prochaines étapes immédiates (approche itérative)
 

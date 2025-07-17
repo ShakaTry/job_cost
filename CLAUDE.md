@@ -13,10 +13,10 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 ## État actuel du projet
 
 ### Résumé de progression
-- **Pages complétées** : 5 sur 8 pages prévues
-- **Fonctionnalités MVP** : 57.5% complétées (11.5/20 fonctionnalités)
-- **Prochaine étape** : 🚨 ÉCRAN DE CALCUL (priorité absolue)
-- **État** : Base solide mais il manque la fonctionnalité principale
+- **Pages complétées** : 6 sur 8 pages prévues
+- **Fonctionnalités MVP** : 60% complétées (12/20 fonctionnalités)
+- **Prochaine étape** : Paramètres fiscaux
+- **État** : Base solide, focus sur CDI uniquement pour le MVP
 
 ### Pages complétées
 1. **Sélection de profil** - Écran principal avec liste des profils
@@ -31,8 +31,8 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - Validation des formulaires
    - Sauvegarde automatique avec pattern PopScope
    - Navigation clavier optimisée
-5. **Situation professionnelle** - Formulaire complet avec :
-   - Statut d'emploi (dropdown)
+5. **Situation professionnelle** - Formulaire simplifié pour CDI uniquement :
+   - Statut d'emploi (CDI seulement dans MVP)
    - Entreprise et poste
    - Case à cocher "Salarié non cadre" (pour calculs futurs)
    - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles côte à côte avec heures sup)
@@ -128,21 +128,25 @@ Approche de développement adoptée :
 - **Principe** : À chaque nouvelle page, on adapte et corrige l'existant
 
 ### Prochaines étapes (ordre précis)
-1. **Réviser "Situation professionnelle"** 🎯 **PROCHAINE ÉTAPE**
-   - Améliorer/corriger selon les besoins identifiés
-2. **Finaliser "Transport & Déplacements"**
-   - Corriger et optimiser
-3. **Créer "Paramètres fiscaux"**
+1. **Créer "Paramètres fiscaux"** 🎯 **PROCHAINE ÉTAPE**
+   - Régime fiscal, taux de prélèvement, parts fiscales
    - Puis réviser toutes les pages existantes
-4. **Créer "Frais professionnels"**
+2. **Créer "Frais professionnels"**
+   - Repas, garde d'enfants, télétravail, équipements
    - Puis nouvelle révision globale
-5. **Créer l'écran de calcul**
-   - Avec toutes les données disponibles
-6. **Tests finaux et export**
+3. **Créer l'écran de calcul**
+   - Interface de saisie d'offre d'emploi
+   - Moteur de calcul complet
+   - Affichage des résultats
+4. **Export et partage**
+   - Export texte simple
+   - Sauvegarde des calculs
+5. **Tests finaux et polish**
 
 ### Notes importantes
 - L'application est Android/iOS uniquement (pas de support desktop)
-- Focus sur les candidats/employés uniquement
+- Focus sur les salariés CDI uniquement pour le MVP
+- CDD, Intérim et autres statuts réservés à la version Premium
 - Développement itératif : réviser l'existant à chaque ajout
 - Les 3 profils d'exemple sont temporaires pour le développement
 - Toujours exécuter `flutter analyze` avant de commit/push
