@@ -74,6 +74,8 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   firstName: profile.firstName,
                   radius: 50,
                   fontSize: 36,
+                  showEditButton: true,
+                  onEditPressed: _pickImage,
                 ),
               ),
               const SizedBox(height: 16),
@@ -233,6 +235,26 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
         ),
       ),
       ),
+    );
+  }
+  
+  void _pickImage() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(AppStrings.profilePhotoTitle),
+          content: const Text(AppStrings.profilePhotoInfo),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(AppStrings.ok),
+            ),
+          ],
+        );
+      },
     );
   }
   
