@@ -3,14 +3,6 @@ Il # Job Cost - Documentation Claude
 ## Projet
 Application Android/iOS développée avec Flutter pour estimer le salaire réel net en déduisant tous les frais annexes pour un emploi ou recherche d'emploi.
 
-## Gestion Git
-- Claude gère entièrement Git pour ce projet
-- Stratégie Git Flow : main, develop, feature/*, bugfix/*, hotfix/*
-- Commits réguliers avec messages descriptifs
-- URL du repo : https://github.com/ShakaTry/job_cost.git
-- Branche actuelle : feature/fiscal-and-expenses-pages
-- **WORKFLOW GIT** : Voir `docs/development/git_workflow.md` (OBLIGATOIRE)
-- **DÉCLENCHEURS** : mot "git", commande "/git", ou après modifications importantes
 
 ## État actuel du projet
 
@@ -126,7 +118,6 @@ docs/
 └── development/
     ├── auto_save_pattern.md       # Pattern de sauvegarde automatique
     ├── plan_optimisation_pages.md # Plan d'optimisation des pages (analyse multi-agents)
-    └── git_workflow.md            # Workflow Git obligatoire (NOUVEAU)
 ```
 
 ### Conventions de code
@@ -188,7 +179,7 @@ Approche de développement adoptée :
 - CDD, Intérim et autres statuts réservés à la version Premium
 - Développement itératif : réviser l'existant à chaque ajout
 - Les 3 profils d'exemple sont temporaires pour le développement
-- Toujours exécuter `flutter analyze` avant de commit/push
+- Toujours exécuter `flutter analyze` avant les modifications
 - Profil de démonstration "Sophie Martin" créé avec données complètes :
   - 4h d'heures sup, statut non cadre, prime 13ème mois
   - Adresse entreprise : 50 avenue des Champs-Élysées, 75008 Paris
@@ -231,30 +222,3 @@ flutter clean && flutter pub get
 - L'utilisateur lancera l'application lui-même et donnera son feedback
 - Se contenter de vérifier le code avec `flutter analyze`
 
-## Gestion Git (rappel du workflow)
-
-### Branches principales
-- **`main`** : Branche de production (protégée)
-- **`develop`** : Branche de développement principal
-
-### Workflow type
-1. Créer une feature branch depuis develop
-2. Développer et tester
-3. Commits réguliers avec messages descriptifs
-4. Push vers GitHub
-5. Créer une Pull Request vers develop
-6. Merge après review
-
-### Format des commits
-```
-type: Description courte
-
-- Détail 1
-- Détail 2
-
-🤖 Generated with [Claude Code](https://claude.ai/code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-Types : feat, fix, docs, style, refactor, test, chore
