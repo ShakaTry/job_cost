@@ -13,10 +13,11 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 ## État actuel du projet
 
 ### Résumé de progression
-- **Pages complétées** : 7 sur 8 pages prévues (87.5%)
+- **Pages complétées** : 7 pages principales fonctionnelles (87.5%)
 - **Fonctionnalités MVP** : 75% complétées (15/20 fonctionnalités)
-- **Prochaine étape** : Paramètres fiscaux (dernière page de collecte de données)
-- **État** : Toutes les pages de saisie transformées en ExpansionTile, interface cohérente
+- **Prochaine étape** : Optimisation des pages existantes avant phase de calcul
+- **État** : Analyse multi-agents terminée, plan d'optimisation créé
+- **Phase actuelle** : Optimisation UX/Performance des formulaires
 
 ### Pages complétées
 1. **Sélection de profil** - Écran principal avec liste des profils
@@ -121,7 +122,8 @@ docs/
 │   ├── salary_calculations.md     # Documentation officielle des calculs de salaire
 │   └── overtime_calculations.md   # Documentation des calculs d'heures supplémentaires
 └── development/
-    └── auto_save_pattern.md       # Pattern de sauvegarde automatique
+    ├── auto_save_pattern.md       # Pattern de sauvegarde automatique
+    └── plan_optimisation_pages.md # Plan d'optimisation des pages (analyse multi-agents)
 ```
 
 ### Conventions de code
@@ -160,12 +162,16 @@ Approche de développement adoptée :
 - **Améliorer** continuellement la cohérence
 - **Principe** : À chaque nouvelle page, on adapte et corrige l'existant
 
-### Prochaines étapes (ordre précis)
-1. **Créer "Paramètres fiscaux"** 🎯 **PROCHAINE ÉTAPE - DERNIÈRE PAGE DE COLLECTE**
-   - Régime fiscal, taux de prélèvement, parts fiscales, barème kilométrique
-   - Transformer en ExpansionTile comme les autres pages
-   - Mettre à jour le profil de démonstration Sophie Martin
-2. **Créer l'écran de calcul** 🎯 **PHASE MAJEURE**
+### 🎯 PHASE ACTUELLE : OPTIMISATION DES PAGES (Décembre 2024)
+
+**Plan d'optimisation créé** : `docs/development/plan_optimisation_pages.md`
+
+**Prochaines étapes (ordre précis)** :
+1. **Optimiser les pages existantes** 🎯 **ÉTAPE ACTUELLE** (3-4 jours)
+   - Phase 1 : Validation visible + Correction calculs asymétriques
+   - Phase 2 : Pattern PopScope uniforme + Navigation optimisée
+   - Problèmes identifiés par analyse multi-agents résolus
+2. **Créer l'écran de calcul** 🎯 **PHASE MAJEURE SUIVANTE**
    - Interface de saisie d'offre d'emploi
    - Moteur de calcul complet utilisant toutes les données collectées
    - Affichage des résultats avec comparaison
@@ -202,6 +208,8 @@ Approche de développement adoptée :
 - UX mobile : double-clic sur les champs de date pour saisie manuelle
 - Future option globale pour activer/désactiver tous les InfoContainers prévue
 - **IMPORTANT** : Interface cohérente maintenue sur toutes les pages de formulaire
+- **ANALYSE COMPLÉTÉE** : Analyse multi-agents des 5 pages terminée (Décembre 2024)
+- **PLAN CRÉÉ** : Plan d'optimisation priorisé disponible dans `docs/development/plan_optimisation_pages.md`
 
 ### Commandes utiles
 ```bash
