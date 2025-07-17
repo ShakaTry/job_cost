@@ -348,6 +348,95 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
 
 
 
+  void _showManualDateInput() {
+    final TextEditingController dateController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Saisir la date d\'entrée'),
+          content: TextFormField(
+            controller: dateController,
+            decoration: const InputDecoration(
+              labelText: 'Date d\'entrée',
+              hintText: 'jj/mm/aaaa',
+              border: OutlineInputBorder(),
+              helperText: 'Format : 17/07/2020',
+            ),
+            keyboardType: TextInputType.datetime,
+            autofocus: true,
+            onChanged: (value) {
+              // Formater automatiquement avec des slashes
+              String formatted = value.replaceAll(RegExp(r'[^0-9]'), '');
+              if (formatted.length > 2) {
+                formatted = '${formatted.substring(0, 2)}/${formatted.substring(2)}';
+              }
+              if (formatted.length > 5) {
+                formatted = '${formatted.substring(0, 5)}/${formatted.substring(5)}';
+              }
+              if (formatted.length > 10) {
+                formatted = formatted.substring(0, 10);
+              }
+              
+              if (formatted != value) {
+                dateController.value = TextEditingValue(
+                  text: formatted,
+                  selection: TextSelection.collapsed(offset: formatted.length),
+                );
+              }
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final dateText = dateController.text;
+                if (dateText.length == 10) {
+                  try {
+                    final parts = dateText.split('/');
+                    final day = int.parse(parts[0]);
+                    final month = int.parse(parts[1]);
+                    final year = int.parse(parts[2]);
+                    
+                    final date = DateTime(year, month, day);
+                    
+                    // Vérifier que la date est valide et dans la plage autorisée
+                    if (date.isAfter(DateTime(1989)) && date.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+                      setState(() {
+                        _companyEntryDate = date;
+                      });
+                      _updateProfile();
+                      Navigator.of(context).pop();
+                    } else {
+                      // Afficher erreur de plage
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Date invalide : doit être entre 1990 et aujourd\'hui')),
+                      );
+                    }
+                  } catch (e) {
+                    // Afficher erreur de format
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Format invalide : utilisez jj/mm/aaaa')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Date incomplète : utilisez le format jj/mm/aaaa')),
+                  );
+                }
+              },
+              child: const Text('Valider'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -678,32 +767,39 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     const SizedBox(height: AppConstants.defaultPadding),
                     
                     // Date d'entrée dans l'entreprise
-                    TextFormField(
-                      readOnly: true,
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: _companyEntryDate ?? DateTime.now(),
-                          firstDate: DateTime(1990),
-                          lastDate: DateTime.now(),
-                        );
-                        if (picked != null) {
-                          setState(() {
-                            _companyEntryDate = picked;
-                          });
-                          _updateProfile();
-                        }
+                    GestureDetector(
+                      onDoubleTap: () {
+                        // Activer la saisie manuelle sur double-tap
+                        _showManualDateInput();
                       },
-                      decoration: const InputDecoration(
-                        labelText: 'Date d\'entrée dans l\'entreprise',
-                        hintText: 'Sélectionner une date',
-                        border: OutlineInputBorder(),
-                        suffixIcon: Icon(Icons.calendar_today),
-                      ),
-                      controller: TextEditingController(
-                        text: _companyEntryDate != null
-                            ? '${_companyEntryDate!.day.toString().padLeft(2, '0')}/${_companyEntryDate!.month.toString().padLeft(2, '0')}/${_companyEntryDate!.year}'
-                            : '',
+                      child: TextFormField(
+                        readOnly: true,
+                        onTap: () async {
+                          final picked = await showDatePicker(
+                            context: context,
+                            initialDate: _companyEntryDate ?? DateTime.now(),
+                            firstDate: DateTime(1990),
+                            lastDate: DateTime.now(),
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              _companyEntryDate = picked;
+                            });
+                            _updateProfile();
+                          }
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Date d\'entrée dans l\'entreprise',
+                          hintText: 'Appuyez ou double-cliquez pour saisir',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.calendar_today),
+                          helperText: 'Double-clic pour saisie manuelle',
+                        ),
+                        controller: TextEditingController(
+                          text: _companyEntryDate != null
+                              ? '${_companyEntryDate!.day.toString().padLeft(2, '0')}/${_companyEntryDate!.month.toString().padLeft(2, '0')}/${_companyEntryDate!.year}'
+                              : '',
+                        ),
                       ),
                     ),
                     
