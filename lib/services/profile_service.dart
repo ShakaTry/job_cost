@@ -74,6 +74,7 @@ class ProfileService {
       'taxSystem': profile.taxSystem,
       'isNonCadre': profile.isNonCadre,
       'conventionalBonusMonths': profile.conventionalBonusMonths,
+      'transport': profile.transport,
     };
   }
   
@@ -156,6 +157,7 @@ class ProfileService {
       taxSystem: json['taxSystem'] as String? ?? 'Prélèvement à la source',
       isNonCadre: json['isNonCadre'] as bool?,
       conventionalBonusMonths: (json['conventionalBonusMonths'] as num?)?.toDouble() ?? 0.0,
+      transport: json['transport'] as Map<String, dynamic>?,
     );
   }
 }

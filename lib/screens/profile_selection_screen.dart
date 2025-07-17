@@ -348,6 +348,16 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       taxSystem: 'Prélèvement à la source',
       isNonCadre: true,
       conventionalBonusMonths: 1.0,
+      transport: {
+        'mode': 'Voiture personnelle',
+        'vehicleType': 'Voiture',
+        'fiscalPower': 5,
+        'dailyDistance': 25.0,
+        'workDaysPerWeek': 5,
+        'publicTransportCost': null,
+        'parkingCost': 120.0,
+        'tollsCost': 0.0,
+      },
     );
 
     setState(() {
