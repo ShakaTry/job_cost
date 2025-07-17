@@ -468,6 +468,24 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
               
               const SizedBox(height: AppConstants.defaultPadding),
               
+              // Case à cocher salarié non cadre
+              CheckboxListTile(
+                value: _modifiedProfile.isNonCadre ?? false,
+                onChanged: (value) {
+                  setState(() {
+                    _modifiedProfile = _modifiedProfile.copyWith(
+                      isNonCadre: value,
+                    );
+                  });
+                  _updateProfile();
+                },
+                title: const Text('Salarié non cadre'),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+              ),
+              
+              const SizedBox(height: AppConstants.defaultPadding),
+              
               // Curseur de pourcentage de temps de travail
               Text(
                 'Temps de travail: ${_workTimePercentage.round()}%',

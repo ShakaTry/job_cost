@@ -31,6 +31,13 @@
     - [x] Calcul automatique avec majoration légale (25%/50%)
     - [x] Cadre récapitulatif unifié (salaire annuel + heures sup + total)
     - [x] Profil démo avec 4h d'heures sup pour tests
+  - [x] Case à cocher "Salarié non cadre" (prise en compte dans les calculs)
+
+**Statuts professionnels futurs (Premium) :**
+- [ ] Salarié cadre (forfait jours, heures sup spécifiques)
+- [ ] Fonction publique (grilles indiciaires, primes)
+- [ ] Profession libérale (BNC, charges sociales)
+- [ ] Portage salarial (frais de gestion, TJM)
 
 **Améliorations futures (optionnel) :**
 - [ ] Upload photo de profil fonctionnel

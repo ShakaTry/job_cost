@@ -23,6 +23,7 @@ class UserProfile {
   final double overtimeHours; // Heures supplémentaires par semaine
   final double grossMonthlySalary;
   final String taxSystem;
+  final bool? isNonCadre; // Statut salarié non cadre
 
   UserProfile({
     required this.id,
@@ -45,6 +46,7 @@ class UserProfile {
     required this.overtimeHours,
     required this.grossMonthlySalary,
     required this.taxSystem,
+    this.isNonCadre,
   });
 
   String get fullName => '$firstName $lastName';
@@ -68,6 +70,7 @@ class UserProfile {
     double? overtimeHours,
     double? grossMonthlySalary,
     String? taxSystem,
+    bool? isNonCadre,
   }) {
     return UserProfile(
       id: id,
@@ -90,6 +93,7 @@ class UserProfile {
       overtimeHours: overtimeHours ?? this.overtimeHours,
       grossMonthlySalary: grossMonthlySalary ?? this.grossMonthlySalary,
       taxSystem: taxSystem ?? this.taxSystem,
+      isNonCadre: isNonCadre ?? this.isNonCadre,
     );
   }
 
@@ -112,6 +116,7 @@ class UserProfile {
     double? overtimeHours,
     double? grossMonthlySalary,
     String? taxSystem,
+    bool? isNonCadre,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -134,6 +139,7 @@ class UserProfile {
       overtimeHours: overtimeHours ?? 0.0,
       grossMonthlySalary: grossMonthlySalary ?? AppConstants.defaultGrossSalary,
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
+      isNonCadre: isNonCadre ?? false,
     );
   }
 }
