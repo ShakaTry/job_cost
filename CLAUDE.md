@@ -9,6 +9,8 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 - Commits réguliers avec messages descriptifs
 - URL du repo : https://github.com/ShakaTry/job_cost.git
 - Branche actuelle : feature/fiscal-and-expenses-pages
+- **WORKFLOW GIT** : Voir `docs/development/git_workflow.md` (OBLIGATOIRE)
+- **DÉCLENCHEURS** : mot "git", commande "/git", ou après modifications importantes
 
 ## État actuel du projet
 
@@ -123,7 +125,8 @@ docs/
 │   └── overtime_calculations.md   # Documentation des calculs d'heures supplémentaires
 └── development/
     ├── auto_save_pattern.md       # Pattern de sauvegarde automatique
-    └── plan_optimisation_pages.md # Plan d'optimisation des pages (analyse multi-agents)
+    ├── plan_optimisation_pages.md # Plan d'optimisation des pages (analyse multi-agents)
+    └── git_workflow.md            # Workflow Git obligatoire (NOUVEAU)
 ```
 
 ### Conventions de code
