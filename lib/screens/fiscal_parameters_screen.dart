@@ -54,8 +54,25 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
     _withholdingRateController.text = _profile.withholdingRate?.toStringAsFixed(2) ?? '';
     _fiscalPartsController.text = _profile.fiscalParts?.toStringAsFixed(1) ?? '';
 
-    // Barème kilométrique
-    _mileageScaleCategory = _profile.mileageScaleCategory;
+    // Barème kilométrique - déduction automatique depuis la puissance fiscale du véhicule
+    if (_profile.mileageScaleCategory != null) {
+      _mileageScaleCategory = _profile.mileageScaleCategory;
+    } else {
+      // Déduire depuis la puissance fiscale si elle existe
+      final transport = _profile.transport;
+      if (transport != null && transport['fiscalPower'] != null) {
+        final fiscalPower = transport['fiscalPower'] as int;
+        if (fiscalPower <= 4) {
+          _mileageScaleCategory = '3-4 CV';
+        } else if (fiscalPower == 5) {
+          _mileageScaleCategory = '5 CV';
+        } else if (fiscalPower == 6) {
+          _mileageScaleCategory = '6 CV';
+        } else {
+          _mileageScaleCategory = '7 CV et plus';
+        }
+      }
+    }
     _deductibleCSGController.text = _profile.deductibleCSG?.toStringAsFixed(2) ?? '';
 
     // Autres déductions
@@ -284,7 +301,7 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
-                                    'Le barème kilométrique sera utilisé pour calculer vos frais réels de transport',
+                                    'La catégorie est automatiquement déduite de la puissance fiscale de votre véhicule. Le barème sera utilisé pour calculer vos frais réels de transport.',
                                     style: TextStyle(
                                       color: Colors.blue[700],
                                       fontSize: 14,
