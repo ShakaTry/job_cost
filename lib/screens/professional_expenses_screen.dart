@@ -4,6 +4,7 @@ import '../models/user_profile.dart';
 import '../services/profile_service.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
+import '../widgets/profile_avatar.dart';
 
 class ProfessionalExpensesScreen extends StatefulWidget {
   final UserProfile profile;
@@ -165,8 +166,37 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text(AppStrings.professionalExpensesTitle),
-          centerTitle: true,
+          title: Row(
+            children: [
+              ProfileAvatar(
+                firstName: _profile.firstName,
+                radius: AppConstants.smallAvatarRadius,
+                fontSize: AppConstants.smallAvatarFontSize,
+              ),
+              const SizedBox(width: AppConstants.defaultPadding),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _profile.fullName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      AppStrings.professionalExpensesTitle,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
