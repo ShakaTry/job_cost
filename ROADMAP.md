@@ -22,38 +22,46 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 
 ### ✅ Pages complétées
 1. **Informations personnelles** ✅
+   - 3 sections ExpansionTile : Identité, Coordonnées, Situation familiale
    - Situation familiale (pour calcul impôts)
    - Localisation (pour frais transport)
+   - Interface cohérente et épurée
    
 2. **Situation professionnelle** ✅
+   - 3 sections ExpansionTile : Emploi actuel, Temps de travail et rémunération, Avantages sociaux
    - Salaire actuel (pour comparaison)
    - Adresse de l'entreprise
    - Heures supplémentaires
    - Prime conventionnelle
-   - Avantages sociaux (ancienneté, mutuelle, titres-restaurant)
+   - Avantages sociaux (ancienneté, mutuelle)
    - UX optimisée mobile (saisie de date manuelle)
    
 3. **Transport & Déplacements** ✅
+   - 3 sections ExpansionTile : Véhicule, Trajet, Frais additionnels
    - Véhicule personnel uniquement (MVP)
    - Type de véhicule et carburant
    - Distance et frais (parking, péages)
-   - Jours de télétravail par semaine
    - Remboursement transport employeur
+
+4. **Frais professionnels** ✅
+   - 4 sections ExpansionTile : Frais de repas, Garde d'enfants, Télétravail, Équipements
+   - Titres-restaurant (déplacé depuis Situation professionnelle)
+   - Frais de repas et indemnités employeur
+   - Garde d'enfants (coût, aides, type)
+   - Télétravail (jours, forfait, frais réels, équipement)
+   - Vêtements, matériel, formation, cotisations syndicales
+   - 17 nouveaux champs dans le modèle de données
 
 ### 🚧 Pages à compléter
 
-#### 1. Paramètres fiscaux (PRIORITÉ 1)
+#### 1. Paramètres fiscaux (PRIORITÉ 1 - DERNIÈRE PAGE DE COLLECTE)
+- [ ] ExpansionTile cohérent avec les autres pages
 - [ ] Régime fiscal (prélèvement à la source)
 - [ ] Taux de prélèvement personnalisé
 - [ ] Nombre de parts fiscales
 - [ ] Crédits et réductions d'impôt basiques
 - [ ] Barème kilométrique (déplacé depuis Transport)
-
-#### 2. Frais professionnels essentiels (PRIORITÉ 2)
-- [ ] Repas (cantine, tickets restaurant, panier)
-- [ ] Garde d'enfants (assistant maternel, crèche)
-- [ ] Télétravail (forfait)
-- [ ] Équipements obligatoires
+- [ ] Mise à jour profil démonstration Sophie Martin
 
 ## 📊 Phase 2 : Moteur de calcul et interface (1-2 semaines)
 
@@ -91,51 +99,56 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 
 ## 📊 État actuel du projet (Décembre 2024)
 
-### Progression : 62.5% (12.5/20 fonctionnalités MVP)
+### Progression : 87.5% pages collecte - 80% fonctionnalités MVP
 
 | Catégorie | Complété | Total | % |
 |-----------|----------|-------|---|
-| Pages données | 3 | 5 | 60% |
+| Pages données | 4 | 5 | 80% |
 | Écran calcul | 0 | 1 | 0% |
-| Fonctionnalités | 9.5 | 14 | 68% |
+| Fonctionnalités | 16 | 20 | 80% |
 
 ### ✅ Fonctionnalités implémentées
-- Profil de démonstration "Sophie Martin"
-- Sauvegarde automatique (pattern PopScope)
-- Calculs salaire brut/horaire bidirectionnels
-- Heures supplémentaires (25%/50%)
-- Validation et formatage des données
-- Navigation entre pages
-- Avantages sociaux (ancienneté, mutuelle, titres-restaurant)
-- UX mobile optimisée (saisie de date manuelle)
-- Organisation visuelle avec Cards
-- Adresse entreprise dans situation professionnelle
-- Jours de télétravail et remboursement transport
+- **Interface utilisateur :**
+  - ExpansionTile sur toutes les pages de formulaire (sections collapsibles)
+  - Interface cohérente et épurée (lignes de séparation supprimées)
+  - Sauvegarde automatique (pattern PopScope)
+  - UX mobile optimisée (saisie de date manuelle)
+  - Navigation clavier entre champs
+- **Gestion des données :**
+  - Profil de démonstration "Sophie Martin" complet (toutes les pages)
+  - 17 nouveaux champs pour frais professionnels
+  - Validation et formatage des données
+  - Calculs salaire brut/horaire bidirectionnels
+  - Heures supplémentaires (25%/50%)
+- **Fonctionnalités métier :**
+  - Informations personnelles complètes
+  - Situation professionnelle (CDI uniquement)
+  - Transport véhicule personnel
+  - Frais professionnels complets (repas, garde enfants, télétravail, équipements)
 
 ### 🚧 Fonctionnalités manquantes critiques
-- Paramètres fiscaux (BLOQUANT pour calculs)
-- Frais professionnels essentiels
-- Écran de calcul
-- Export des résultats
+- **Paramètres fiscaux** (BLOQUANT pour calculs) - dernière page de collecte
+- **Écran de calcul complet** avec moteur utilisant toutes les données
+- **Export des résultats** en format texte
 
 ## ⏱️ Timeline actualisée
 
-### Semaine 1-2 : Finaliser les données
-- **2-3 jours** : Page Paramètres fiscaux
-- **2-3 jours** : Page Frais professionnels essentiels
-- **1 jour** : Tests avec profil Sophie Martin
+### Semaine 1 : Finaliser collecte de données
+- **2-3 jours** : Page Paramètres fiscaux (ExpansionTile + mise à jour Sophie Martin)
+- **1 jour** : Tests et corrections finales sur toutes les pages
 
-### Semaine 3 : Écran de calcul
-- **2 jours** : Modèle JobOffer + UI saisie
-- **2 jours** : Moteur de calcul
-- **1 jour** : UI résultats
+### Semaine 2-3 : Écran de calcul (PHASE MAJEURE)
+- **2 jours** : Modèle JobOffer + UI saisie d'offre
+- **3 jours** : Moteur de calcul complet (toutes les données collectées)
+- **2 jours** : UI résultats avec comparaison
 
 ### Semaine 4 : Finalisation MVP
 - **2 jours** : Export et partage
-- **2 jours** : Tests et corrections
-- **1 jour** : Polish final
+- **2 jours** : Tests intensifs et corrections
+- **1 jour** : Polish final et préparation release
 
 **Total réaliste : 4 semaines pour MVP fonctionnel**
+**État actuel : 80% terminé, phase calcul à développer**
 
 ## 💎 Fonctionnalités Premium (Post-MVP)
 
