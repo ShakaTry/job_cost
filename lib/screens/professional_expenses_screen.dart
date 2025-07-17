@@ -5,6 +5,7 @@ import '../services/profile_service.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
 import '../widgets/profile_avatar.dart';
+import '../utils/validators.dart';
 
 class ProfessionalExpensesScreen extends StatefulWidget {
   final UserProfile profile;
@@ -53,6 +54,21 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
   bool _remoteExpanded = false;
   bool _equipmentExpanded = false;
 
+  // Système de tracking des erreurs par section
+  final Map<String, bool> _sectionHasError = {
+    'meal': false,
+    'childcare': false,
+    'remote': false,
+    'equipment': false,
+  };
+
+  final Map<String, bool> _sectionIsComplete = {
+    'meal': false,
+    'childcare': false,
+    'remote': false,
+    'equipment': false,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -88,23 +104,69 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
   }
 
   void _setupListeners() {
-    // Listeners pour sauvegarde automatique
-    _mealExpensesController.addListener(_saveProfile);
-    _mealAllowanceController.addListener(_saveProfile);
-    _mealTicketValueController.addListener(_saveProfile);
-    _mealTicketsPerMonthController.addListener(_saveProfile);
-    _childcareCostController.addListener(_saveProfile);
-    _childcareAidsController.addListener(_saveProfile);
-    _workDaysPerWeekController.addListener(_saveProfile);
-    _remoteDaysPerWeekController.addListener(_saveProfile);
-    _remoteAllowanceController.addListener(_saveProfile);
-    _remoteExpensesController.addListener(_saveProfile);
-    _remoteEquipmentController.addListener(_saveProfile);
-    _workClothingController.addListener(_saveProfile);
-    _professionalEquipmentController.addListener(_saveProfile);
-    _trainingCostController.addListener(_saveProfile);
-    _unionFeesController.addListener(_saveProfile);
+    // Suppression des listeners pour la sauvegarde automatique
+    // La sauvegarde se fera uniquement via PopScope
   }
+
+  // Méthodes de validation par section
+  bool _hasMealErrors() {
+    return Validators.validatePositiveNumber(_mealExpensesController.text) != null ||
+           Validators.validatePositiveNumber(_mealAllowanceController.text) != null ||
+           Validators.validatePositiveNumber(_mealTicketValueController.text) != null ||
+           Validators.validatePositiveNumber(_mealTicketsPerMonthController.text) != null;
+  }
+
+  bool _hasChildcareErrors() {
+    return Validators.validatePositiveNumber(_childcareCostController.text) != null ||
+           Validators.validatePositiveNumber(_childcareAidsController.text) != null;
+  }
+
+  bool _hasRemoteErrors() {
+    return Validators.validateDaysPerWeek(_workDaysPerWeekController.text) != null ||
+           Validators.validateDaysPerWeek(_remoteDaysPerWeekController.text) != null ||
+           Validators.validatePositiveNumber(_remoteAllowanceController.text) != null ||
+           Validators.validatePositiveNumber(_remoteExpensesController.text) != null ||
+           Validators.validatePositiveNumber(_remoteEquipmentController.text) != null;
+  }
+
+  bool _hasEquipmentErrors() {
+    return Validators.validatePositiveNumber(_workClothingController.text) != null ||
+           Validators.validatePositiveNumber(_professionalEquipmentController.text) != null ||
+           Validators.validatePositiveNumber(_trainingCostController.text) != null ||
+           Validators.validatePositiveNumber(_unionFeesController.text) != null;
+  }
+
+  bool _isMealComplete() {
+    return _mealTicketValueController.text.isNotEmpty || _mealExpensesController.text.isNotEmpty;
+  }
+
+  bool _isChildcareComplete() {
+    return _profile.dependentChildren <= 0 || _childcareCostController.text.isNotEmpty;
+  }
+
+  bool _isRemoteComplete() {
+    return _workDaysPerWeekController.text.isNotEmpty;
+  }
+
+  bool _isEquipmentComplete() {
+    return true; // Section optionnelle
+  }
+
+  void _updateSectionErrorStatus() {
+    setState(() {
+      _sectionHasError['meal'] = _hasMealErrors();
+      _sectionHasError['childcare'] = _hasChildcareErrors();
+      _sectionHasError['remote'] = _hasRemoteErrors();
+      _sectionHasError['equipment'] = _hasEquipmentErrors();
+      
+      _sectionIsComplete['meal'] = _isMealComplete() && !_hasMealErrors();
+      _sectionIsComplete['childcare'] = _isChildcareComplete() && !_hasChildcareErrors();
+      _sectionIsComplete['remote'] = _isRemoteComplete() && !_hasRemoteErrors();
+      _sectionIsComplete['equipment'] = _isEquipmentComplete() && !_hasEquipmentErrors();
+    });
+  }
+
+
 
   @override
   void dispose() {
@@ -156,6 +218,9 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
       );
 
       await _profileService.updateProfile(_profile);
+      
+      // Mettre à jour l'état des erreurs
+      _updateSectionErrorStatus();
     } catch (e) {
       debugPrint('Erreur lors de la sauvegarde: $e');
     }
@@ -167,7 +232,10 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
-          Navigator.pop(context, _profile);
+          await _saveProfile();
+          if (mounted) {
+            Navigator.pop(context, _profile);
+          }
         }
       },
       child: Scaffold(
@@ -222,13 +290,28 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                     });
                   },
                   shape: const Border(),
-                  title: const Text(
-                    'Frais de repas',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  title: Row(
+                    children: [
+                      const Text(
+                        'Frais de repas',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (_sectionHasError['meal']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.error, color: Colors.red, size: 20),
+                        const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                      ] else if (_sectionIsComplete['meal']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      ]
+                    ],
                   ),
+                  backgroundColor: _sectionHasError['meal']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -316,13 +399,28 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                       });
                     },
                     shape: const Border(),
-                    title: const Text(
-                      'Garde d\'enfants',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    title: Row(
+                      children: [
+                        const Text(
+                          'Garde d\'enfants',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (_sectionHasError['childcare']!) ...[
+                          const SizedBox(width: 8),
+                          const Icon(Icons.error, color: Colors.red, size: 20),
+                          const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                        ] else if (_sectionIsComplete['childcare']!) ...[
+                          const SizedBox(width: 8),
+                          const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                        ]
+                      ],
                     ),
+                    backgroundColor: _sectionHasError['childcare']! 
+                      ? Colors.red.withValues(alpha: 0.1) 
+                      : Colors.transparent,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -343,7 +441,6 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                               onChanged: (value) {
                                 setState(() {
                                   _childcareType = value;
-                                  _saveProfile();
                                 });
                               },
                             ),
@@ -394,13 +491,28 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                     });
                   },
                   shape: const Border(),
-                  title: const Text(
-                    'Télétravail',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  title: Row(
+                    children: [
+                      const Text(
+                        'Télétravail',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (_sectionHasError['remote']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.error, color: Colors.red, size: 20),
+                        const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                      ] else if (_sectionIsComplete['remote']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      ]
+                    ],
                   ),
+                  backgroundColor: _sectionHasError['remote']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -420,6 +532,8 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                                     FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
                                   ],
                                   textInputAction: TextInputAction.next,
+                                  validator: (value) => Validators.validateDaysPerWeek(value),
+                                  onChanged: (_) => _updateSectionErrorStatus(),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -435,6 +549,8 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                                     FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
                                   ],
                                   textInputAction: TextInputAction.next,
+                                  validator: (value) => Validators.validateDaysPerWeek(value),
+                                  onChanged: (_) => _updateSectionErrorStatus(),
                                 ),
                               ),
                             ],
@@ -499,13 +615,28 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                     });
                   },
                   shape: const Border(),
-                  title: const Text(
-                    'Équipements et autres frais',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  title: Row(
+                    children: [
+                      const Text(
+                        'Équipements et autres frais',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (_sectionHasError['equipment']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.error, color: Colors.red, size: 20),
+                        const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                      ] else if (_sectionIsComplete['equipment']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      ]
+                    ],
                   ),
+                  backgroundColor: _sectionHasError['equipment']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),

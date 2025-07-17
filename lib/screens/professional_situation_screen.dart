@@ -243,15 +243,23 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     final salaryText = _salaryController.text.replaceAll(' ', '');
     final salary = double.tryParse(salaryText);
     if (salary != null && salary > 0) {
-      // Stocker la valeur exacte du salaire (précision maximale)
-      _exactMonthlySalary = salary;
+      // AJOUT : Même logique que _updateSalaryFromHourly
+      final currentDisplayed = _exactMonthlySalary.toStringAsFixed(2);
+      final isUserModified = salaryText != currentDisplayed;
+      
+      final exactSalary = isUserModified ? salary : _exactMonthlySalary;
+      
+      // Mettre à jour la valeur exacte si modifiée par l'utilisateur
+      if (isUserModified) {
+        _exactMonthlySalary = salary;
+      }
       
       // Calcul avec coefficient de temps de travail selon la documentation officielle
       final coefficient = _getWorkTimeCoefficient();
       final dureeReelle = _dureeLegaleMensuelle * coefficient;
       
       // Formule officielle : Taux_Horaire_Brut = Salaire_Mensuel_Brut / Durée_Mensuelle_Travail
-      _exactHourlyRate = salary / dureeReelle; // Conserver précision maximale
+      _exactHourlyRate = exactSalary / dureeReelle; // Utiliser exactSalary au lieu de salary direct
       
       _isUpdating = true;
       // Affichage arrondi seulement (selon documentation: "arrondir seulement à l'affichage")

@@ -70,4 +70,46 @@ class Validators {
     if (value.isEmpty) return true; // Empty is valid
     return _emailRegex.hasMatch(value);
   }
+
+  // Numeric validation for professional expenses
+  static String? validateNumeric(String? value, {bool allowEmpty = true}) {
+    if (value == null || value.isEmpty) {
+      return allowEmpty ? null : 'Ce champ est requis.';
+    }
+    if (double.tryParse(value.replaceAll(',', '.')) == null) {
+      return 'Veuillez entrer une valeur numérique valide.';
+    }
+    return null;
+  }
+
+  // Percentage validation (0-100%)
+  static String? validatePercentage(String? value) {
+    final numError = validateNumeric(value);
+    if (numError != null) return numError;
+    final num = double.parse(value!.replaceAll(',', '.'));
+    if (num < 0 || num > 100) return 'Doit être entre 0 et 100%';
+    return null;
+  }
+
+  // Positive number validation
+  static String? validatePositiveNumber(String? value, {bool allowEmpty = true}) {
+    final numError = validateNumeric(value, allowEmpty: allowEmpty);
+    if (numError != null) return numError;
+    if (value != null && value.isNotEmpty) {
+      final num = double.parse(value.replaceAll(',', '.'));
+      if (num < 0) return 'La valeur doit être positive.';
+    }
+    return null;
+  }
+
+  // Days per week validation (1-7)
+  static String? validateDaysPerWeek(String? value) {
+    final numError = validateNumeric(value);
+    if (numError != null) return numError;
+    if (value != null && value.isNotEmpty) {
+      final num = double.parse(value.replaceAll(',', '.'));
+      if (num < 0 || num > 7) return 'Doit être entre 0 et 7 jours.';
+    }
+    return null;
+  }
 }
