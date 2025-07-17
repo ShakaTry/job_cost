@@ -413,6 +413,24 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     return _getCurrentMonthlySalary() * _bonusMonths;
   }
 
+  // Calcul de l'avantage mensuel des titres-restaurant
+  double _calculateMealVoucherAdvantage() {
+    final value = double.tryParse(_mealVoucherValueController.text) ?? 0.0;
+    final count = int.tryParse(_mealVouchersCountController.text) ?? 0;
+    
+    if (value <= 0 || count <= 0) return 0.0;
+    
+    // L'avantage = différence entre valeur faciale et part salarié
+    // En général, l'employeur paie 60% donc le salarié économise 60% de la valeur
+    const employerRate = AppConstants.defaultEmployerMealVoucherRate; // 60%
+    return value * count * employerRate;
+  }
+
+  // Calcul de la déduction mensuelle mutuelle
+  double _getMutualDeduction() {
+    return double.tryParse(_mutualCostController.text) ?? 0.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     final monthlySalary = _getCurrentMonthlySalary();
@@ -850,6 +868,110 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     ],
                   ),
                 ),
+                
+                // Récapitulatif des avantages sociaux
+                if (_calculateMealVoucherAdvantage() > 0 || _getMutualDeduction() > 0) ...[
+                  const SizedBox(height: AppConstants.defaultPadding),
+                  
+                  Container(
+                    padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                    decoration: BoxDecoration(
+                      color: Colors.green[50],
+                      borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                      border: Border.all(color: Colors.green[200]!),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Avantages sociaux (impact mensuel)',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green[800],
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: AppConstants.smallPadding),
+                        
+                        // Avantages (positifs)
+                        if (_calculateMealVoucherAdvantage() > 0) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '+ Titres-restaurant',
+                                style: TextStyle(
+                                  color: Colors.green[700],
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Text(
+                                '+${_formatSalary(_calculateMealVoucherAdvantage().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                                style: TextStyle(
+                                  color: Colors.green[700],
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                        
+                        // Déductions (négatives)
+                        if (_getMutualDeduction() > 0) ...[
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                '- Mutuelle (part salarié)',
+                                style: TextStyle(
+                                  color: Colors.red[700],
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Text(
+                                '-${_formatSalary(_getMutualDeduction().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                                style: TextStyle(
+                                  color: Colors.red[700],
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                        
+                        // Impact net
+                        const SizedBox(height: AppConstants.smallPadding),
+                        const Divider(height: 1),
+                        const SizedBox(height: AppConstants.smallPadding),
+                        
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Impact net mensuel',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[800],
+                                fontSize: 13,
+                              ),
+                            ),
+                            Text(
+                              '${(_calculateMealVoucherAdvantage() - _getMutualDeduction()) >= 0 ? '+' : ''}${_formatSalary((_calculateMealVoucherAdvantage() - _getMutualDeduction()).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue[800],
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ],
           ],
