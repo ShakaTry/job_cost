@@ -176,6 +176,12 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
   - Réviser toutes les pages
   - Assurer la cohérence
 
+### 2.1 Améliorations futures
+- **Option globale pour les InfoContainers**
+  - Ajouter un paramètre dans les préférences utilisateur
+  - Permettre d'activer/désactiver tous les "i" informatifs
+  - Appliquer le paramètre à toutes les pages de l'application
+
 ### 3. Écran de calcul
 - **Développer avec toutes les données disponibles**
 - **Réviser l'ensemble de l'application**

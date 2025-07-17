@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
 import '../widgets/profile_avatar.dart';
-import '../widgets/info_container.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
 import '../utils/validators.dart';
@@ -439,10 +438,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 ),
               ),
               
-              const SizedBox(height: 24),
-              const InfoContainer(
-                text: AppStrings.socialTaxInfo,
-              ),
               const SizedBox(height: 32),
             ],
         ),
