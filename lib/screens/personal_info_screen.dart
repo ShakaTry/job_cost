@@ -207,6 +207,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       _identityExpanded = expanded;
                     });
                   },
+                  shape: const Border(),
                   title: Text(
                     AppStrings.identitySection,
                     style: const TextStyle(
@@ -318,6 +319,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       _contactExpanded = expanded;
                     });
                   },
+                  shape: const Border(),
                   title: Text(
                     AppStrings.contactSection,
                     style: const TextStyle(
@@ -399,6 +401,7 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                       _familyExpanded = expanded;
                     });
                   },
+                  shape: const Border(),
                   title: Text(
                     AppStrings.familySection,
                     style: const TextStyle(

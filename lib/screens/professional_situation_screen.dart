@@ -486,6 +486,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     _employmentExpanded = expanded;
                   });
                 },
+                shape: const Border(),
                 title: Text(
                   AppStrings.currentEmploymentSection,
                   style: const TextStyle(
@@ -595,6 +596,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     _workTimeExpanded = expanded;
                   });
                 },
+                shape: const Border(),
                 title: const Text(
                   'Temps de travail et rémunération',
                   style: TextStyle(
@@ -776,6 +778,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     _benefitsExpanded = expanded;
                   });
                 },
+                shape: const Border(),
                 title: const Text(
                   'Avantages sociaux',
                   style: TextStyle(

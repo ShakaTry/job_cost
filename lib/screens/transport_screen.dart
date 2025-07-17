@@ -205,6 +205,7 @@ class _TransportScreenState extends State<TransportScreen> {
                         _vehicleExpanded = expanded;
                       });
                     },
+                    shape: const Border(),
                     title: const Text(
                       'Véhicule',
                       style: TextStyle(
@@ -301,6 +302,7 @@ class _TransportScreenState extends State<TransportScreen> {
                         _tripExpanded = expanded;
                       });
                     },
+                    shape: const Border(),
                     title: const Text(
                       'Trajet',
                       style: TextStyle(
@@ -345,6 +347,7 @@ class _TransportScreenState extends State<TransportScreen> {
                         _expensesExpanded = expanded;
                       });
                     },
+                    shape: const Border(),
                     title: const Text(
                       'Frais additionnels',
                       style: TextStyle(

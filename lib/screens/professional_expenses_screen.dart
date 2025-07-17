@@ -221,9 +221,11 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                       _mealExpanded = expanded;
                     });
                   },
-                  title: Text(
+                  shape: const Border(),
+                  title: const Text(
                     'Frais de repas',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -313,9 +315,11 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                         _childcareExpanded = expanded;
                       });
                     },
-                    title: Text(
+                    shape: const Border(),
+                    title: const Text(
                       'Garde d\'enfants',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      style: TextStyle(
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -389,9 +393,11 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                       _remoteExpanded = expanded;
                     });
                   },
-                  title: Text(
+                  shape: const Border(),
+                  title: const Text(
                     'Télétravail',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -492,9 +498,11 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                       _equipmentExpanded = expanded;
                     });
                   },
-                  title: Text(
+                  shape: const Border(),
+                  title: const Text(
                     'Équipements et autres frais',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    style: TextStyle(
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
