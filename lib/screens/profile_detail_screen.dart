@@ -6,6 +6,7 @@ import '../constants/app_strings.dart';
 import '../constants/app_constants.dart';
 import 'personal_info_screen.dart';
 import 'professional_situation_screen.dart';
+import 'transport_screen.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
   final UserProfile profile;
@@ -147,8 +148,28 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 icon: Icons.directions_car,
                 title: AppStrings.transportTitle,
                 subtitle: AppStrings.transportSubtitle,
-                onTap: () {
-                  // TODO: Navigation
+                onTap: () async {
+                  try {
+                    final updatedProfile = await Navigator.push<UserProfile>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => TransportScreen(profile: profile),
+                      ),
+                    );
+                    
+                    if (updatedProfile != null && mounted) {
+                      setState(() {
+                        profile = updatedProfile;
+                      });
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erreur de navigation: $e')),
+                      );
+                    }
+                  }
                 },
               ),
               

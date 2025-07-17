@@ -25,6 +25,9 @@ class UserProfile {
   final String taxSystem;
   final bool? isNonCadre; // Statut salarié non cadre
   final double conventionalBonusMonths; // Nombre de mois de prime conventionnelle
+  
+  // Transport fields
+  final Map<String, dynamic>? transport;
 
   UserProfile({
     required this.id,
@@ -49,6 +52,7 @@ class UserProfile {
     required this.taxSystem,
     this.isNonCadre,
     required this.conventionalBonusMonths,
+    this.transport,
   });
 
   String get fullName => '$firstName $lastName';
@@ -74,6 +78,7 @@ class UserProfile {
     String? taxSystem,
     bool? isNonCadre,
     double? conventionalBonusMonths,
+    Map<String, dynamic>? transport,
   }) {
     return UserProfile(
       id: id,
@@ -98,6 +103,7 @@ class UserProfile {
       taxSystem: taxSystem ?? this.taxSystem,
       isNonCadre: isNonCadre ?? this.isNonCadre,
       conventionalBonusMonths: conventionalBonusMonths ?? this.conventionalBonusMonths,
+      transport: transport ?? this.transport,
     );
   }
 
@@ -122,6 +128,7 @@ class UserProfile {
     String? taxSystem,
     bool? isNonCadre,
     double? conventionalBonusMonths,
+    Map<String, dynamic>? transport,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -146,6 +153,7 @@ class UserProfile {
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
       isNonCadre: isNonCadre ?? false,
       conventionalBonusMonths: conventionalBonusMonths ?? 0.0,
+      transport: transport,
     );
   }
 }

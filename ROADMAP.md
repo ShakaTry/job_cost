@@ -124,10 +124,11 @@
 - [ ] Synchronisation cloud (version Premium)
 
 ## 🎯 État actuel du projet
-- ✅ Pages complétées : 5/10
+- ✅ Pages complétées : 6/10
 - ✅ Informations personnelles : 100% fonctionnel
 - ✅ Situation professionnelle : 100% fonctionnel avec toutes les features MVP
-- 🚧 Prochaine étape : Transport & Déplacements
+- ✅ Transport & Déplacements : 100% fonctionnel avec barème kilométrique 2024
+- 🚧 Prochaine étape : Frais professionnels
 - 📱 Application testée et fonctionnelle sur mobile
 
 ## 💎 Fonctionnalités Premium (Monétisation)

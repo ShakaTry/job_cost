@@ -105,4 +105,16 @@ class AppConstants {
   static const double defaultWeeklyHours = 35.0; // 35h par semaine
   static const String defaultTaxSystem = 'Prélèvement à la source';
   static const double defaultGrossSalary = 0.0;
+  
+  // Transport
+  static const List<String> transportModes = [
+    'Voiture personnelle',
+    'Moto personnelle',
+    'Transports en commun',
+    'Vélo',
+    'À pied',
+    'Covoiturage',
+    'Train',
+    'Mixte',
+  ];
 }

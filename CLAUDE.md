@@ -13,9 +13,9 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 ## État actuel du projet
 
 ### Résumé de progression
-- **Pages complétées** : 5 sur ~10 pages prévues
-- **Fonctionnalités MVP** : ~50% complétées
-- **Prochaine étape** : Page Transport & Déplacements
+- **Pages complétées** : 6 sur ~10 pages prévues
+- **Fonctionnalités MVP** : ~60% complétées
+- **Prochaine étape** : Page Frais professionnels
 - **État** : Application fonctionnelle et testée sur mobile Android
 
 ### Pages complétées
@@ -49,6 +49,21 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
      - Total annuel brut avec tous les éléments
    - Sauvegarde automatique avec pattern PopScope
    - Note: Le régime fiscal a été déplacé vers "Paramètres fiscaux"
+6. **Transport & Déplacements** - Formulaire complet avec :
+   - Mode de transport principal (dropdown)
+   - Pour véhicule personnel :
+     - Type de véhicule (voiture/moto)
+     - Puissance fiscale (slider 3-10 CV pour voiture)
+     - Distance domicile-travail aller simple
+     - Jours travaillés par semaine
+     - Calcul automatique du barème kilométrique 2024
+   - Pour transports en commun :
+     - Coût mensuel
+   - Frais additionnels :
+     - Parking mensuel
+     - Péages mensuels
+   - Récapitulatif annuel avec total des frais
+   - Sauvegarde automatique avec pattern PopScope
 
 ### Architecture du code
 ```
@@ -107,8 +122,8 @@ Focus actuel : MVP/Version gratuite uniquement.
 
 ### Prochaines étapes
 1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT (100% fonctionnel)
-2. Créer la page "Transport & Déplacements" 🎯 **PROCHAINE ÉTAPE**
-3. Créer la page "Frais professionnels"
+2. ~~Créer la page "Transport & Déplacements"~~ ✅ FAIT (100% fonctionnel)
+3. Créer la page "Frais professionnels" 🎯 **PROCHAINE ÉTAPE**
 4. Créer la page "Paramètres fiscaux" (inclure le régime fiscal)
 5. Implémenter l'écran de calcul
 6. Ajouter la persistance des données (SQLite)

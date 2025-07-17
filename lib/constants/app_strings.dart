@@ -118,4 +118,8 @@ class AppStrings {
   static const String regularOvertime = 'Heures supplémentaires régulières';
   static const String regularOvertimeHelper = 'Ces heures sont effectuées chaque semaine';
   static const String occasionalOvertimeHelper = 'Estimation ponctuelle (impact sur la précision du calcul)';
+  
+  // Errors
+  static const String errorTitle = 'Erreur';
+  static const String errorGeneric = 'Une erreur est survenue. Veuillez réessayer.';
 }
