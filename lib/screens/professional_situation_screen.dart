@@ -164,6 +164,11 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         });
       }
     });
+    
+    // Initialiser l'état des erreurs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSectionErrorStatus();
+    });
   }
 
   @override

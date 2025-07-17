@@ -58,6 +58,11 @@ class _TransportScreenState extends State<TransportScreen> {
     _modifiedProfile = widget.profile;
     _initializeControllers();
     _setupListeners();
+    
+    // Initialiser l'état des erreurs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSectionErrorStatus();
+    });
   }
 
   void _initializeControllers() {

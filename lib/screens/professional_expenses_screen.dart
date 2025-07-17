@@ -75,6 +75,11 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
     _profile = widget.profile;
     _initializeControllers();
     _setupListeners();
+    
+    // Initialiser l'état des erreurs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSectionErrorStatus();
+    });
   }
 
   void _initializeControllers() {

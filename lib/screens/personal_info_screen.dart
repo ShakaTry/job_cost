@@ -66,6 +66,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _dependentChildren = widget.profile.dependentChildren;
     _birthDate = widget.profile.birthDate;
     _nationality = widget.profile.nationality;
+    
+    // Initialiser l'état des erreurs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSectionErrorStatus();
+    });
   }
 
   @override
