@@ -732,6 +732,39 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 textAlign: TextAlign.center,
               ),
               
+              // Total annuel brut (placé avant les avantages sociaux)
+              if (monthlySalary > 0) ...[
+                const SizedBox(height: AppConstants.largePadding),
+                
+                Container(
+                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Total annuel brut',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
+                        ),
+                      ),
+                      Text(
+                        '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12 + conventionalBonus).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue[800],
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              
               const SizedBox(height: AppConstants.largePadding),
               
               // Section Avantages sociaux
@@ -844,41 +877,9 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 ],
               ),
               
-              // Cadre récapitulatif
-              if (monthlySalary > 0) ...[
+              // Récapitulatif des avantages sociaux
+              if (monthlySalary > 0 && (_calculateMealVoucherAdvantage() > 0 || _getMutualDeduction() > 0)) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
-                
-                Container(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Total annuel brut',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[800],
-                        ),
-                      ),
-                      Text(
-                        '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12 + conventionalBonus).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue[800],
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                // Récapitulatif des avantages sociaux
-                if (_calculateMealVoucherAdvantage() > 0 || _getMutualDeduction() > 0) ...[
-                  const SizedBox(height: AppConstants.defaultPadding),
                   
                   Container(
                     padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -979,7 +980,6 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                     ),
                   ),
                 ],
-              ],
             ],
           ],
         ),
