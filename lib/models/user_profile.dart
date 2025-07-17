@@ -24,6 +24,7 @@ class UserProfile {
   final double grossMonthlySalary;
   final String taxSystem;
   final bool? isNonCadre; // Statut salarié non cadre
+  final double conventionalBonusMonths; // Nombre de mois de prime conventionnelle
 
   UserProfile({
     required this.id,
@@ -47,6 +48,7 @@ class UserProfile {
     required this.grossMonthlySalary,
     required this.taxSystem,
     this.isNonCadre,
+    required this.conventionalBonusMonths,
   });
 
   String get fullName => '$firstName $lastName';
@@ -71,6 +73,7 @@ class UserProfile {
     double? grossMonthlySalary,
     String? taxSystem,
     bool? isNonCadre,
+    double? conventionalBonusMonths,
   }) {
     return UserProfile(
       id: id,
@@ -94,6 +97,7 @@ class UserProfile {
       grossMonthlySalary: grossMonthlySalary ?? this.grossMonthlySalary,
       taxSystem: taxSystem ?? this.taxSystem,
       isNonCadre: isNonCadre ?? this.isNonCadre,
+      conventionalBonusMonths: conventionalBonusMonths ?? this.conventionalBonusMonths,
     );
   }
 
@@ -117,6 +121,7 @@ class UserProfile {
     double? grossMonthlySalary,
     String? taxSystem,
     bool? isNonCadre,
+    double? conventionalBonusMonths,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -140,6 +145,7 @@ class UserProfile {
       grossMonthlySalary: grossMonthlySalary ?? AppConstants.defaultGrossSalary,
       taxSystem: taxSystem ?? AppConstants.defaultTaxSystem,
       isNonCadre: isNonCadre ?? false,
+      conventionalBonusMonths: conventionalBonusMonths ?? 0.0,
     );
   }
 }

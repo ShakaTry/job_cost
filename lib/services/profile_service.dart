@@ -72,6 +72,8 @@ class ProfileService {
       'overtimeHours': profile.overtimeHours,
       'grossMonthlySalary': profile.grossMonthlySalary,
       'taxSystem': profile.taxSystem,
+      'isNonCadre': profile.isNonCadre,
+      'conventionalBonusMonths': profile.conventionalBonusMonths,
     };
   }
   
@@ -152,6 +154,8 @@ class ProfileService {
       overtimeHours: (json['overtimeHours'] as num?)?.toDouble() ?? 0.0,
       grossMonthlySalary: (json['grossMonthlySalary'] as num?)?.toDouble() ?? 0.0,
       taxSystem: json['taxSystem'] as String? ?? 'Prélèvement à la source',
+      isNonCadre: json['isNonCadre'] as bool?,
+      conventionalBonusMonths: (json['conventionalBonusMonths'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

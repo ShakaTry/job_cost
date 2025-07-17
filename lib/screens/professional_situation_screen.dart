@@ -30,8 +30,11 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   late double _workTimePercentage;
   late TextEditingController _weeklyHoursController;
   late TextEditingController _overtimeHoursController;
+  late double _bonusMonths;
   late UserProfile _modifiedProfile;
   late FocusNode _salaryFocusNode;
+  late FocusNode _weeklyHoursFocusNode;
+  late FocusNode _overtimeHoursFocusNode;
 
   @override
   void initState() {
@@ -49,7 +52,10 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _workTimePercentage = widget.profile.workTimePercentage;
     _weeklyHoursController = TextEditingController(text: widget.profile.weeklyHours.toStringAsFixed(2));
     _overtimeHoursController = TextEditingController(text: widget.profile.overtimeHours > 0 ? widget.profile.overtimeHours.toStringAsFixed(2) : '');
+    _bonusMonths = widget.profile.conventionalBonusMonths;
     _salaryFocusNode = FocusNode();
+    _weeklyHoursFocusNode = FocusNode();
+    _overtimeHoursFocusNode = FocusNode();
     
     // Initialiser les valeurs exactes
     _exactMonthlySalary = widget.profile.grossMonthlySalary;
@@ -108,6 +114,23 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         });
       }
     });
+    
+    // Formater les heures quand l'utilisateur quitte les champs
+    _weeklyHoursFocusNode.addListener(() {
+      if (!_weeklyHoursFocusNode.hasFocus && !_isUpdating) {
+        Future.delayed(const Duration(milliseconds: 50), () {
+          if (mounted) _formatHoursInput(_weeklyHoursController);
+        });
+      }
+    });
+    
+    _overtimeHoursFocusNode.addListener(() {
+      if (!_overtimeHoursFocusNode.hasFocus && !_isUpdating) {
+        Future.delayed(const Duration(milliseconds: 50), () {
+          if (mounted) _formatHoursInput(_overtimeHoursController);
+        });
+      }
+    });
   }
 
   @override
@@ -119,6 +142,8 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _weeklyHoursController.dispose();
     _overtimeHoursController.dispose();
     _salaryFocusNode.dispose();
+    _weeklyHoursFocusNode.dispose();
+    _overtimeHoursFocusNode.dispose();
     super.dispose();
   }
 
@@ -163,6 +188,18 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
         } else {
           _salaryController.text = salary.toString();
         }
+        _isUpdating = false;
+      }
+    }
+  }
+  
+  void _formatHoursInput(TextEditingController controller) {
+    final currentText = controller.text;
+    if (currentText.isNotEmpty) {
+      final hours = double.tryParse(currentText);
+      if (hours != null) {
+        _isUpdating = true;
+        controller.text = hours.toStringAsFixed(2);
         _isUpdating = false;
       }
     }
@@ -345,6 +382,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       weeklyHours: weeklyHours,
       overtimeHours: overtimeHours,
       grossMonthlySalary: _getCurrentMonthlySalary(),
+      conventionalBonusMonths: _bonusMonths,
     );
     
     // Sauvegarder automatiquement le profil (comme sur la page d'infos personnelles)
@@ -352,10 +390,18 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   }
 
 
+  // Calcul de la prime conventionnelle
+  double _calculateConventionalBonus() {
+    if (_bonusMonths <= 0 || _getCurrentMonthlySalary() <= 0) return 0.0;
+    
+    return _getCurrentMonthlySalary() * _bonusMonths;
+  }
+
   @override
   Widget build(BuildContext context) {
     final monthlySalary = _getCurrentMonthlySalary();
     final annualSalary = _calculateAnnualSalary(monthlySalary);
+    final conventionalBonus = _calculateConventionalBonus();
 
     return PopScope(
       canPop: false,
@@ -519,6 +565,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   Expanded(
                     child: TextFormField(
                       controller: _weeklyHoursController,
+                      focusNode: _weeklyHoursFocusNode,
                       decoration: const InputDecoration(
                         labelText: 'Heures/semaine',
                         hintText: 'Ex: 35.00',
@@ -536,6 +583,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   Expanded(
                     child: TextFormField(
                       controller: _overtimeHoursController,
+                      focusNode: _overtimeHoursFocusNode,
                       decoration: const InputDecoration(
                         labelText: 'Heures sup.',
                         hintText: 'Ex: 4.00',
@@ -607,6 +655,42 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                 ],
               ),
               
+              const SizedBox(height: AppConstants.defaultPadding),
+              
+              // Prime conventionnelle avec slider
+              Text(
+                'Prime conventionnelle: ${_bonusMonths.round()} mois',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: AppConstants.smallPadding),
+              
+              Slider(
+                value: _bonusMonths,
+                min: 0.0,
+                max: 4.0,
+                divisions: 4,
+                label: '${_bonusMonths.round()} mois',
+                onChanged: (value) {
+                  setState(() {
+                    _bonusMonths = value;
+                  });
+                  _updateProfile();
+                },
+              ),
+              
+              Text(
+                _bonusMonths == 0 ? 'Aucune prime' : 
+                _bonusMonths == 1 ? '13ème mois' : 
+                '${12 + _bonusMonths.round()}ème mois',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
               // Cadre récapitulatif
               if (monthlySalary > 0) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
@@ -639,26 +723,66 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(AppStrings.overtimeMonthlyAmount),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '${_getOvertimeHoursByRate()['hours25']!.toStringAsFixed(1)}h à 125% + ${_getOvertimeHoursByRate()['hours50']!.toStringAsFixed(1)}h à 150%/mois',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    color: Colors.grey[600],
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(AppStrings.overtimeMonthlyAmount),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${_getOvertimeHoursByRate()['hours25']!.toStringAsFixed(1)}h à 125% + ${_getOvertimeHoursByRate()['hours50']!.toStringAsFixed(1)}h à 150%/mois',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey[600],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 8),
                             Text(
                               '${_formatSalary(_calculateOvertimeSalary().toStringAsFixed(2))} ${AppStrings.euroSymbol}',
                               style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
+                      ],
+                      
+                      // Prime conventionnelle si présente
+                      if (conventionalBonus > 0) ...[
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        const Divider(),
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('Prime conventionnelle'),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${_bonusMonths.round()} mois supplémentaire(s)',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '${_formatSalary(conventionalBonus.toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                      
+                      // Total final
+                      if (_calculateOvertimeSalary() > 0 || conventionalBonus > 0) ...[
                         const SizedBox(height: AppConstants.defaultPadding),
                         const Divider(),
                         const SizedBox(height: AppConstants.defaultPadding),
@@ -673,7 +797,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                               ),
                             ),
                             Text(
-                              '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
+                              '${_formatSalary((annualSalary + _calculateOvertimeSalary() * 12 + conventionalBonus).toStringAsFixed(2))} ${AppStrings.euroSymbol}',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.blue[800],

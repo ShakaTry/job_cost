@@ -28,15 +28,19 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 5. **Situation professionnelle** - Formulaire complet avec :
    - Statut d'emploi (dropdown)
    - Entreprise et poste
+   - Case à cocher "Salarié non cadre" (pour calculs futurs)
    - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles côte à côte avec heures sup)
    - Heures supplémentaires (saisie simple, calcul automatique 25%/50%)
+   - Prime conventionnelle (slider 0-4 mois)
    - Salaire brut mensuel / Taux horaire (calcul bidirectionnel automatique)
    - Support des décimales avec format 2 chiffres (ex: 2500.00)
+   - Formatage automatique à 2 décimales pour heures/semaine et heures sup
    - Calculs officiels selon durée légale 151,67h/mois
    - Cadre récapitulatif unifié avec :
      - Salaire brut annuel
      - Montant mensuel des heures sup (si présentes)
-     - Total annuel brut avec heures sup incluses
+     - Prime conventionnelle (si présente)
+     - Total annuel brut avec tous les éléments
    - Sauvegarde automatique avec pattern PopScope
    - Note: Le régime fiscal a été déplacé vers "Paramètres fiscaux"
 
@@ -109,7 +113,7 @@ Focus actuel : MVP/Version gratuite uniquement.
 - Développement progressif sans précipitation
 - Les 3 profils d'exemple sont temporaires pour le développement
 - Toujours exécuter `flutter analyze` avant de commit/push
-- Profil de démonstration "Sophie Martin" créé avec données complètes (inclut 4h d'heures sup)
+- Profil de démonstration "Sophie Martin" créé avec données complètes (inclut 4h d'heures sup, statut non cadre, prime 13ème mois)
 - Calculs de salaire basés sur 151,67h/mois (durée légale officielle)
 - Précision maximale en interne, arrondi seulement pour l'affichage
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"

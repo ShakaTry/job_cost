@@ -32,6 +32,11 @@
     - [x] Cadre récapitulatif unifié (salaire annuel + heures sup + total)
     - [x] Profil démo avec 4h d'heures sup pour tests
   - [x] Case à cocher "Salarié non cadre" (prise en compte dans les calculs)
+  - [x] Prime conventionnelle (slider 0-4 mois)
+    - [x] Slider intuitif pour sélection du nombre de mois
+    - [x] Calcul automatique et affichage dans le récapitulatif
+    - [x] Profil démo avec 13ème mois
+  - [x] Formatage automatique des champs heures (2 décimales)
 
 **Statuts professionnels futurs (Premium) :**
 - [ ] Salarié cadre (forfait jours, heures sup spécifiques)

@@ -346,6 +346,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       overtimeHours: 4.0,
       grossMonthlySalary: 3500,
       taxSystem: 'Prélèvement à la source',
+      isNonCadre: true,
+      conventionalBonusMonths: 1.0,
     );
 
     setState(() {
