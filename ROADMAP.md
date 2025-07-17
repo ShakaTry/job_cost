@@ -5,10 +5,18 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 
 ## 🚀 Stratégie de développement
 
-### Approche logique : Données → Calculs → Résultats
-1. **Collecter** toutes les données nécessaires (pages de saisie)
-2. **Calculer** le salaire net réel (moteur de calcul)
-3. **Présenter** les résultats détaillés (écran de calcul)
+### Approche itérative : Développer → Réviser → Améliorer
+1. **Développer** chaque page avec soin
+2. **Réviser** les pages existantes après chaque ajout
+3. **Améliorer** continuellement pour maintenir la cohérence
+4. **Adapter** l'ensemble à chaque nouvelle fonctionnalité
+
+### Principe clé
+À chaque nouvelle page ajoutée :
+- Revoir et corriger les pages précédentes
+- Adapter les modèles de données si nécessaire
+- Assurer la cohérence globale
+- Tester avec le profil de démonstration
 
 ## 📋 Phase 1 : Pages de données essentielles (1-2 semaines)
 
@@ -135,23 +143,32 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - Export PDF professionnel
 - Simulations 5 ans
 
-## 🎯 Prochaines étapes immédiates
+## 🎯 Prochaines étapes immédiates (approche itérative)
 
-1. **Créer la page "Paramètres fiscaux"** 
-   - Simple et focalisée sur l'essentiel
-   - Taux personnalisé + parts fiscales
+### 1. Révision des pages existantes
+- **Revenir sur "Situation professionnelle"**
+  - Améliorer/corriger selon les besoins
+  - Adapter aux nouvelles exigences
+  
+- **Finaliser "Transport & Déplacements"**
+  - Corriger les éventuels bugs
+  - Optimiser l'expérience utilisateur
 
-2. **Créer la page "Frais professionnels"**
-   - Seulement les frais majeurs (repas, garde)
-   - Autres frais en phase 2
+### 2. Développement des nouvelles pages
+- **Page "Paramètres fiscaux"**
+  - Développer la page
+  - Réviser les pages existantes
+  - Adapter le modèle de données
 
-3. **Développer l'écran de calcul**
-   - Utiliser toutes les données collectées
-   - Calculs précis et transparents
+- **Page "Frais professionnels"**
+  - Développer avec les frais essentiels
+  - Réviser toutes les pages
+  - Assurer la cohérence
 
-4. **Tester avec Sophie Martin**
-   - Valider tous les calculs
-   - Comparer avec fiche de paie réelle
+### 3. Écran de calcul
+- **Développer avec toutes les données disponibles**
+- **Réviser l'ensemble de l'application**
+- **Tester intensivement avec Sophie Martin**
 
 ---
 

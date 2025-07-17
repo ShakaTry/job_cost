@@ -120,32 +120,43 @@ docs/
 Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
 Focus actuel : MVP/Version gratuite uniquement.
 
-### 🔄 STRATÉGIE FINALE (17/12/2024)
-Après discussion, nous suivons une approche logique :
-- **Collecter d'abord** toutes les données nécessaires (pages de saisie)
-- **Puis calculer** avec toutes les informations disponibles
-- **Approche** : Données → Calculs → Résultats
+### 🔄 STRATÉGIE ITÉRATIVE (17/12/2024)
+Approche de développement adoptée :
+- **Développer** chaque page avec soin
+- **Réviser** les pages existantes après chaque ajout
+- **Améliorer** continuellement la cohérence
+- **Principe** : À chaque nouvelle page, on adapte et corrige l'existant
 
-### Prochaines étapes
-1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT
-2. ~~Créer la page "Transport & Déplacements"~~ ✅ FAIT
-3. Créer la page "Paramètres fiscaux" 🎯 **PROCHAINE ÉTAPE**
-4. Créer la page "Frais professionnels" (essentiels)
-5. Créer l'écran de calcul (avec toutes les données)
-6. Implémenter l'export des résultats
+### Prochaines étapes (ordre précis)
+1. **Réviser "Situation professionnelle"** 🎯 **PROCHAINE ÉTAPE**
+   - Améliorer/corriger selon les besoins identifiés
+2. **Finaliser "Transport & Déplacements"**
+   - Corriger et optimiser
+3. **Créer "Paramètres fiscaux"**
+   - Puis réviser toutes les pages existantes
+4. **Créer "Frais professionnels"**
+   - Puis nouvelle révision globale
+5. **Créer l'écran de calcul**
+   - Avec toutes les données disponibles
+6. **Tests finaux et export**
 
 ### Notes importantes
 - L'application est Android/iOS uniquement (pas de support desktop)
 - Focus sur les candidats/employés uniquement
-- Développement progressif sans précipitation
+- Développement itératif : réviser l'existant à chaque ajout
 - Les 3 profils d'exemple sont temporaires pour le développement
 - Toujours exécuter `flutter analyze` avant de commit/push
-- Profil de démonstration "Sophie Martin" créé avec données complètes (inclut 4h d'heures sup, statut non cadre, prime 13ème mois)
+- Profil de démonstration "Sophie Martin" créé avec données complètes :
+  - 4h d'heures sup
+  - Statut non cadre
+  - Prime 13ème mois
+  - Transport : voiture 5CV, 25km/jour, parking 120€/mois
 - Calculs de salaire basés sur 151,67h/mois (durée légale officielle)
 - Précision maximale en interne, arrondi seulement pour l'affichage
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
 - Pattern de sauvegarde automatique avec PopScope obligatoire pour toutes les pages de formulaire
 - Bug d'overflow sur mobile corrigé avec widgets Flexible dans les récapitulatifs
+- **IMPORTANT** : Après chaque nouvelle page, réviser et adapter les pages existantes
 
 ### Commandes utiles
 ```bash
