@@ -4,6 +4,7 @@ import '../models/user_profile.dart';
 import '../services/profile_service.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
+import '../widgets/profile_avatar.dart';
 
 class TransportScreen extends StatefulWidget {
   final UserProfile profile;
@@ -155,7 +156,40 @@ class _TransportScreenState extends State<TransportScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Transport & Déplacements'),
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          title: Row(
+            children: [
+              ProfileAvatar(
+                firstName: widget.profile.firstName,
+                radius: AppConstants.smallAvatarRadius,
+                fontSize: AppConstants.smallAvatarFontSize,
+              ),
+              const SizedBox(width: AppConstants.defaultPadding),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.profile.fullName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text(
+                      'Transport & Déplacements',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
