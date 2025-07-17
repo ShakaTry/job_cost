@@ -401,19 +401,9 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                 Text('Profil créé'),
               ],
             ),
-            content: const SingleChildScrollView(
-              child: Text(
-                'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
-                'Ce profil contient des données complètes :\n'
-                '• Salariée CDI non cadre avec 4h d\'heures sup/semaine\n'
-                '• 13ème mois et mutuelle d\'entreprise\n'
-                '• Titres-restaurant : 9,50€ x 19/mois\n'
-                '• 2 enfants en garde (assistant maternel)\n'
-                '• Télétravail 2j/semaine avec forfait employeur\n'
-                '• Frais de transport : voiture + parking + péages\n'
-                '• Frais professionnels divers (formation, syndicat...)\n\n'
-                'Explorez toutes les sections pour découvrir l\'application !',
-              ),
+            content: const Text(
+              'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
+              'Vous pouvez maintenant explorer toutes les fonctionnalités de l\'application.',
             ),
             actions: [
               ElevatedButton(
