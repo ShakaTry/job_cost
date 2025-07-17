@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/user_profile.dart';
-import '../services/profile_service.dart';
+import '../widgets/profile_avatar.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
-import '../widgets/profile_avatar.dart';
+import '../services/profile_service.dart';
 
 class TransportScreen extends StatefulWidget {
   final UserProfile profile;
@@ -32,6 +32,11 @@ class _TransportScreenState extends State<TransportScreen> {
   int _fiscalPower = 5;
   bool _hasModifications = false;
   bool _isSaving = false;
+
+  // États d'expansion des sections
+  bool _vehicleExpanded = false;
+  bool _tripExpanded = false;
+  bool _expensesExpanded = false;
 
   @override
   void initState() {
@@ -133,7 +138,6 @@ class _TransportScreenState extends State<TransportScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -192,215 +196,221 @@ class _TransportScreenState extends State<TransportScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Card 1 - Véhicule
+                // Section 1 - Véhicule
                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Véhicule',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        
-                        // Type de véhicule
-                        DropdownButtonFormField<String>(
-                          value: _vehicleType,
-                          items: ['Voiture', 'Moto'].map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _vehicleType = value!;
-                              _hasModifications = true;
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Type de véhicule',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Type de carburant
-                        DropdownButtonFormField<String>(
-                          value: _fuelType,
-                          items: AppConstants.fuelTypes.map((fuel) {
-                            return DropdownMenuItem(
-                              value: fuel,
-                              child: Text(fuel),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _fuelType = value!;
-                              _hasModifications = true;
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Carburant',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        
-                        const SizedBox(height: 16),
-                  
-                        // Puissance fiscale
-                        if (_vehicleType == 'Voiture') ...[
-                    const Text('Puissance fiscale (CV)'),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Slider(
-                            value: _fiscalPower.toDouble(),
-                            min: 3,
-                            max: 10,
-                            divisions: 7,
-                            label: '$_fiscalPower CV',
-                            onChanged: (value) {
-                              setState(() {
-                                _fiscalPower = value.round();
-                                _hasModifications = true;
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 60,
-                          child: Text(
-                            '$_fiscalPower CV',
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
+                  child: ExpansionTile(
+                    initiallyExpanded: _vehicleExpanded,
+                    onExpansionChanged: (expanded) {
+                      setState(() {
+                        _vehicleExpanded = expanded;
+                      });
+                    },
+                    title: const Text(
+                      'Véhicule',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                        ],
-                      ],
-                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            // Type de véhicule
+                            DropdownButtonFormField<String>(
+                              value: _vehicleType,
+                              items: ['Voiture', 'Moto'].map((type) {
+                                return DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _vehicleType = value!;
+                                  _hasModifications = true;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Type de véhicule',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // Type de carburant
+                            DropdownButtonFormField<String>(
+                              value: _fuelType,
+                              items: AppConstants.fuelTypes.map((fuel) {
+                                return DropdownMenuItem(
+                                  value: fuel,
+                                  child: Text(fuel),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _fuelType = value!;
+                                  _hasModifications = true;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                labelText: 'Type de carburant',
+                                border: OutlineInputBorder(),
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // Puissance fiscale (seulement pour voiture)
+                            if (_vehicleType == 'Voiture') ...[
+                              Text(
+                                'Puissance fiscale: $_fiscalPower CV',
+                                style: Theme.of(context).textTheme.labelLarge,
+                              ),
+                              Slider(
+                                value: _fiscalPower.toDouble(),
+                                min: 3,
+                                max: 10,
+                                divisions: 7,
+                                label: '$_fiscalPower CV',
+                                onChanged: (value) {
+                                  setState(() {
+                                    _fiscalPower = value.round();
+                                    _hasModifications = true;
+                                  });
+                                },
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 
                 const SizedBox(height: 16),
                 
-                // Card 2 - Trajet
+                // Section 2 - Trajet
                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Trajet',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        
-                        // Distance domicile-travail
-                        TextFormField(
-                          controller: _distanceController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Distance domicile-travail (km aller simple)',
-                            border: OutlineInputBorder(),
-                            suffixText: 'km',
-                          ),
-                          textInputAction: TextInputAction.next,
-                        ),
-                      ],
+                  child: ExpansionTile(
+                    initiallyExpanded: _tripExpanded,
+                    onExpansionChanged: (expanded) {
+                      setState(() {
+                        _tripExpanded = expanded;
+                      });
+                    },
+                    title: const Text(
+                      'Trajet',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            // Distance domicile-travail
+                            TextFormField(
+                              controller: _distanceController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: 'Distance domicile-travail (aller simple)',
+                                suffixText: 'km',
+                                border: OutlineInputBorder(),
+                              ),
+                              textInputAction: TextInputAction.next,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 
                 const SizedBox(height: 16),
                 
-                // Card 3 - Frais additionnels
+                // Section 3 - Frais additionnels
                 Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Frais additionnels',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        
-                        // Parking
-                        TextFormField(
-                          controller: _parkingController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Frais de parking mensuel',
-                            border: OutlineInputBorder(),
-                            suffixText: '€/mois',
-                          ),
-                          textInputAction: TextInputAction.next,
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Péages
-                        TextFormField(
-                          controller: _tollsController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Frais de péages mensuel',
-                            border: OutlineInputBorder(),
-                            suffixText: '€/mois',
-                          ),
-                          textInputAction: TextInputAction.next,
-                        ),
-                        
-                        const SizedBox(height: 16),
-                        
-                        // Remboursement employeur
-                        TextFormField(
-                          controller: _employerReimbursementController,
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-                          ],
-                          decoration: const InputDecoration(
-                            labelText: 'Remboursement transport employeur',
-                            border: OutlineInputBorder(),
-                            suffixText: '€/mois',
-                          ),
-                          textInputAction: TextInputAction.done,
-                        ),
-                      ],
+                  child: ExpansionTile(
+                    initiallyExpanded: _expensesExpanded,
+                    onExpansionChanged: (expanded) {
+                      setState(() {
+                        _expensesExpanded = expanded;
+                      });
+                    },
+                    title: const Text(
+                      'Frais additionnels',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            // Parking mensuel
+                            TextFormField(
+                              controller: _parkingController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: 'Parking mensuel',
+                                suffixText: '€/mois',
+                                border: OutlineInputBorder(),
+                              ),
+                              textInputAction: TextInputAction.next,
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // Péages mensuels
+                            TextFormField(
+                              controller: _tollsController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: 'Péages mensuels',
+                                suffixText: '€/mois',
+                                border: OutlineInputBorder(),
+                              ),
+                              textInputAction: TextInputAction.next,
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // Remboursement transport employeur
+                            TextFormField(
+                              controller: _employerReimbursementController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                              ],
+                              decoration: const InputDecoration(
+                                labelText: 'Remboursement transport employeur',
+                                suffixText: '€/mois',
+                                border: OutlineInputBorder(),
+                              ),
+                              textInputAction: TextInputAction.done,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                
-                
-                const SizedBox(height: 80), // Espace en bas
               ],
             ),
           ),
