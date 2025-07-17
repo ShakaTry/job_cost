@@ -166,6 +166,9 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
       },
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+          elevation: 0,
           title: Row(
             children: [
               ProfileAvatar(

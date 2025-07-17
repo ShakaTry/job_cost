@@ -168,11 +168,11 @@ class _TransportScreenState extends State<TransportScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Text(
-                      'Transport & Déplacements',
+                    Text(
+                      AppStrings.transportTitle,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.white70,
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                   ],
