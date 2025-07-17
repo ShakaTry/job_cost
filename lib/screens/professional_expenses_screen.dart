@@ -48,10 +48,10 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
   String? _childcareType;
 
   // États d'expansion des sections
-  bool _mealExpanded = true;
-  bool _childcareExpanded = true;
-  bool _remoteExpanded = true;
-  bool _equipmentExpanded = true;
+  bool _mealExpanded = false;
+  bool _childcareExpanded = false;
+  bool _remoteExpanded = false;
+  bool _equipmentExpanded = false;
 
   @override
   void initState() {
