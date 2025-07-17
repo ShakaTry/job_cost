@@ -120,18 +120,18 @@ docs/
 Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
 Focus actuel : MVP/Version gratuite uniquement.
 
-### 🚨 CHANGEMENT DE STRATÉGIE (17/12/2024)
-Suite à une analyse complète du projet, la priorité a été réorganisée :
-- **PROBLÈME** : Nous développions des pages de saisie sans avoir l'écran de calcul
-- **SOLUTION** : Développer d'abord l'écran de calcul (fonctionnalité principale)
-- **NOUVELLE PRIORITÉ** : Écran de calcul → Paramètres fiscaux → Frais essentiels
+### 🔄 STRATÉGIE FINALE (17/12/2024)
+Après discussion, nous suivons une approche logique :
+- **Collecter d'abord** toutes les données nécessaires (pages de saisie)
+- **Puis calculer** avec toutes les informations disponibles
+- **Approche** : Données → Calculs → Résultats
 
-### Prochaines étapes (ordre révisé)
+### Prochaines étapes
 1. ~~Créer la page "Situation professionnelle"~~ ✅ FAIT
 2. ~~Créer la page "Transport & Déplacements"~~ ✅ FAIT
-3. **🚨 Créer l'écran de calcul** 🎯 **PRIORITÉ ABSOLUE**
-4. Créer la page "Paramètres fiscaux" simplifiée
-5. Créer la page "Frais professionnels" (essentiels uniquement)
+3. Créer la page "Paramètres fiscaux" 🎯 **PROCHAINE ÉTAPE**
+4. Créer la page "Frais professionnels" (essentiels)
+5. Créer l'écran de calcul (avec toutes les données)
 6. Implémenter l'export des résultats
 
 ### Notes importantes

@@ -1,6 +1,6 @@
 # 📋 Stratégie MVP - Job Cost
 
-## 🔄 Changement de priorité (17/12/2024)
+## 🔄 Évolution de la stratégie (17/12/2024)
 
 ### Problème identifié
 Nous développions l'application "de bas en haut" :
@@ -80,6 +80,19 @@ CalculationScreen
 - Export texte des calculs
 - Tests avec cas réels
 - Corrections et ajustements
+
+## 📝 Décision finale
+
+Après réflexion, il est plus logique de **finir d'abord toutes les pages de données** avant l'écran de calcul, car :
+1. L'écran de calcul a besoin de TOUTES les données pour fonctionner correctement
+2. Les paramètres fiscaux sont essentiels pour calculer le net après impôt
+3. Les frais professionnels (repas, garde) ont un impact majeur sur le salaire réel
+
+**Nouvelle séquence** :
+1. ✅ Pages de profil (FAIT)
+2. 🚧 Paramètres fiscaux
+3. 🚧 Frais professionnels
+4. 🚧 Écran de calcul (avec toutes les données disponibles)
 
 ## ✅ Critères de succès du MVP
 

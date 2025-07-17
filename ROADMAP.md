@@ -3,149 +3,157 @@
 ## 📱 Vue d'ensemble
 Application Flutter pour calculer le salaire réel net en déduisant tous les frais liés à un emploi.
 
-## 🚨 PRIORITÉ CRITIQUE : MVP Minimal Fonctionnel
+## 🚀 Stratégie de développement
 
-### Phase 1 : Fonctionnalités Essentielles (2-3 semaines)
-**Sans ces fonctionnalités, l'application n'a AUCUNE valeur**
+### Approche logique : Données → Calculs → Résultats
+1. **Collecter** toutes les données nécessaires (pages de saisie)
+2. **Calculer** le salaire net réel (moteur de calcul)
+3. **Présenter** les résultats détaillés (écran de calcul)
 
-#### 1. 🧮 Écran de calcul (PRIORITÉ ABSOLUE)
-- [ ] Interface de saisie d'offre d'emploi
-  - [ ] Salaire proposé (brut/net)
-  - [ ] Localisation du poste
-  - [ ] Avantages (tickets resto, mutuelle, etc.)
-- [ ] Moteur de calcul complet
-  - [ ] Calcul du net après charges sociales
-  - [ ] Déduction des frais de transport
-  - [ ] Déduction des frais professionnels
-  - [ ] Calcul du "vrai net" final
-- [ ] Affichage des résultats détaillés
-  - [ ] Décomposition ligne par ligne
-  - [ ] Comparaison avec situation actuelle
-  - [ ] Gain/perte mensuel et annuel
+## 📋 Phase 1 : Pages de données essentielles (1-2 semaines)
 
-#### 2. 📊 Paramètres fiscaux simplifiés
+### ✅ Pages complétées
+1. **Informations personnelles** ✅
+   - Situation familiale (pour calcul impôts)
+   - Localisation (pour frais transport)
+   
+2. **Situation professionnelle** ✅
+   - Salaire actuel (pour comparaison)
+   - Heures supplémentaires
+   - Prime conventionnelle
+   
+3. **Transport & Déplacements** ✅
+   - Mode de transport
+   - Distance et frais
+   - Barème kilométrique 2024
+
+### 🚧 Pages à compléter
+
+#### 1. Paramètres fiscaux (PRIORITÉ 1)
 - [ ] Régime fiscal (prélèvement à la source)
 - [ ] Taux de prélèvement personnalisé
 - [ ] Nombre de parts fiscales
-- [ ] Crédits d'impôt basiques
+- [ ] Crédits et réductions d'impôt basiques
 
-#### 3. 🍽️ Frais professionnels essentiels
-- [ ] Repas (cantine d'entreprise vs tickets restaurant vs rien)
-- [ ] Garde d'enfants (si enfants à charge détectés)
-- [ ] Forfait télétravail de base
+#### 2. Frais professionnels essentiels (PRIORITÉ 2)
+- [ ] Repas (cantine, tickets restaurant, panier)
+- [ ] Garde d'enfants (assistant maternel, crèche)
+- [ ] Télétravail (forfait)
+- [ ] Équipements obligatoires
 
-#### 4. 📤 Export basique
-- [ ] Export texte simple des calculs
-- [ ] Partage via apps natives (WhatsApp, email, etc.)
+## 📊 Phase 2 : Moteur de calcul et interface (1-2 semaines)
 
-### Phase 2 : MVP Complet (1-2 semaines)
+### 3. Écran de calcul (PRIORITÉ 3)
+- [ ] Interface de saisie d'offre d'emploi
+  - [ ] Salaire brut proposé
+  - [ ] Localisation du poste
+  - [ ] Avantages (tickets resto, mutuelle, etc.)
+- [ ] Moteur de calcul complet
+  - [ ] Calcul charges sociales → net
+  - [ ] Calcul impôts avec données fiscales
+  - [ ] Déduction frais transport (données existantes)
+  - [ ] Déduction frais professionnels
+- [ ] Affichage des résultats
+  - [ ] Salaire net après charges
+  - [ ] Net après impôts
+  - [ ] Net après frais = SALAIRE RÉEL
+  - [ ] Comparaison avec situation actuelle
 
-#### 5. 💼 Frais professionnels complets
-- [ ] Équipements professionnels
-- [ ] Formations obligatoires
-- [ ] Vêtements de travail
-- [ ] Frais de déménagement
+### 4. Export et partage (PRIORITÉ 4)
+- [ ] Export texte simple
+- [ ] Partage via apps natives
+- [ ] Sauvegarde des calculs
 
-#### 6. 💾 Persistance SQLite
-- [ ] Migration depuis SharedPreferences
+## 🎯 Phase 3 : MVP Complet (1 semaine)
+
+### 5. Améliorations essentielles
+- [ ] Comparaison multi-offres (3 max)
+- [ ] Graphiques simples
 - [ ] Historique des calculs
-- [ ] Sauvegarde des offres comparées
 
-#### 7. 📈 Comparaison avancée
-- [ ] Comparaison simultanée de 3 offres
-- [ ] Graphiques de comparaison
-- [ ] Simulation sur 12 mois
+### 6. Persistance SQLite
+- [ ] Migration depuis SharedPreferences
+- [ ] Optimisation des performances
 
 ## 📊 État actuel du projet (Décembre 2024)
 
-### ✅ Complété (57.5%)
-1. **Pages terminées (5/8)**
-   - ✅ Sélection de profil
-   - ✅ Informations personnelles
-   - ✅ Situation professionnelle
-   - ✅ Transport & Déplacements
-   - ✅ Vue détail du profil
+### Progression : 57.5% (11.5/20 fonctionnalités MVP)
 
-2. **Fonctionnalités implémentées**
-   - ✅ Profil de démonstration "Sophie Martin"
-   - ✅ Sauvegarde automatique (pattern PopScope)
-   - ✅ Calculs salaire brut/horaire bidirectionnels
-   - ✅ Heures supplémentaires (25%/50%)
-   - ✅ Barème kilométrique 2024
-   - ✅ Validation et formatage des données
+| Catégorie | Complété | Total | % |
+|-----------|----------|-------|---|
+| Pages données | 3 | 5 | 60% |
+| Écran calcul | 0 | 1 | 0% |
+| Fonctionnalités | 8.5 | 14 | 61% |
 
-### 🚧 En cours / À faire (42.5%)
-1. **Fonctionnalités critiques manquantes**
-   - ❌ Écran de calcul (BLOQUANT)
-   - ❌ Paramètres fiscaux
-   - ❌ Frais professionnels
-   - ❌ Export des résultats
+### ✅ Fonctionnalités implémentées
+- Profil de démonstration "Sophie Martin"
+- Sauvegarde automatique (pattern PopScope)
+- Calculs salaire brut/horaire bidirectionnels
+- Heures supplémentaires (25%/50%)
+- Barème kilométrique 2024
+- Validation et formatage des données
+- Navigation entre pages
 
-2. **Améliorations techniques**
-   - ❌ Persistance SQLite
-   - ❌ Tests unitaires
-   - ❌ State management avancé
+### 🚧 Fonctionnalités manquantes critiques
+- Paramètres fiscaux (BLOQUANT pour calculs)
+- Frais professionnels essentiels
+- Écran de calcul
+- Export des résultats
+
+## ⏱️ Timeline actualisée
+
+### Semaine 1-2 : Finaliser les données
+- **2-3 jours** : Page Paramètres fiscaux
+- **2-3 jours** : Page Frais professionnels essentiels
+- **1 jour** : Tests avec profil Sophie Martin
+
+### Semaine 3 : Écran de calcul
+- **2 jours** : Modèle JobOffer + UI saisie
+- **2 jours** : Moteur de calcul
+- **1 jour** : UI résultats
+
+### Semaine 4 : Finalisation MVP
+- **2 jours** : Export et partage
+- **2 jours** : Tests et corrections
+- **1 jour** : Polish final
+
+**Total réaliste : 4 semaines pour MVP fonctionnel**
 
 ## 💎 Fonctionnalités Premium (Post-MVP)
 
 ### Version Gratuite
 - ✅ 3 profils maximum
-- ✅ Saisie manuelle des données
-- ✅ Calculs de base
-- ✅ Export texte simple
+- ✅ Saisie manuelle
+- ✅ Calculs complets
+- ✅ Export texte
 
-### Version Premium (5€/mois ou 50€/an)
-- [ ] Profils illimités
-- [ ] Import automatique (LinkedIn, fiches de paie PDF)
-- [ ] API Google Maps pour distances précises
-- [ ] Prix carburant en temps réel
-- [ ] Détection convention collective
-- [ ] Export PDF professionnel
-- [ ] Simulations sur 5 ans
-- [ ] Notifications changements fiscaux
-
-## 🔧 Recommandations techniques urgentes
-
-### Court terme (pour le MVP)
-1. **Créer le moteur de calcul**
-   ```dart
-   class SalaryCalculator {
-     static CalculationResult calculate(UserProfile profile, JobOffer offer)
-   }
-   ```
-
-2. **Refactorer le modèle transport**
-   ```dart
-   // Remplacer Map<String, dynamic>? par
-   TransportData? transport;
-   ```
-
-3. **Ajouter des tests critiques**
-   - Tests des calculs de salaire
-   - Tests des majorations heures sup
-   - Tests du barème kilométrique
-
-## ⏱️ Timeline réaliste
-
-### MVP Minimal (3 semaines)
-- **Semaine 1** : Écran de calcul + moteur
-- **Semaine 2** : Paramètres fiscaux + frais essentiels  
-- **Semaine 3** : Export + tests + finalisation
-
-### MVP Complet (+2 semaines)
-- **Semaine 4** : Frais pro complets + SQLite
-- **Semaine 5** : Comparaison + polish final
-
-**Total : 5 semaines pour un MVP commercialisable**
+### Version Premium (5€/mois)
+- Profils illimités
+- Import automatique (LinkedIn, PDF)
+- API distances précises
+- Prix carburant temps réel
+- Export PDF professionnel
+- Simulations 5 ans
 
 ## 🎯 Prochaines étapes immédiates
 
-1. **ARRÊTER** le développement de nouvelles pages de saisie
-2. **COMMENCER** l'écran de calcul immédiatement
-3. **TESTER** avec des cas réels (Sophie Martin)
-4. **VALIDER** les calculs avec des fiches de paie réelles
+1. **Créer la page "Paramètres fiscaux"** 
+   - Simple et focalisée sur l'essentiel
+   - Taux personnalisé + parts fiscales
+
+2. **Créer la page "Frais professionnels"**
+   - Seulement les frais majeurs (repas, garde)
+   - Autres frais en phase 2
+
+3. **Développer l'écran de calcul**
+   - Utiliser toutes les données collectées
+   - Calculs précis et transparents
+
+4. **Tester avec Sophie Martin**
+   - Valider tous les calculs
+   - Comparer avec fiche de paie réelle
 
 ---
 
 *Dernière mise à jour : 17 décembre 2024*
-*Progression réelle : 57.5% (11.5/20 fonctionnalités MVP)*
+*Note : Stratégie révisée pour collecter d'abord toutes les données nécessaires*
