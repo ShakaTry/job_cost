@@ -189,13 +189,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
           ],
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(AppConstants.defaultPadding),
+          children: [
               Center(
                 child: ProfileAvatar(
                   firstName: _firstNameController.text,
@@ -207,209 +205,261 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               ),
               const SizedBox(height: 32),
               
-              // Section Identité
-              _buildSectionHeader(AppStrings.identitySection),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _lastNameController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.lastName,
-                  hintText: AppStrings.lastNameHint,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person_outline),
-                ),
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                validator: (value) => Validators.validateName(value, AppStrings.lastName),
-                onChanged: (_) => _updateProfile(),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _firstNameController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.firstName,
-                  hintText: AppStrings.firstNameHint,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.person),
-                ),
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                validator: (value) => Validators.validateName(value, AppStrings.firstName),
-                onChanged: (value) {
-                  if (mounted) setState(() {});
-                  _updateProfile();
-                },
-                onFieldSubmitted: (_) {
-                  // Ouvrir le date picker pour la date de naissance
-                  _selectBirthDate();
-                },
-              ),
-              const SizedBox(height: 16),
-              InkWell(
-                onTap: _selectBirthDate,
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: AppStrings.birthDate,
-                    hintText: AppStrings.selectDateHint,
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.calendar_today),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Card Identité
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _birthDate != null
-                            ? '${_birthDate!.day.toString().padLeft(2, '0')}/${_birthDate!.month.toString().padLeft(2, '0')}/${_birthDate!.year}'
-                            : AppStrings.notSpecifiedDate,
+                        AppStrings.identitySection,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      if (_birthDate != null)
-                        Text(
-                          '${_calculateAge()} ${AppStrings.yearsOld}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 14,
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      TextFormField(
+                        controller: _lastNameController,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.lastName,
+                          hintText: AppStrings.lastNameHint,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person_outline),
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) => Validators.validateName(value, AppStrings.lastName),
+                        onChanged: (_) => _updateProfile(),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _firstNameController,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.firstName,
+                          hintText: AppStrings.firstNameHint,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.person),
+                        ),
+                        textCapitalization: TextCapitalization.words,
+                        textInputAction: TextInputAction.next,
+                        validator: (value) => Validators.validateName(value, AppStrings.firstName),
+                        onChanged: (value) {
+                          if (mounted) setState(() {});
+                          _updateProfile();
+                        },
+                        onFieldSubmitted: (_) {
+                          // Ouvrir le date picker pour la date de naissance
+                          _selectBirthDate();
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onDoubleTap: () {
+                          // Activer la saisie manuelle sur double-tap
+                          _showManualBirthDateInput();
+                        },
+                        child: TextFormField(
+                          readOnly: true,
+                          onTap: _selectBirthDate,
+                          decoration: const InputDecoration(
+                            labelText: AppStrings.birthDate,
+                            hintText: 'Appuyez ou double-cliquez pour saisir',
+                            border: OutlineInputBorder(),
+                            suffixIcon: Icon(Icons.calendar_today),
+                            helperText: 'Double-clic pour saisie manuelle',
+                          ),
+                          controller: TextEditingController(
+                            text: _birthDate != null
+                                ? '${_birthDate!.day.toString().padLeft(2, '0')}/${_birthDate!.month.toString().padLeft(2, '0')}/${_birthDate!.year}'
+                                : '',
                           ),
                         ),
+                      ),
+                      if (_birthDate != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            '${_calculateAge()} ${AppStrings.yearsOld}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        value: _nationality,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.nationality,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.flag),
+                        ),
+                        items: AppConstants.nationalityOptions.map((String country) {
+                          return DropdownMenuItem<String>(
+                            value: country,
+                            child: Text(country),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            if (mounted) {
+                              setState(() {
+                                _nationality = newValue;
+                              });
+                            }
+                            _updateProfile();
+                          }
+                        },
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _nationality,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.nationality,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.flag),
+              
+              const SizedBox(height: AppConstants.defaultPadding),
+              
+              // Card Coordonnées
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.contactSection,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      TextFormField(
+                        controller: _addressController,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.address,
+                          hintText: AppStrings.addressHint,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.home),
+                        ),
+                        maxLines: 3,
+                        textInputAction: TextInputAction.next,
+                        validator: Validators.validateAddress,
+                        onChanged: (_) => _updateProfile(),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _phoneController,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.phone,
+                          hintText: AppStrings.phoneHint,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.phone),
+                        ),
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                        validator: Validators.validatePhone,
+                        onChanged: (value) {
+                          // Formater automatiquement le numéro
+                          final newValue = _formatPhoneNumber(value);
+                          if (newValue != value) {
+                            _phoneController.value = TextEditingValue(
+                              text: newValue,
+                              selection: TextSelection.collapsed(offset: newValue.length),
+                            );
+                          }
+                          _updateProfile();
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.email,
+                          hintText: AppStrings.emailHint,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.email),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.done,
+                        validator: Validators.validateEmail,
+                        onChanged: (_) => _updateProfile(),
+                      ),
+                    ],
+                  ),
                 ),
-                items: AppConstants.nationalityOptions.map((String country) {
-                  return DropdownMenuItem<String>(
-                    value: country,
-                    child: Text(country),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    if (mounted) {
-                      setState(() {
-                        _nationality = newValue;
-                      });
-                    }
-                    _updateProfile();
-                  }
-                },
               ),
               
-              const SizedBox(height: 32),
+              const SizedBox(height: AppConstants.defaultPadding),
               
-              // Section Coordonnées
-              _buildSectionHeader(AppStrings.contactSection),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _addressController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.address,
-                  hintText: AppStrings.addressHint,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.home),
+              // Card Situation familiale
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.familySection,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      DropdownButtonFormField<String>(
+                        value: _maritalStatus,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.maritalStatus,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.family_restroom),
+                        ),
+                        items: AppConstants.maritalStatusOptions.map((String status) {
+                          return DropdownMenuItem<String>(
+                            value: status,
+                            child: Text(status),
+                          );
+                        }).toList(),
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            if (mounted) {
+                              setState(() {
+                                _maritalStatus = newValue;
+                              });
+                            }
+                            _updateProfile();
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<int>(
+                        value: _dependentChildren,
+                        decoration: const InputDecoration(
+                          labelText: AppStrings.dependentChildren,
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.child_care),
+                        ),
+                        items: List.generate(11, (index) => index).map((int value) {
+                          return DropdownMenuItem<int>(
+                            value: value,
+                            child: Text(value == 0 ? AppStrings.none : '$value'),
+                          );
+                        }).toList(),
+                        onChanged: (int? newValue) {
+                          if (newValue != null) {
+                            if (mounted) {
+                              setState(() {
+                                _dependentChildren = newValue;
+                              });
+                            }
+                            _updateProfile();
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                maxLines: 3,
-                textInputAction: TextInputAction.next,
-                validator: Validators.validateAddress,
-                onChanged: (_) => _updateProfile(),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _phoneController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.phone,
-                  hintText: AppStrings.phoneHint,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.phone),
-                ),
-                keyboardType: TextInputType.phone,
-                textInputAction: TextInputAction.next,
-                validator: Validators.validatePhone,
-                onChanged: (value) {
-                  // Formater automatiquement le numéro
-                  final newValue = _formatPhoneNumber(value);
-                  if (newValue != value) {
-                    _phoneController.value = TextEditingValue(
-                      text: newValue,
-                      selection: TextSelection.collapsed(offset: newValue.length),
-                    );
-                  }
-                  _updateProfile();
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.email,
-                  hintText: AppStrings.emailHint,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
-                validator: Validators.validateEmail,
-                onChanged: (_) => _updateProfile(),
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // Section Situation familiale
-              _buildSectionHeader(AppStrings.familySection),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _maritalStatus,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.maritalStatus,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.family_restroom),
-                ),
-                items: AppConstants.maritalStatusOptions.map((String status) {
-                  return DropdownMenuItem<String>(
-                    value: status,
-                    child: Text(status),
-                  );
-                }).toList(),
-                onChanged: (String? newValue) {
-                  if (newValue != null) {
-                    if (mounted) {
-                      setState(() {
-                        _maritalStatus = newValue;
-                      });
-                    }
-                    _updateProfile();
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<int>(
-                value: _dependentChildren,
-                decoration: const InputDecoration(
-                  labelText: AppStrings.dependentChildren,
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.child_care),
-                ),
-                items: List.generate(11, (index) => index).map((int value) {
-                  return DropdownMenuItem<int>(
-                    value: value,
-                    child: Text(value == 0 ? AppStrings.none : '$value'),
-                  );
-                }).toList(),
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    if (mounted) {
-                      setState(() {
-                        _dependentChildren = newValue;
-                      });
-                    }
-                    _updateProfile();
-                  }
-                },
               ),
               
               const SizedBox(height: 24),
@@ -418,23 +468,12 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
               ),
               const SizedBox(height: 32),
             ],
-          ),
         ),
       ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: Colors.black87,
-      ),
-    );
-  }
 
   int _calculateAge() {
     if (_birthDate == null) return 0;
@@ -493,6 +532,95 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         );
       }
     }
+  }
+
+  void _showManualBirthDateInput() {
+    final TextEditingController dateController = TextEditingController();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Saisir la date de naissance'),
+          content: TextFormField(
+            controller: dateController,
+            decoration: const InputDecoration(
+              labelText: 'Date de naissance',
+              hintText: 'jj/mm/aaaa',
+              border: OutlineInputBorder(),
+              helperText: 'Format : 17/07/1990',
+            ),
+            keyboardType: TextInputType.datetime,
+            autofocus: true,
+            onChanged: (value) {
+              // Formater automatiquement avec des slashes
+              String formatted = value.replaceAll(RegExp(r'[^0-9]'), '');
+              if (formatted.length > 2) {
+                formatted = '${formatted.substring(0, 2)}/${formatted.substring(2)}';
+              }
+              if (formatted.length > 5) {
+                formatted = '${formatted.substring(0, 5)}/${formatted.substring(5)}';
+              }
+              if (formatted.length > 10) {
+                formatted = formatted.substring(0, 10);
+              }
+              
+              if (formatted != value) {
+                dateController.value = TextEditingValue(
+                  text: formatted,
+                  selection: TextSelection.collapsed(offset: formatted.length),
+                );
+              }
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Annuler'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final dateText = dateController.text;
+                if (dateText.length == 10) {
+                  try {
+                    final parts = dateText.split('/');
+                    final day = int.parse(parts[0]);
+                    final month = int.parse(parts[1]);
+                    final year = int.parse(parts[2]);
+                    
+                    final date = DateTime(year, month, day);
+                    
+                    // Vérifier que la date est valide et dans la plage autorisée
+                    if (date.isAfter(DateTime(1899)) && date.isBefore(DateTime.now().add(const Duration(days: 1)))) {
+                      setState(() {
+                        _birthDate = date;
+                      });
+                      _updateProfile();
+                      Navigator.of(context).pop();
+                    } else {
+                      // Afficher erreur de plage
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Date invalide : doit être entre 1900 et aujourd\'hui')),
+                      );
+                    }
+                  } catch (e) {
+                    // Afficher erreur de format
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Format invalide : utilisez jj/mm/aaaa')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Date incomplète : utilisez le format jj/mm/aaaa')),
+                  );
+                }
+              },
+              child: const Text('Valider'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _pickImage() {
