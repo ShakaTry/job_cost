@@ -5,6 +5,7 @@ import '../services/profile_service.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
 import '../widgets/profile_avatar.dart';
+import '../utils/validators.dart';
 
 class FiscalParametersScreen extends StatefulWidget {
   final UserProfile profile;
@@ -37,12 +38,28 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
   bool _fiscalRegimeExpanded = false;
   bool _deductionsExpanded = false;
 
+  // Système de tracking des erreurs par section
+  final Map<String, bool> _sectionHasError = {
+    'regime': false,
+    'deductions': false,
+  };
+
+  final Map<String, bool> _sectionIsComplete = {
+    'regime': false,
+    'deductions': false,
+  };
+
   @override
   void initState() {
     super.initState();
     _profile = widget.profile;
     _initializeControllers();
     _setupListeners();
+    
+    // Initialiser l'état des erreurs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSectionErrorStatus();
+    });
   }
 
   void _initializeControllers() {
@@ -87,8 +104,49 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
       );
 
       await _profileService.updateProfile(_profile);
+      
+      // Mettre à jour l'état des erreurs
+      _updateSectionErrorStatus();
     } catch (e) {
       debugPrint('Erreur lors de la sauvegarde: $e');
+    }
+  }
+
+  // Méthodes de validation par section
+  bool _hasRegimeErrors() {
+    return _fiscalRegime == null || _fiscalRegime!.isEmpty;
+  }
+
+  bool _hasDeductionsErrors() {
+    return Validators.validatePositiveNumber(_deductibleCSGController.text) != null ||
+           Validators.validatePositiveNumber(_additionalDeductionsController.text) != null;
+  }
+
+  bool _isRegimeComplete() {
+    return _fiscalRegime != null && _fiscalRegime!.isNotEmpty;
+  }
+
+  bool _isDeductionsComplete() {
+    return true; // Section optionnelle
+  }
+
+  void _updateSectionErrorStatus() {
+    setState(() {
+      _sectionHasError['regime'] = _hasRegimeErrors();
+      _sectionHasError['deductions'] = _hasDeductionsErrors();
+      
+      _sectionIsComplete['regime'] = _isRegimeComplete() && !_hasRegimeErrors();
+      _sectionIsComplete['deductions'] = _isDeductionsComplete() && !_hasDeductionsErrors();
+    });
+  }
+
+  Widget _buildValidationIcon(String section) {
+    if (_sectionHasError[section]!) {
+      return const Icon(Icons.error, color: Colors.red, size: 20);
+    } else if (_sectionIsComplete[section]!) {
+      return const Icon(Icons.check_circle, color: Colors.green, size: 20);
+    } else {
+      return const Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 20);
     }
   }
 
@@ -153,13 +211,22 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
                     });
                   },
                   shape: const Border(),
-                  title: const Text(
-                    'Régime fiscal et prélèvement à la source',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  title: Row(
+                    children: [
+                      const Text(
+                        'Régime fiscal et prélèvement à la source',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _buildValidationIcon('regime'),
+                    ],
                   ),
+                  backgroundColor: _sectionHasError['regime']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),
@@ -180,8 +247,8 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
                             onChanged: (value) {
                               setState(() {
                                 _fiscalRegime = value;
-                                _saveProfile();
                               });
+                              _saveProfile();
                             },
                           ),
                           const SizedBox(height: 16),
@@ -231,13 +298,22 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
                     });
                   },
                   shape: const Border(),
-                  title: const Text(
-                    'Déductions fiscales',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  title: Row(
+                    children: [
+                      const Text(
+                        'Déductions fiscales',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      _buildValidationIcon('deductions'),
+                    ],
                   ),
+                  backgroundColor: _sectionHasError['deductions']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16.0),

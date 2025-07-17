@@ -43,6 +43,19 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   bool _workTimeExpanded = false;
   bool _benefitsExpanded = false;
 
+  // Système de tracking des erreurs par section
+  final Map<String, bool> _sectionHasError = {
+    'employment': false,
+    'worktime': false,
+    'benefits': false,
+  };
+
+  final Map<String, bool> _sectionIsComplete = {
+    'employment': false,
+    'worktime': false,
+    'benefits': false,
+  };
+
   @override
   void initState() {
     super.initState();
@@ -338,6 +351,9 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
       mutualEmployeeCost: mutualCost,
     );
     
+    // Mettre à jour l'état des erreurs
+    _updateSectionErrorStatus();
+    
     // Sauvegarder automatiquement le profil (comme sur la page d'infos personnelles)
     _profileService.updateProfile(_modifiedProfile);
   }
@@ -433,6 +449,58 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     );
   }
 
+  // Méthodes de validation par section
+  bool _hasEmploymentErrors() {
+    return (_companyNameController.text.isEmpty) ||
+           (_jobTitleController.text.isEmpty);
+  }
+
+  bool _hasWorkTimeErrors() {
+    return (_salaryController.text.isEmpty) ||
+           (double.tryParse(_salaryController.text.replaceAll(' ', '')) == null) ||
+           ((double.tryParse(_salaryController.text.replaceAll(' ', '')) ?? 0) <= 0);
+  }
+
+  bool _hasBenefitsErrors() {
+    return false; // Pas d'erreurs spécifiques pour cette section
+  }
+
+  bool _isEmploymentComplete() {
+    return _companyNameController.text.isNotEmpty && 
+           _jobTitleController.text.isNotEmpty;
+  }
+
+  bool _isWorkTimeComplete() {
+    return _salaryController.text.isNotEmpty &&
+           (double.tryParse(_salaryController.text.replaceAll(' ', '')) ?? 0) > 0;
+  }
+
+  bool _isBenefitsComplete() {
+    return true; // Section optionnelle
+  }
+
+  void _updateSectionErrorStatus() {
+    setState(() {
+      _sectionHasError['employment'] = _hasEmploymentErrors();
+      _sectionHasError['worktime'] = _hasWorkTimeErrors();
+      _sectionHasError['benefits'] = _hasBenefitsErrors();
+      
+      _sectionIsComplete['employment'] = _isEmploymentComplete() && !_hasEmploymentErrors();
+      _sectionIsComplete['worktime'] = _isWorkTimeComplete() && !_hasWorkTimeErrors();
+      _sectionIsComplete['benefits'] = _isBenefitsComplete() && !_hasBenefitsErrors();
+    });
+  }
+
+  Widget _buildValidationIcon(String section) {
+    if (_sectionHasError[section]!) {
+      return const Icon(Icons.error, color: Colors.red, size: 20);
+    } else if (_sectionIsComplete[section]!) {
+      return const Icon(Icons.check_circle, color: Colors.green, size: 20);
+    } else {
+      return const Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 20);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -495,13 +563,22 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   });
                 },
                 shape: const Border(),
-                title: Text(
-                  AppStrings.currentEmploymentSection,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                title: Row(
+                  children: [
+                    Text(
+                      AppStrings.currentEmploymentSection,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildValidationIcon('employment'),
+                  ],
                 ),
+                backgroundColor: _sectionHasError['employment']! 
+                  ? Colors.red.withValues(alpha: 0.1) 
+                  : Colors.transparent,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -605,13 +682,22 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   });
                 },
                 shape: const Border(),
-                title: const Text(
-                  'Temps de travail et rémunération',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                title: Row(
+                  children: [
+                    const Text(
+                      'Temps de travail et rémunération',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildValidationIcon('worktime'),
+                  ],
                 ),
+                backgroundColor: _sectionHasError['worktime']! 
+                  ? Colors.red.withValues(alpha: 0.1) 
+                  : Colors.transparent,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -787,13 +873,22 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                   });
                 },
                 shape: const Border(),
-                title: const Text(
-                  'Avantages sociaux',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                title: Row(
+                  children: [
+                    const Text(
+                      'Avantages sociaux',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildValidationIcon('benefits'),
+                  ],
                 ),
+                backgroundColor: _sectionHasError['benefits']! 
+                  ? Colors.red.withValues(alpha: 0.1) 
+                  : Colors.transparent,
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(AppConstants.defaultPadding),

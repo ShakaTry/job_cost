@@ -232,9 +232,10 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop) {
+          final navigator = Navigator.of(context);
           await _saveProfile();
           if (mounted) {
-            Navigator.pop(context, _profile);
+            navigator.pop(_profile);
           }
         }
       },

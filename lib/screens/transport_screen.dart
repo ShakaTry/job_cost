@@ -5,6 +5,7 @@ import '../widgets/profile_avatar.dart';
 import '../constants/app_constants.dart';
 import '../constants/app_strings.dart';
 import '../services/profile_service.dart';
+import '../utils/validators.dart';
 
 class TransportScreen extends StatefulWidget {
   final UserProfile profile;
@@ -37,6 +38,19 @@ class _TransportScreenState extends State<TransportScreen> {
   bool _vehicleExpanded = false;
   bool _tripExpanded = false;
   bool _expensesExpanded = false;
+
+  // Système de tracking des erreurs par section
+  final Map<String, bool> _sectionHasError = {
+    'vehicle': false,
+    'trip': false,
+    'expenses': false,
+  };
+
+  final Map<String, bool> _sectionIsComplete = {
+    'vehicle': false,
+    'trip': false,
+    'expenses': false,
+  };
 
   @override
   void initState() {
@@ -105,6 +119,9 @@ class _TransportScreenState extends State<TransportScreen> {
 
       await _profileService.updateProfile(_modifiedProfile);
       
+      // Mettre à jour l'état des erreurs
+      _updateSectionErrorStatus();
+      
       if (mounted) {
         setState(() {
           _hasModifications = false;
@@ -136,6 +153,57 @@ class _TransportScreenState extends State<TransportScreen> {
         ],
       ),
     );
+  }
+
+  // Méthodes de validation par section
+  bool _hasVehicleErrors() {
+    return false; // Pas d'erreurs possibles car tous les champs sont des dropdowns/sliders
+  }
+
+  bool _hasTripErrors() {
+    final distance = double.tryParse(_distanceController.text);
+    return distance == null || distance <= 0;
+  }
+
+  bool _hasExpensesErrors() {
+    return Validators.validatePositiveNumber(_parkingController.text) != null ||
+           Validators.validatePositiveNumber(_tollsController.text) != null ||
+           Validators.validatePositiveNumber(_employerReimbursementController.text) != null;
+  }
+
+  bool _isVehicleComplete() {
+    return _vehicleType.isNotEmpty && _fuelType.isNotEmpty;
+  }
+
+  bool _isTripComplete() {
+    final distance = double.tryParse(_distanceController.text);
+    return distance != null && distance > 0;
+  }
+
+  bool _isExpensesComplete() {
+    return true; // Section optionnelle
+  }
+
+  void _updateSectionErrorStatus() {
+    setState(() {
+      _sectionHasError['vehicle'] = _hasVehicleErrors();
+      _sectionHasError['trip'] = _hasTripErrors();
+      _sectionHasError['expenses'] = _hasExpensesErrors();
+      
+      _sectionIsComplete['vehicle'] = _isVehicleComplete() && !_hasVehicleErrors();
+      _sectionIsComplete['trip'] = _isTripComplete() && !_hasTripErrors();
+      _sectionIsComplete['expenses'] = _isExpensesComplete() && !_hasExpensesErrors();
+    });
+  }
+
+  Widget _buildValidationIcon(String section) {
+    if (_sectionHasError[section]!) {
+      return const Icon(Icons.error, color: Colors.red, size: 20);
+    } else if (_sectionIsComplete[section]!) {
+      return const Icon(Icons.check_circle, color: Colors.green, size: 20);
+    } else {
+      return const Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 20);
+    }
   }
 
   @override
@@ -206,13 +274,22 @@ class _TransportScreenState extends State<TransportScreen> {
                       });
                     },
                     shape: const Border(),
-                    title: const Text(
-                      'Véhicule',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    title: Row(
+                      children: [
+                        const Text(
+                          'Véhicule',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildValidationIcon('vehicle'),
+                      ],
                     ),
+                    backgroundColor: _sectionHasError['vehicle']! 
+                      ? Colors.red.withValues(alpha: 0.1) 
+                      : Colors.transparent,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -303,13 +380,22 @@ class _TransportScreenState extends State<TransportScreen> {
                       });
                     },
                     shape: const Border(),
-                    title: const Text(
-                      'Trajet',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    title: Row(
+                      children: [
+                        const Text(
+                          'Trajet',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildValidationIcon('trip'),
+                      ],
                     ),
+                    backgroundColor: _sectionHasError['trip']! 
+                      ? Colors.red.withValues(alpha: 0.1) 
+                      : Colors.transparent,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -348,13 +434,22 @@ class _TransportScreenState extends State<TransportScreen> {
                       });
                     },
                     shape: const Border(),
-                    title: const Text(
-                      'Frais additionnels',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    title: Row(
+                      children: [
+                        const Text(
+                          'Frais additionnels',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildValidationIcon('expenses'),
+                      ],
                     ),
+                    backgroundColor: _sectionHasError['expenses']! 
+                      ? Colors.red.withValues(alpha: 0.1) 
+                      : Colors.transparent,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(16.0),
