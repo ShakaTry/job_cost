@@ -105,7 +105,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                           OutlinedButton.icon(
                             onPressed: _createDemoProfile,
                             icon: const Icon(Icons.science),
-                            label: const Text('Créer un profil de démonstration'),
+                            label: const Text('Créer un profil de démo'),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -487,7 +487,6 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
               ],
             ),
             content: const Text(
-              'Deux profils de démonstration ont été créés :\n\n'
               '• Sophie Martin (complet et valide)\n'
               '• Marc Durand (avec erreurs à corriger)\n\n'
               'Vous pouvez maintenant explorer la validation des profils.',
@@ -498,13 +497,6 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                   Navigator.of(context).pop();
                 },
                 child: const Text('Fermer'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _selectProfile(demoProfileComplete);
-                },
-                child: const Text('Voir Sophie Martin'),
               ),
             ],
           );
