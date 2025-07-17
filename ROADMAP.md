@@ -24,12 +24,13 @@
   - [x] Salaire brut mensuel / Taux horaire (calcul bidirectionnel)
   - [x] Salaire annuel (affichage automatique)
   - [x] Sauvegarde automatique avec pattern PopScope
-  - [x] Support des décimales pour les salaires
+  - [x] Support des décimales pour les salaires (format 2 chiffres après virgule)
   - [x] Calculs officiels selon durée légale 151,67h/mois
-  - [x] Heures supplémentaires (version basique)
-    - [x] Saisie heures fixes par semaine
+  - [x] Heures supplémentaires (version MVP)
+    - [x] Saisie heures fixes par semaine (champ côte à côte avec heures hebdo)
     - [x] Calcul automatique avec majoration légale (25%/50%)
-    - [x] Indicateur régulier/occasionnel
+    - [x] Cadre récapitulatif unifié (salaire annuel + heures sup + total)
+    - [x] Profil démo avec 4h d'heures sup pour tests
 
 **Améliorations futures (optionnel) :**
 - [ ] Upload photo de profil fonctionnel
@@ -162,8 +163,8 @@
 
 ### Phase 1 - MVP (Version gratuite)
 1. **Haute priorité** : Pages essentielles
-   - Situation professionnelle
-   - Transport & Déplacements
+   - ✅ Situation professionnelle (TERMINÉ)
+   - Transport & Déplacements (EN COURS)
    - Écran de calcul basique
    
 2. **Priorité moyenne** : Précision
