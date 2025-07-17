@@ -14,7 +14,7 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 
 ### Résumé de progression
 - **Pages complétées** : 6 sur 8 pages prévues
-- **Fonctionnalités MVP** : 60% complétées (12/20 fonctionnalités)
+- **Fonctionnalités MVP** : 62.5% complétées (12.5/20 fonctionnalités)
 - **Prochaine étape** : Paramètres fiscaux
 - **État** : Base solide, focus sur CDI uniquement pour le MVP
 
@@ -31,23 +31,25 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - Validation des formulaires
    - Sauvegarde automatique avec pattern PopScope
    - Navigation clavier optimisée
-5. **Situation professionnelle** - Formulaire simplifié pour CDI uniquement :
-   - Statut d'emploi (CDI seulement dans MVP)
-   - Entreprise et poste
-   - Case à cocher "Salarié non cadre" (pour calculs futurs)
-   - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles côte à côte avec heures sup)
-   - Heures supplémentaires (saisie simple, calcul automatique 25%/50%)
-   - Prime conventionnelle (slider 0-4 mois)
-   - Salaire brut mensuel / Taux horaire (calcul bidirectionnel automatique)
+5. **Situation professionnelle** - Formulaire restructuré avec Cards :
+   - **Card 1 - Emploi actuel** :
+     - Statut d'emploi (CDI seulement dans MVP)
+     - Entreprise et poste
+     - Case à cocher "Salarié non cadre"
+   - **Card 2 - Temps de travail et rémunération** :
+     - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles côte à côte avec heures sup)
+     - Heures supplémentaires (saisie simple, calcul automatique 25%/50%)
+     - Salaire brut mensuel / Taux horaire (calcul bidirectionnel automatique)
+     - Prime conventionnelle (slider 0-4 mois)
+   - **Card 3 - Avantages sociaux** :
+     - Date d'entrée dans l'entreprise (avec UX mobile optimisée)
+     - Part salarié mutuelle (€/mois)
+     - Titres-restaurant (valeur et nombre/mois)
    - Support des décimales avec format 2 chiffres (ex: 2500.00)
    - Formatage automatique à 2 décimales pour heures/semaine et heures sup
    - Calculs officiels selon durée légale 151,67h/mois
-   - Cadre récapitulatif unifié avec :
-     - Salaire brut annuel
-     - Montant mensuel des heures sup (si présentes)
-     - Prime conventionnelle (si présente)
-     - Total annuel brut avec tous les éléments
    - Sauvegarde automatique avec pattern PopScope
+   - UX mobile : double-clic pour saisie manuelle de date avec formatage automatique
    - Note: Le régime fiscal a été déplacé vers "Paramètres fiscaux"
 6. **Transport & Déplacements** - Formulaire complet avec :
    - Mode de transport principal (dropdown)
@@ -115,6 +117,7 @@ docs/
 - Navigation clavier entre les champs de formulaire (Tab/Entrée)
 - Dropdown pour la nationalité (standardisation)
 - Formatage automatique du téléphone pour éviter les erreurs
+- UX mobile optimisée pour les dates (double-clic pour saisie manuelle)
 
 ### Stratégie de monétisation
 Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
