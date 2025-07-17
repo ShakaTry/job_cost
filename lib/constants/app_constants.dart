@@ -136,13 +136,6 @@ class AppConstants {
     'Frais réels',
   ];
   
-  static const List<String> mileageScaleCategories = [
-    '3-4 CV',
-    '5 CV',
-    '6 CV',
-    '7 CV et plus',
-  ];
-  
   // Default fiscal values
   static const double defaultWithholdingRate = 0.0; // %
   static const double defaultFiscalParts = 1.0;

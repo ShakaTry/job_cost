@@ -97,7 +97,6 @@ class ProfileService {
       'fiscalRegime': profile.fiscalRegime,
       'withholdingRate': profile.withholdingRate,
       'fiscalParts': profile.fiscalParts,
-      'mileageScaleCategory': profile.mileageScaleCategory,
       'deductibleCSG': profile.deductibleCSG,
       'additionalDeductions': profile.additionalDeductions,
     };
@@ -207,7 +206,6 @@ class ProfileService {
       fiscalRegime: json['fiscalRegime'] as String?,
       withholdingRate: (json['withholdingRate'] as num?)?.toDouble(),
       fiscalParts: (json['fiscalParts'] as num?)?.toDouble(),
-      mileageScaleCategory: json['mileageScaleCategory'] as String?,
       deductibleCSG: (json['deductibleCSG'] as num?)?.toDouble(),
       additionalDeductions: (json['additionalDeductions'] as num?)?.toDouble(),
     );

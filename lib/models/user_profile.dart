@@ -54,7 +54,6 @@ class UserProfile {
   final String? fiscalRegime; // Régime fiscal (réel ou forfaitaire)
   final double? withholdingRate; // Taux de prélèvement à la source
   final double? fiscalParts; // Nombre de parts fiscales
-  final String? mileageScaleCategory; // Catégorie barème kilométrique (3-4CV, 5CV, etc.)
   final double? deductibleCSG; // CSG déductible (pourcentage personnalisé si différent du standard)
   final double? additionalDeductions; // Autres déductions fiscales mensuelles
 
@@ -104,7 +103,6 @@ class UserProfile {
     this.fiscalRegime,
     this.withholdingRate,
     this.fiscalParts,
-    this.mileageScaleCategory,
     this.deductibleCSG,
     this.additionalDeductions,
   });
@@ -155,7 +153,6 @@ class UserProfile {
     String? fiscalRegime,
     double? withholdingRate,
     double? fiscalParts,
-    String? mileageScaleCategory,
     double? deductibleCSG,
     double? additionalDeductions,
   }) {
@@ -205,7 +202,6 @@ class UserProfile {
       fiscalRegime: fiscalRegime ?? this.fiscalRegime,
       withholdingRate: withholdingRate ?? this.withholdingRate,
       fiscalParts: fiscalParts ?? this.fiscalParts,
-      mileageScaleCategory: mileageScaleCategory ?? this.mileageScaleCategory,
       deductibleCSG: deductibleCSG ?? this.deductibleCSG,
       additionalDeductions: additionalDeductions ?? this.additionalDeductions,
     );
@@ -255,7 +251,6 @@ class UserProfile {
     String? fiscalRegime,
     double? withholdingRate,
     double? fiscalParts,
-    String? mileageScaleCategory,
     double? deductibleCSG,
     double? additionalDeductions,
   }) {
@@ -305,7 +300,6 @@ class UserProfile {
       fiscalRegime: fiscalRegime,
       withholdingRate: withholdingRate,
       fiscalParts: fiscalParts,
-      mileageScaleCategory: mileageScaleCategory,
       deductibleCSG: deductibleCSG,
       additionalDeductions: additionalDeductions,
     );

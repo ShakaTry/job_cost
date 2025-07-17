@@ -26,18 +26,15 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
   final _withholdingRateController = TextEditingController();
   final _fiscalPartsController = TextEditingController();
 
-  // Controllers pour barème kilométrique
+  // Controllers pour déductions
   final _deductibleCSGController = TextEditingController();
-
   // Controllers pour autres déductions
   final _additionalDeductionsController = TextEditingController();
 
   String? _fiscalRegime;
-  String? _mileageScaleCategory;
 
   // États d'expansion des sections
   bool _fiscalRegimeExpanded = false;
-  bool _mileageScaleExpanded = false;
   bool _deductionsExpanded = false;
 
   @override
@@ -54,25 +51,7 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
     _withholdingRateController.text = _profile.withholdingRate?.toStringAsFixed(2) ?? '';
     _fiscalPartsController.text = _profile.fiscalParts?.toStringAsFixed(1) ?? '';
 
-    // Barème kilométrique - déduction automatique depuis la puissance fiscale du véhicule
-    if (_profile.mileageScaleCategory != null) {
-      _mileageScaleCategory = _profile.mileageScaleCategory;
-    } else {
-      // Déduire depuis la puissance fiscale si elle existe
-      final transport = _profile.transport;
-      if (transport != null && transport['fiscalPower'] != null) {
-        final fiscalPower = transport['fiscalPower'] as int;
-        if (fiscalPower <= 4) {
-          _mileageScaleCategory = '3-4 CV';
-        } else if (fiscalPower == 5) {
-          _mileageScaleCategory = '5 CV';
-        } else if (fiscalPower == 6) {
-          _mileageScaleCategory = '6 CV';
-        } else {
-          _mileageScaleCategory = '7 CV et plus';
-        }
-      }
-    }
+    // Déductions
     _deductibleCSGController.text = _profile.deductibleCSG?.toStringAsFixed(2) ?? '';
 
     // Autres déductions
@@ -103,7 +82,6 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
         fiscalRegime: _fiscalRegime,
         withholdingRate: double.tryParse(_withholdingRateController.text),
         fiscalParts: double.tryParse(_fiscalPartsController.text),
-        mileageScaleCategory: _mileageScaleCategory,
         deductibleCSG: double.tryParse(_deductibleCSGController.text),
         additionalDeductions: double.tryParse(_additionalDeductionsController.text),
       );
@@ -243,83 +221,7 @@ class _FiscalParametersScreenState extends State<FiscalParametersScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Section 2 - Barème kilométrique
-              Card(
-                child: ExpansionTile(
-                  initiallyExpanded: _mileageScaleExpanded,
-                  onExpansionChanged: (expanded) {
-                    setState(() {
-                      _mileageScaleExpanded = expanded;
-                    });
-                  },
-                  shape: const Border(),
-                  title: const Text(
-                    'Barème kilométrique',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          DropdownButtonFormField<String>(
-                            value: _mileageScaleCategory,
-                            decoration: const InputDecoration(
-                              labelText: 'Catégorie du barème kilométrique',
-                              border: OutlineInputBorder(),
-                            ),
-                            items: AppConstants.mileageScaleCategories.map((category) {
-                              return DropdownMenuItem(
-                                value: category,
-                                child: Text(category),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                _mileageScaleCategory = value;
-                                _saveProfile();
-                              });
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.blue.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.info_outline,
-                                  color: Colors.blue[700],
-                                  size: 20,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    'La catégorie est automatiquement déduite de la puissance fiscale de votre véhicule. Le barème sera utilisé pour calculer vos frais réels de transport.',
-                                    style: TextStyle(
-                                      color: Colors.blue[700],
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Section 3 - Déductions fiscales
+              // Section 2 - Déductions fiscales
               Card(
                 child: ExpansionTile(
                   initiallyExpanded: _deductionsExpanded,
