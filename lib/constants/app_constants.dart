@@ -108,13 +108,15 @@ class AppConstants {
   
   // Transport
   static const List<String> transportModes = [
-    'Voiture personnelle',
-    'Moto personnelle',
-    'Transports en commun',
-    'Vélo',
-    'À pied',
-    'Covoiturage',
-    'Train',
-    'Mixte',
+    'Véhicule personnel',
+  ];
+  
+  // Fuel types
+  static const List<String> fuelTypes = [
+    'Essence',
+    'Diesel',
+    'Hybride',
+    'Électrique',
+    'GPL',
   ];
 }

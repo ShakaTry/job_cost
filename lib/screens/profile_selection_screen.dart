@@ -340,6 +340,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       nationality: 'France',
       employmentStatus: 'Salarié(e) CDI',
       companyName: 'Tech Solutions SARL',
+      companyAddress: '50 avenue des Champs-Élysées, 75008 Paris',
       jobTitle: 'Développeuse Full Stack',
       workTimePercentage: 100.0,
       weeklyHours: 35.0,
@@ -355,12 +356,15 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       transport: {
         'mode': 'Voiture personnelle',
         'vehicleType': 'Voiture',
+        'fuelType': 'Essence',
         'fiscalPower': 5,
         'dailyDistance': 25.0,
         'workDaysPerWeek': 5,
+        'teleworkDaysPerWeek': 2,
         'publicTransportCost': null,
         'parkingCost': 120.0,
-        'tollsCost': 0.0,
+        'tollsCost': 45.0,
+        'employerReimbursement': 50.0,
       },
     );
 

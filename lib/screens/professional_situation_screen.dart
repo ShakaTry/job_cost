@@ -22,6 +22,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   final _formKey = GlobalKey<FormState>();
   final ProfileService _profileService = ProfileService();
   late TextEditingController _companyNameController;
+  late TextEditingController _companyAddressController;
   late TextEditingController _jobTitleController;
   late TextEditingController _salaryController;
   late TextEditingController _hourlyRateController;
@@ -44,6 +45,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     super.initState();
     _modifiedProfile = widget.profile;
     _companyNameController = TextEditingController(text: widget.profile.companyName ?? '');
+    _companyAddressController = TextEditingController(text: widget.profile.companyAddress ?? '');
     _jobTitleController = TextEditingController(text: widget.profile.jobTitle ?? '');
     _salaryController = TextEditingController(
       text: widget.profile.grossMonthlySalary > 0 
@@ -87,6 +89,9 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     
     // Sauvegarde automatique comme sur la page d'infos personnelles
     _companyNameController.addListener(() {
+      _updateProfile();
+    });
+    _companyAddressController.addListener(() {
       _updateProfile();
     });
     _jobTitleController.addListener(() {
@@ -164,6 +169,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
   @override
   void dispose() {
     _companyNameController.dispose();
+    _companyAddressController.dispose();
     _jobTitleController.dispose();
     _salaryController.dispose();
     _hourlyRateController.dispose();
@@ -330,6 +336,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _modifiedProfile = _modifiedProfile.copyWith(
       employmentStatus: _employmentStatus,
       companyName: _companyNameController.text.trim().isEmpty ? null : _companyNameController.text.trim(),
+      companyAddress: _companyAddressController.text.trim().isEmpty ? null : _companyAddressController.text.trim(),
       jobTitle: _jobTitleController.text.trim().isEmpty ? null : _jobTitleController.text.trim(),
       workTimePercentage: _workTimePercentage,
       weeklyHours: weeklyHours,
@@ -538,6 +545,19 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                           border: OutlineInputBorder(),
                         ),
                         textInputAction: TextInputAction.next,
+                      ),
+                      
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      
+                      TextFormField(
+                        controller: _companyAddressController,
+                        decoration: const InputDecoration(
+                          labelText: 'Adresse de l\'entreprise',
+                          hintText: 'Ex: 10 rue de la Paix, 75001 Paris',
+                          border: OutlineInputBorder(),
+                        ),
+                        textInputAction: TextInputAction.next,
+                        maxLines: 2,
                       ),
                       
                       const SizedBox(height: AppConstants.defaultPadding),

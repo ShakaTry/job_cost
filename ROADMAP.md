@@ -27,15 +27,18 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
    
 2. **Situation professionnelle** ✅
    - Salaire actuel (pour comparaison)
+   - Adresse de l'entreprise
    - Heures supplémentaires
    - Prime conventionnelle
    - Avantages sociaux (ancienneté, mutuelle, titres-restaurant)
    - UX optimisée mobile (saisie de date manuelle)
    
 3. **Transport & Déplacements** ✅
-   - Mode de transport
-   - Distance et frais
-   - Barème kilométrique 2024
+   - Véhicule personnel uniquement (MVP)
+   - Type de véhicule et carburant
+   - Distance et frais (parking, péages)
+   - Jours de télétravail par semaine
+   - Remboursement transport employeur
 
 ### 🚧 Pages à compléter
 
@@ -44,6 +47,7 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - [ ] Taux de prélèvement personnalisé
 - [ ] Nombre de parts fiscales
 - [ ] Crédits et réductions d'impôt basiques
+- [ ] Barème kilométrique (déplacé depuis Transport)
 
 #### 2. Frais professionnels essentiels (PRIORITÉ 2)
 - [ ] Repas (cantine, tickets restaurant, panier)
@@ -100,12 +104,13 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - Sauvegarde automatique (pattern PopScope)
 - Calculs salaire brut/horaire bidirectionnels
 - Heures supplémentaires (25%/50%)
-- Barème kilométrique 2024
 - Validation et formatage des données
 - Navigation entre pages
 - Avantages sociaux (ancienneté, mutuelle, titres-restaurant)
 - UX mobile optimisée (saisie de date manuelle)
 - Organisation visuelle avec Cards
+- Adresse entreprise dans situation professionnelle
+- Jours de télétravail et remboursement transport
 
 ### 🚧 Fonctionnalités manquantes critiques
 - Paramètres fiscaux (BLOQUANT pour calculs)
@@ -153,6 +158,11 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - Export PDF professionnel
 - Simulations 5 ans
 - Comparaison multi-statuts
+- **Frais véhicule avancés** :
+  - Assurance véhicule (coût mensuel)
+  - Entretien annuel (révisions, pneus, réparations)
+  - Amortissement du véhicule
+  - Contrôle technique
 
 ## 🎯 Prochaines étapes immédiates (approche itérative)
 
@@ -189,5 +199,5 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 
 ---
 
-*Dernière mise à jour : 17 décembre 2024*
+*Dernière mise à jour : 19 décembre 2024*
 *Note : Stratégie révisée pour collecter d'abord toutes les données nécessaires*

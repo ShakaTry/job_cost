@@ -17,6 +17,7 @@ class UserProfile {
   // Professional situation fields
   final String employmentStatus;
   final String? companyName;
+  final String? companyAddress;
   final String? jobTitle;
   final double workTimePercentage; // Pourcentage de temps de travail (10-100)
   final double weeklyHours; // Heures hebdomadaires
@@ -48,6 +49,7 @@ class UserProfile {
     required this.createdAt,
     required this.employmentStatus,
     this.companyName,
+    this.companyAddress,
     this.jobTitle,
     required this.workTimePercentage,
     required this.weeklyHours,
@@ -78,6 +80,7 @@ class UserProfile {
     String? nationality,
     String? employmentStatus,
     String? companyName,
+    String? companyAddress,
     String? jobTitle,
     double? workTimePercentage,
     double? weeklyHours,
@@ -107,6 +110,7 @@ class UserProfile {
       createdAt: createdAt,
       employmentStatus: employmentStatus ?? this.employmentStatus,
       companyName: companyName ?? this.companyName,
+      companyAddress: companyAddress ?? this.companyAddress,
       jobTitle: jobTitle ?? this.jobTitle,
       workTimePercentage: workTimePercentage ?? this.workTimePercentage,
       weeklyHours: weeklyHours ?? this.weeklyHours,
@@ -136,6 +140,7 @@ class UserProfile {
     String? nationality,
     String? employmentStatus,
     String? companyName,
+    String? companyAddress,
     String? jobTitle,
     double? workTimePercentage,
     double? weeklyHours,
@@ -165,6 +170,7 @@ class UserProfile {
       createdAt: DateTime.now(),
       employmentStatus: employmentStatus ?? AppConstants.defaultEmploymentStatus,
       companyName: companyName,
+      companyAddress: companyAddress,
       jobTitle: jobTitle,
       workTimePercentage: workTimePercentage ?? AppConstants.defaultWorkTimePercentage,
       weeklyHours: weeklyHours ?? AppConstants.defaultWeeklyHours,
