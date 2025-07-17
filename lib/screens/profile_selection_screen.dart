@@ -343,6 +343,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       jobTitle: 'Développeuse Full Stack',
       workTimePercentage: 100.0,
       weeklyHours: 35.0,
+      overtimeHours: 4.0,
       grossMonthlySalary: 3500,
       taxSystem: 'Prélèvement à la source',
     );

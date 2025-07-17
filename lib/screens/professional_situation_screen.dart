@@ -41,7 +41,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
     _jobTitleController = TextEditingController(text: widget.profile.jobTitle ?? '');
     _salaryController = TextEditingController(
       text: widget.profile.grossMonthlySalary > 0 
-        ? widget.profile.grossMonthlySalary.toStringAsFixed(0) 
+        ? widget.profile.grossMonthlySalary.toStringAsFixed(2) 
         : ''
     );
     _hourlyRateController = TextEditingController();
@@ -505,7 +505,7 @@ class _ProfessionalSituationScreenState extends State<ProfessionalSituationScree
                         labelText: 'Heures/semaine',
                         hintText: 'Ex: 35.00',
                         border: OutlineInputBorder(),
-                        suffixText: 'h',
+                        suffixText: 'h/sem',
                       ),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
