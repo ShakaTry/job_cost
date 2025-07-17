@@ -129,4 +129,22 @@ class AppConstants {
     'Centre de loisirs',
     'Autre',
   ];
+  
+  // Fiscal parameters
+  static const List<String> fiscalRegimes = [
+    'Déduction forfaitaire 10%',
+    'Frais réels',
+  ];
+  
+  static const List<String> mileageScaleCategories = [
+    '3-4 CV',
+    '5 CV',
+    '6 CV',
+    '7 CV et plus',
+  ];
+  
+  // Default fiscal values
+  static const double defaultWithholdingRate = 0.0; // %
+  static const double defaultFiscalParts = 1.0;
+  static const double defaultDeductibleCSG = 6.8; // % standard
 }

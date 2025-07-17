@@ -50,6 +50,14 @@ class UserProfile {
   final double? trainingCost; // Formation non remboursée
   final double? unionFees; // Cotisations syndicales
 
+  // Fiscal parameters fields
+  final String? fiscalRegime; // Régime fiscal (réel ou forfaitaire)
+  final double? withholdingRate; // Taux de prélèvement à la source
+  final double? fiscalParts; // Nombre de parts fiscales
+  final String? mileageScaleCategory; // Catégorie barème kilométrique (3-4CV, 5CV, etc.)
+  final double? deductibleCSG; // CSG déductible (pourcentage personnalisé si différent du standard)
+  final double? additionalDeductions; // Autres déductions fiscales mensuelles
+
   UserProfile({
     required this.id,
     required this.lastName,
@@ -93,6 +101,12 @@ class UserProfile {
     this.professionalEquipment,
     this.trainingCost,
     this.unionFees,
+    this.fiscalRegime,
+    this.withholdingRate,
+    this.fiscalParts,
+    this.mileageScaleCategory,
+    this.deductibleCSG,
+    this.additionalDeductions,
   });
 
   String get fullName => '$firstName $lastName';
@@ -138,6 +152,12 @@ class UserProfile {
     double? professionalEquipment,
     double? trainingCost,
     double? unionFees,
+    String? fiscalRegime,
+    double? withholdingRate,
+    double? fiscalParts,
+    String? mileageScaleCategory,
+    double? deductibleCSG,
+    double? additionalDeductions,
   }) {
     return UserProfile(
       id: id,
@@ -182,6 +202,12 @@ class UserProfile {
       professionalEquipment: professionalEquipment ?? this.professionalEquipment,
       trainingCost: trainingCost ?? this.trainingCost,
       unionFees: unionFees ?? this.unionFees,
+      fiscalRegime: fiscalRegime ?? this.fiscalRegime,
+      withholdingRate: withholdingRate ?? this.withholdingRate,
+      fiscalParts: fiscalParts ?? this.fiscalParts,
+      mileageScaleCategory: mileageScaleCategory ?? this.mileageScaleCategory,
+      deductibleCSG: deductibleCSG ?? this.deductibleCSG,
+      additionalDeductions: additionalDeductions ?? this.additionalDeductions,
     );
   }
 
@@ -226,6 +252,12 @@ class UserProfile {
     double? professionalEquipment,
     double? trainingCost,
     double? unionFees,
+    String? fiscalRegime,
+    double? withholdingRate,
+    double? fiscalParts,
+    String? mileageScaleCategory,
+    double? deductibleCSG,
+    double? additionalDeductions,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -270,6 +302,12 @@ class UserProfile {
       professionalEquipment: professionalEquipment,
       trainingCost: trainingCost,
       unionFees: unionFees,
+      fiscalRegime: fiscalRegime,
+      withholdingRate: withholdingRate,
+      fiscalParts: fiscalParts,
+      mileageScaleCategory: mileageScaleCategory,
+      deductibleCSG: deductibleCSG,
+      additionalDeductions: additionalDeductions,
     );
   }
 }

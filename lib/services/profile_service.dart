@@ -66,6 +66,7 @@ class ProfileService {
       'createdAt': profile.createdAt.toIso8601String(),
       'employmentStatus': profile.employmentStatus,
       'companyName': profile.companyName,
+      'companyAddress': profile.companyAddress,
       'jobTitle': profile.jobTitle,
       'workTimePercentage': profile.workTimePercentage,
       'weeklyHours': profile.weeklyHours,
@@ -93,6 +94,12 @@ class ProfileService {
       'professionalEquipment': profile.professionalEquipment,
       'trainingCost': profile.trainingCost,
       'unionFees': profile.unionFees,
+      'fiscalRegime': profile.fiscalRegime,
+      'withholdingRate': profile.withholdingRate,
+      'fiscalParts': profile.fiscalParts,
+      'mileageScaleCategory': profile.mileageScaleCategory,
+      'deductibleCSG': profile.deductibleCSG,
+      'additionalDeductions': profile.additionalDeductions,
     };
   }
   
@@ -167,6 +174,7 @@ class ProfileService {
           : DateTime.now(),
       employmentStatus: json['employmentStatus'] as String? ?? 'Salarié(e) CDI',
       companyName: json['companyName'] as String?,
+      companyAddress: json['companyAddress'] as String?,
       jobTitle: json['jobTitle'] as String?,
       workTimePercentage: workTimePercentage,
       weeklyHours: weeklyHours,
@@ -196,6 +204,12 @@ class ProfileService {
       professionalEquipment: (json['professionalEquipment'] as num?)?.toDouble(),
       trainingCost: (json['trainingCost'] as num?)?.toDouble(),
       unionFees: (json['unionFees'] as num?)?.toDouble(),
+      fiscalRegime: json['fiscalRegime'] as String?,
+      withholdingRate: (json['withholdingRate'] as num?)?.toDouble(),
+      fiscalParts: (json['fiscalParts'] as num?)?.toDouble(),
+      mileageScaleCategory: json['mileageScaleCategory'] as String?,
+      deductibleCSG: (json['deductibleCSG'] as num?)?.toDouble(),
+      additionalDeductions: (json['additionalDeductions'] as num?)?.toDouble(),
     );
   }
 }

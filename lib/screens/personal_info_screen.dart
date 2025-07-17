@@ -617,24 +617,4 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
-  void _pickImage() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(AppStrings.profilePhotoTitle),
-          content: const Text(AppStrings.profilePhotoInfo),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(AppStrings.ok),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
 }
