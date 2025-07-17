@@ -47,6 +47,12 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
 
   String? _childcareType;
 
+  // États d'expansion des sections
+  bool _mealExpanded = true;
+  bool _childcareExpanded = true;
+  bool _remoteExpanded = true;
+  bool _equipmentExpanded = true;
+
   @override
   void initState() {
     super.initState();
@@ -206,28 +212,143 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Card 1 - Frais de repas
+              // Section 1 - Frais de repas
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Frais de repas',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
+                child: ExpansionTile(
+                  initiallyExpanded: _mealExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _mealExpanded = expanded;
+                    });
+                  },
+                  title: Text(
+                    'Frais de repas',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _mealTicketValueController,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _mealTicketValueController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Valeur du titre-restaurant',
+                                    suffixText: '€',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                                  ],
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _mealTicketsPerMonthController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Nombre/mois',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _mealExpensesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Frais de repas mensuels (hors titres)',
+                              hintText: 'Repas pris sur le lieu de travail',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _mealAllowanceController,
+                            decoration: const InputDecoration(
+                              labelText: 'Indemnité repas employeur',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Section 2 - Garde d'enfants (seulement si enfants à charge)
+              if (_profile.dependentChildren > 0) ...[
+                Card(
+                  child: ExpansionTile(
+                    initiallyExpanded: _childcareExpanded,
+                    onExpansionChanged: (expanded) {
+                      setState(() {
+                        _childcareExpanded = expanded;
+                      });
+                    },
+                    title: Text(
+                      'Garde d\'enfants',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: [
+                            DropdownButtonFormField<String>(
+                              value: _childcareType,
                               decoration: const InputDecoration(
-                                labelText: 'Valeur du titre-restaurant',
-                                suffixText: '€',
+                                labelText: 'Type de garde',
+                                border: OutlineInputBorder(),
+                              ),
+                              items: AppConstants.childcareTypes.map((type) {
+                                return DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _childcareType = value;
+                                  _saveProfile();
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _childcareCostController,
+                              decoration: const InputDecoration(
+                                labelText: 'Coût mensuel de la garde',
+                                suffixText: '€/mois',
                                 border: OutlineInputBorder(),
                               ),
                               keyboardType: const TextInputType.numberWithOptions(decimal: true),
@@ -236,294 +357,211 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
                               ],
                               textInputAction: TextInputAction.next,
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _mealTicketsPerMonthController,
+                            const SizedBox(height: 16),
+                            TextFormField(
+                              controller: _childcareAidsController,
                               decoration: const InputDecoration(
-                                labelText: 'Nombre/mois',
+                                labelText: 'Aides reçues (CAF, employeur)',
+                                suffixText: '€/mois',
                                 border: OutlineInputBorder(),
                               ),
-                              keyboardType: TextInputType.number,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
                               inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                               ],
                               textInputAction: TextInputAction.next,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _mealExpensesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Frais de repas mensuels (hors titres)',
-                          hintText: 'Repas pris sur le lieu de travail',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
+                          ],
                         ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _mealAllowanceController,
-                        decoration: const InputDecoration(
-                          labelText: 'Indemnité repas employeur',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
                       ),
                     ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Card 2 - Garde d'enfants (seulement si enfants à charge)
-              if (_profile.dependentChildren > 0) ...[
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Garde d\'enfants',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        DropdownButtonFormField<String>(
-                          value: _childcareType,
-                          decoration: const InputDecoration(
-                            labelText: 'Type de garde',
-                            border: OutlineInputBorder(),
-                          ),
-                          items: AppConstants.childcareTypes.map((type) {
-                            return DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _childcareType = value;
-                              _saveProfile();
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _childcareCostController,
-                          decoration: const InputDecoration(
-                            labelText: 'Coût mensuel de la garde',
-                            suffixText: '€/mois',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                          ],
-                          textInputAction: TextInputAction.next,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _childcareAidsController,
-                          decoration: const InputDecoration(
-                            labelText: 'Aides reçues (CAF, employeur)',
-                            suffixText: '€/mois',
-                            border: OutlineInputBorder(),
-                          ),
-                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                          ],
-                          textInputAction: TextInputAction.next,
-                        ),
-                      ],
-                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
               ],
 
-              // Card 3 - Télétravail
+              // Section 3 - Télétravail
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Télétravail',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: _workDaysPerWeekController,
-                              decoration: const InputDecoration(
-                                labelText: 'Jours travaillés/semaine',
-                                border: OutlineInputBorder(),
-                              ),
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
-                              ],
-                              textInputAction: TextInputAction.next,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _remoteDaysPerWeekController,
-                              decoration: const InputDecoration(
-                                labelText: 'Jours télétravail/semaine',
-                                border: OutlineInputBorder(),
-                              ),
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
-                              ],
-                              textInputAction: TextInputAction.next,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _remoteAllowanceController,
-                        decoration: const InputDecoration(
-                          labelText: 'Forfait télétravail employeur',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _remoteExpensesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Frais réels estimés (internet, électricité)',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _remoteEquipmentController,
-                        decoration: const InputDecoration(
-                          labelText: 'Équipement (bureau, chaise) - amortissement',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                    ],
+                child: ExpansionTile(
+                  initiallyExpanded: _remoteExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _remoteExpanded = expanded;
+                    });
+                  },
+                  title: Text(
+                    'Télétravail',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _workDaysPerWeekController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Jours travaillés/semaine',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+                                  ],
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: TextFormField(
+                                  controller: _remoteDaysPerWeekController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Jours télétravail/semaine',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,1}')),
+                                  ],
+                                  textInputAction: TextInputAction.next,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _remoteAllowanceController,
+                            decoration: const InputDecoration(
+                              labelText: 'Forfait télétravail employeur',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _remoteExpensesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Frais réels estimés (internet, électricité)',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _remoteEquipmentController,
+                            decoration: const InputDecoration(
+                              labelText: 'Équipement (bureau, chaise) - amortissement',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
 
-              // Card 4 - Équipements et autres frais
+              // Section 4 - Équipements et autres frais
               Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Équipements et autres frais',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _workClothingController,
-                        decoration: const InputDecoration(
-                          labelText: 'Vêtements de travail',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _professionalEquipmentController,
-                        decoration: const InputDecoration(
-                          labelText: 'Matériel professionnel',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _trainingCostController,
-                        decoration: const InputDecoration(
-                          labelText: 'Formation non remboursée',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: 16),
-                      TextFormField(
-                        controller: _unionFeesController,
-                        decoration: const InputDecoration(
-                          labelText: 'Cotisations syndicales',
-                          suffixText: '€/mois',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                        ],
-                        textInputAction: TextInputAction.done,
-                      ),
-                    ],
+                child: ExpansionTile(
+                  initiallyExpanded: _equipmentExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _equipmentExpanded = expanded;
+                    });
+                  },
+                  title: Text(
+                    'Équipements et autres frais',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _workClothingController,
+                            decoration: const InputDecoration(
+                              labelText: 'Vêtements de travail',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _professionalEquipmentController,
+                            decoration: const InputDecoration(
+                              labelText: 'Matériel professionnel',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _trainingCostController,
+                            decoration: const InputDecoration(
+                              labelText: 'Formation non remboursée',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.next,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _unionFeesController,
+                            decoration: const InputDecoration(
+                              labelText: 'Cotisations syndicales',
+                              suffixText: '€/mois',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                            ],
+                            textInputAction: TextInputAction.done,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
