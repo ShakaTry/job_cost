@@ -149,7 +149,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (profile.email == 'sophie.martin@example.com')
+                                  if (profile.email == 'sophie.martin@example.com' || profile.email == 'marc.durand@invalid')
                                     Container(
                                       margin: const EdgeInsets.only(top: 4),
                                       padding: const EdgeInsets.symmetric(
@@ -157,14 +157,20 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                         vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue.shade100,
+                                        color: profile.email == 'sophie.martin@example.com' 
+                                          ? Colors.green.shade100 
+                                          : Colors.orange.shade100,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: const Text(
-                                        'Profil de démonstration',
+                                      child: Text(
+                                        profile.email == 'sophie.martin@example.com' 
+                                          ? 'Profil de démonstration (complet)'
+                                          : 'Profil de démonstration (avec erreurs)',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.blue,
+                                          color: profile.email == 'sophie.martin@example.com' 
+                                            ? Colors.green.shade700
+                                            : Colors.orange.shade700,
                                         ),
                                       ),
                                     ),
@@ -337,7 +343,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   }
 
   void _createDemoProfile() async {
-    final demoProfile = UserProfile.create(
+    // PROFIL 1 : Sophie Martin - COMPLET ET VALIDE
+    final demoProfileComplete = UserProfile.create(
       lastName: 'Martin',
       firstName: 'Sophie',
       address: '15 rue de la République, 75001 Paris',
@@ -358,43 +365,112 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       taxSystem: 'Prélèvement à la source',
       isNonCadre: true,
       conventionalBonusMonths: 1.0,
-      companyEntryDate: DateTime(2020, 3, 15), // Il y a ~4 ans
-      mutualEmployeeCost: 35.0, // Part salarié mutuelle
+      companyEntryDate: DateTime(2020, 3, 15),
+      mutualEmployeeCost: 35.0,
       transport: {
         'mode': 'Voiture personnelle',
         'vehicleType': 'Voiture',
         'fuelType': 'Essence',
         'fiscalPower': 5,
         'dailyDistance': 25.0,
+        'distanceToWork': 25.0, // Distance domicile-travail aller simple
         'publicTransportCost': null,
         'parkingCost': 120.0,
         'tollsCost': 45.0,
         'employerReimbursement': 50.0,
       },
       // Frais professionnels - COMPLET
-      mealTicketValue: 9.50, // Valeur titre-restaurant (classique)
-      mealTicketsPerMonth: 19, // 19 jours travaillés au bureau
-      mealExpenses: 120.0, // Frais de repas hors titres (6€/jour * 20 jours)
-      mealAllowance: 80.0, // Indemnité repas employeur (4€/jour * 20 jours)
+      mealTicketValue: 9.50,
+      mealTicketsPerMonth: 19,
+      mealExpenses: 120.0,
+      mealAllowance: 80.0,
       childcareType: 'Assistant(e) maternel(le)',
-      childcareCost: 850.0, // Coût mensuel garde (2 enfants)
-      childcareAids: 294.0, // Aides CAF pour 2 enfants
-      workDaysPerWeek: 5, // 5 jours par semaine
-      remoteDaysPerWeek: 2, // 2 jours de télétravail
-      remoteAllowance: 50.0, // Forfait télétravail employeur (2.5€/jour)
-      remoteExpenses: 45.0, // Internet + électricité (estimation)
-      remoteEquipment: 20.0, // Amortissement bureau/chaise (1000€ sur 4 ans)
-      workClothing: 30.0, // Vêtements professionnels
-      professionalEquipment: 15.0, // Souris/clavier ergonomiques
-      trainingCost: 50.0, // Formation en ligne non remboursée
-      unionFees: 18.0, // Cotisations syndicales CGT
+      childcareCost: 850.0,
+      childcareAids: 294.0,
+      workDaysPerWeek: 5,
+      remoteDaysPerWeek: 2,
+      remoteAllowance: 50.0,
+      remoteExpenses: 45.0,
+      remoteEquipment: 20.0,
+      workClothing: 30.0,
+      professionalEquipment: 15.0,
+      trainingCost: 50.0,
+      unionFees: 18.0,
+      // Paramètres fiscaux - AJOUT COMPLET
+      fiscalRegime: 'Frais réels',
+      withholdingRate: 12.5, // Taux de prélèvement à la source
+      fiscalParts: 2.5, // Mariée + 2 enfants (2 + 0.5*2 = 3, mais plafonné)
+      deductibleCSG: 6.8, // CSG déductible standard
+      additionalDeductions: 25.0, // Autres déductions mensuelles
+    );
+
+    // PROFIL 2 : Marc Durand - AVEC ERREURS VOLONTAIRES
+    final demoProfileWithErrors = UserProfile.create(
+      lastName: 'Durand',
+      firstName: 'Marc',
+      address: '', // ERREUR : Adresse vide
+      maritalStatus: 'Célibataire',
+      dependentChildren: 1,
+      phone: '123456', // ERREUR : Format téléphone invalide
+      email: 'marc.durand@invalid', // ERREUR : Email invalide
+      birthDate: DateTime(1990, 12, 10),
+      nationality: 'France',
+      employmentStatus: 'Salarié(e) CDI',
+      companyName: 'Digital Corp',
+      companyAddress: '25 boulevard Voltaire, 75011 Paris',
+      jobTitle: 'Chef de projet',
+      workTimePercentage: 100.0,
+      weeklyHours: 35.0,
+      overtimeHours: 2.0,
+      grossMonthlySalary: 4200,
+      taxSystem: 'Prélèvement à la source',
+      isNonCadre: false,
+      conventionalBonusMonths: 1.0,
+      companyEntryDate: DateTime(2021, 9, 1),
+      mutualEmployeeCost: 45.0,
+      transport: {
+        'mode': 'Voiture personnelle',
+        'vehicleType': 'Voiture',
+        'fuelType': 'Diesel',
+        'fiscalPower': 6,
+        'dailyDistance': 35.0,
+        'distanceToWork': 35.0,
+        'publicTransportCost': null,
+        'parkingCost': 150.0,
+        'tollsCost': 25.0,
+        'employerReimbursement': 40.0,
+      },
+      // Frais professionnels avec erreurs
+      mealTicketValue: 8.50,
+      mealTicketsPerMonth: 20,
+      mealExpenses: -50.0, // ERREUR : Valeur négative
+      mealAllowance: 60.0,
+      childcareType: 'Crèche',
+      childcareCost: -200.0, // ERREUR : Valeur négative
+      childcareAids: 150.0,
+      workDaysPerWeek: 15, // ERREUR : Plus de 7 jours par semaine
+      remoteDaysPerWeek: 1,
+      remoteAllowance: 30.0,
+      remoteExpenses: 35.0,
+      remoteEquipment: 15.0,
+      workClothing: 25.0,
+      professionalEquipment: 10.0,
+      trainingCost: 75.0,
+      unionFees: 12.0,
+      // Paramètres fiscaux
+      fiscalRegime: 'Forfaitaire',
+      withholdingRate: 8.2,
+      fiscalParts: 1.5, // Célibataire + 1 enfant
+      deductibleCSG: 6.8,
+      additionalDeductions: 15.0,
     );
 
     setState(() {
-      _profiles.add(demoProfile);
+      _profiles.add(demoProfileComplete);
+      _profiles.add(demoProfileWithErrors);
     });
     
-    // Sauvegarder le profil
+    // Sauvegarder les profils
     await _profileService.saveProfiles(_profiles);
     
     // Afficher un message de confirmation
@@ -407,20 +483,28 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
               children: [
                 Icon(Icons.check_circle, color: Colors.green),
                 SizedBox(width: 8),
-                Text('Profil créé'),
+                Text('Profils créés'),
               ],
             ),
             content: const Text(
-              'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
-              'Vous pouvez maintenant explorer toutes les fonctionnalités de l\'application.',
+              'Deux profils de démonstration ont été créés :\n\n'
+              '• Sophie Martin (complet et valide)\n'
+              '• Marc Durand (avec erreurs à corriger)\n\n'
+              'Vous pouvez maintenant explorer la validation des profils.',
             ),
             actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fermer'),
+              ),
               ElevatedButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _selectProfile(demoProfile);
+                  _selectProfile(demoProfileComplete);
                 },
-                child: const Text('Ouvrir le profil'),
+                child: const Text('Voir Sophie Martin'),
               ),
             ],
           );
