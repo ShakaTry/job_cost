@@ -108,13 +108,36 @@ class AppConstants {
   
   // Transport
   static const List<String> transportModes = [
-    'Voiture personnelle',
-    'Moto personnelle',
-    'Transports en commun',
-    'Vélo',
-    'À pied',
-    'Covoiturage',
-    'Train',
-    'Mixte',
+    'Véhicule personnel',
   ];
+  
+  // Fuel types
+  static const List<String> fuelTypes = [
+    'Essence',
+    'Diesel',
+    'Hybride',
+    'Électrique',
+    'GPL',
+  ];
+  
+  // Childcare types
+  static const List<String> childcareTypes = [
+    'Assistant(e) maternel(le)',
+    'Crèche',
+    'Garde à domicile',
+    'Périscolaire',
+    'Centre de loisirs',
+    'Autre',
+  ];
+  
+  // Fiscal parameters
+  static const List<String> fiscalRegimes = [
+    'Déduction forfaitaire 10%',
+    'Frais réels',
+  ];
+  
+  // Default fiscal values
+  static const double defaultWithholdingRate = 0.0; // %
+  static const double defaultFiscalParts = 1.0;
+  static const double defaultDeductibleCSG = 6.8; // % standard
 }

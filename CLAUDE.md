@@ -8,15 +8,18 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
 - Stratégie Git Flow : main, develop, feature/*, bugfix/*, hotfix/*
 - Commits réguliers avec messages descriptifs
 - URL du repo : https://github.com/ShakaTry/job_cost.git
-- Branche actuelle : feature/setup-base-structure
+- Branche actuelle : feature/fiscal-and-expenses-pages
+- **WORKFLOW GIT** : Voir `docs/development/git_workflow.md` (OBLIGATOIRE)
+- **DÉCLENCHEURS** : mot "git", commande "/git", ou après modifications importantes
 
 ## État actuel du projet
 
 ### Résumé de progression
-- **Pages complétées** : 6 sur 8 pages prévues
-- **Fonctionnalités MVP** : 62.5% complétées (12.5/20 fonctionnalités)
-- **Prochaine étape** : Paramètres fiscaux
-- **État** : Base solide, focus sur CDI uniquement pour le MVP
+- **Pages complétées** : 7 pages principales fonctionnelles (87.5%)
+- **Fonctionnalités MVP** : 75% complétées (15/20 fonctionnalités)
+- **Prochaine étape** : Optimisation des pages existantes avant phase de calcul
+- **État** : Analyse multi-agents terminée, plan d'optimisation créé
+- **Phase actuelle** : Optimisation UX/Performance des formulaires
 
 ### Pages complétées
 1. **Sélection de profil** - Écran principal avec liste des profils
@@ -39,6 +42,7 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - **Card 1 - Emploi actuel** :
      - Statut d'emploi (CDI seulement dans MVP)
      - Entreprise et poste
+     - Adresse de l'entreprise
      - Case à cocher "Salarié non cadre"
    - **Card 2 - Temps de travail et rémunération** :
      - Temps de travail (curseur 10-100% + heures hebdomadaires manuelles côte à côte avec heures sup)
@@ -55,20 +59,40 @@ Application Android/iOS développée avec Flutter pour estimer le salaire réel 
    - Sauvegarde automatique avec pattern PopScope
    - UX mobile : double-clic pour saisie manuelle de date avec formatage automatique
    - Note: Le régime fiscal a été déplacé vers "Paramètres fiscaux"
-6. **Transport & Déplacements** - Formulaire complet avec :
-   - Mode de transport principal (dropdown)
-   - Pour véhicule personnel :
+6. **Transport & Déplacements** - Formulaire avec ExpansionTile :
+   - **Section 1 - Véhicule** :
      - Type de véhicule (voiture/moto)
+     - Carburant (essence, diesel, hybride, électrique, GPL)
      - Puissance fiscale (slider 3-10 CV pour voiture)
+   - **Section 2 - Trajet** :
      - Distance domicile-travail aller simple
-     - Jours travaillés par semaine
-     - Calcul automatique du barème kilométrique 2024
-   - Pour transports en commun :
-     - Coût mensuel
-   - Frais additionnels :
+   - **Section 3 - Frais additionnels** :
      - Parking mensuel
      - Péages mensuels
-   - Récapitulatif annuel avec total des frais
+     - Remboursement transport employeur
+   - Sections collapsibles fermées par défaut
+   - Sauvegarde automatique avec pattern PopScope
+   - Note: Télétravail déplacé vers "Frais professionnels"
+7. **Frais professionnels** - Formulaire avec ExpansionTile :
+   - **Section 1 - Frais de repas** :
+     - Titres-restaurant (valeur et nombre/mois) - déplacé depuis Situation pro
+     - Frais de repas mensuels hors titres
+     - Indemnité repas employeur
+   - **Section 2 - Garde d'enfants** (si enfants > 0) :
+     - Type de garde (assistant maternel, crèche, etc.)
+     - Coût mensuel et aides reçues
+   - **Section 3 - Télétravail** :
+     - Jours travaillés et télétravail par semaine - déplacé depuis Transport
+     - Forfait télétravail employeur
+     - Frais réels estimés (internet, électricité)
+     - Équipement (amortissement bureau/chaise)
+   - **Section 4 - Équipements et autres frais** :
+     - Vêtements de travail
+     - Matériel professionnel
+     - Formation non remboursée
+     - Cotisations syndicales
+   - Sections collapsibles fermées par défaut
+   - 17 nouveaux champs dans le modèle UserProfile
    - Sauvegarde automatique avec pattern PopScope
 
 ### Architecture du code
@@ -84,7 +108,8 @@ lib/
 │   ├── profile_detail_screen.dart
 │   ├── personal_info_screen.dart
 │   ├── professional_situation_screen.dart
-│   └── transport_expenses_screen.dart
+│   ├── transport_screen.dart
+│   └── professional_expenses_screen.dart
 ├── services/
 │   └── profile_service.dart  # Service de gestion des profils (CRUD)
 ├── utils/
@@ -99,7 +124,9 @@ docs/
 │   ├── salary_calculations.md     # Documentation officielle des calculs de salaire
 │   └── overtime_calculations.md   # Documentation des calculs d'heures supplémentaires
 └── development/
-    └── auto_save_pattern.md       # Pattern de sauvegarde automatique
+    ├── auto_save_pattern.md       # Pattern de sauvegarde automatique
+    ├── plan_optimisation_pages.md # Plan d'optimisation des pages (analyse multi-agents)
+    └── git_workflow.md            # Workflow Git obligatoire (NOUVEAU)
 ```
 
 ### Conventions de code
@@ -123,6 +150,9 @@ docs/
 - Dropdown pour la nationalité (standardisation)
 - Formatage automatique du téléphone pour éviter les erreurs
 - UX mobile optimisée pour les dates (double-clic pour saisie manuelle)
+- Interface cohérente avec ExpansionTile dans toutes les pages de formulaire
+- Sections collapsibles fermées par défaut pour une navigation claire
+- Suppression des lignes de séparation des ExpansionTile (shape: Border())
 
 ### Stratégie de monétisation
 Voir ROADMAP.md pour le détail complet des fonctionnalités Premium.
@@ -135,21 +165,22 @@ Approche de développement adoptée :
 - **Améliorer** continuellement la cohérence
 - **Principe** : À chaque nouvelle page, on adapte et corrige l'existant
 
-### Prochaines étapes (ordre précis)
-1. **Créer "Paramètres fiscaux"** 🎯 **PROCHAINE ÉTAPE**
-   - Régime fiscal, taux de prélèvement, parts fiscales
-   - Puis réviser toutes les pages existantes
-2. **Créer "Frais professionnels"**
-   - Repas, garde d'enfants, télétravail, équipements
-   - Puis nouvelle révision globale
-3. **Créer l'écran de calcul**
+### 🎯 PHASE ACTUELLE : OPTIMISATION DES PAGES (Décembre 2024)
+
+**Plan d'optimisation créé** : `docs/development/plan_optimisation_pages.md`
+
+**Prochaines étapes (ordre précis)** :
+1. **Optimiser les pages existantes** 🎯 **ÉTAPE ACTUELLE** (3-4 jours)
+   - Phase 1 : Validation visible + Correction calculs asymétriques
+   - Phase 2 : Pattern PopScope uniforme + Navigation optimisée
+   - Problèmes identifiés par analyse multi-agents résolus
+2. **Créer l'écran de calcul** 🎯 **PHASE MAJEURE SUIVANTE**
    - Interface de saisie d'offre d'emploi
-   - Moteur de calcul complet
-   - Affichage des résultats
-4. **Export et partage**
+   - Moteur de calcul complet utilisant toutes les données collectées
+   - Affichage des résultats avec comparaison
+3. **Export et finalisation MVP**
    - Export texte simple
-   - Sauvegarde des calculs
-5. **Tests finaux et polish**
+   - Tests finaux et polish
 
 ### Notes importantes
 - L'application est Android/iOS uniquement (pas de support desktop)
@@ -159,19 +190,29 @@ Approche de développement adoptée :
 - Les 3 profils d'exemple sont temporaires pour le développement
 - Toujours exécuter `flutter analyze` avant de commit/push
 - Profil de démonstration "Sophie Martin" créé avec données complètes :
-  - 4h d'heures sup
-  - Statut non cadre
-  - Prime 13ème mois
-  - Transport : voiture 5CV, 25km/jour, parking 120€/mois
+  - 4h d'heures sup, statut non cadre, prime 13ème mois
+  - Adresse entreprise : 50 avenue des Champs-Élysées, 75008 Paris
+  - Transport : voiture essence 5CV, 25km/jour
+  - Frais transport : parking 120€/mois, péages 45€/mois, remboursement employeur 50€/mois
+  - Frais professionnels : titres-restaurant 9,50€×19, repas 120€/mois, indemnité repas 80€/mois
+  - Garde d'enfants : 850€/mois (2 enfants), aides CAF 294€/mois
+  - Télétravail : 2j/semaine, forfait 50€/mois, frais réels 45€/mois, équipement 20€/mois
+  - Autres : vêtements pro 30€/mois, équipement 15€/mois, formation 50€/mois, syndicat 18€/mois
 - Calculs de salaire basés sur 151,67h/mois (durée légale officielle)
 - Précision maximale en interne, arrondi seulement pour l'affichage
 - Le régime fiscal a été déplacé de "Situation professionnelle" vers "Paramètres fiscaux"
+- Le barème kilométrique a été déplacé de "Transport" vers "Paramètres fiscaux" (à implémenter)
 - Pattern de sauvegarde automatique avec PopScope obligatoire pour toutes les pages de formulaire
 - Bug d'overflow sur mobile corrigé avec widgets Flexible dans les récapitulatifs
-- Pages organisées avec Cards pour une meilleure lisibilité
+- Toutes les pages transformées en ExpansionTile collapsibles (Informations personnelles, 
+  Situation professionnelle, Transport, Frais professionnels)
+- Sections fermées par défaut pour une navigation claire
+- Lignes de séparation supprimées (shape: Border()) pour un rendu propre
 - UX mobile : double-clic sur les champs de date pour saisie manuelle
 - Future option globale pour activer/désactiver tous les InfoContainers prévue
-- **IMPORTANT** : Après chaque nouvelle page, réviser et adapter les pages existantes
+- **IMPORTANT** : Interface cohérente maintenue sur toutes les pages de formulaire
+- **ANALYSE COMPLÉTÉE** : Analyse multi-agents des 5 pages terminée (Décembre 2024)
+- **PLAN CRÉÉ** : Plan d'optimisation priorisé disponible dans `docs/development/plan_optimisation_pages.md`
 
 ### Commandes utiles
 ```bash

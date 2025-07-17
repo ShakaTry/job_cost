@@ -70,8 +70,8 @@ class AppStrings {
   static const String transportSubtitle = 'Mode de transport, distance domicile-travail';
   static const String professionalExpensesTitle = 'Frais professionnels';
   static const String professionalExpensesSubtitle = 'Repas, garde d\'enfants, équipements';
-  static const String taxParametersTitle = 'Paramètres fiscaux';
-  static const String taxParametersSubtitle = 'Taux d\'imposition, crédits d\'impôt';
+  static const String fiscalParametersTitle = 'Paramètres fiscaux';
+  static const String fiscalParametersSubtitle = 'Régime fiscal, taux de prélèvement';
 
   // Other
   static const String notSpecified = 'Non renseigné';

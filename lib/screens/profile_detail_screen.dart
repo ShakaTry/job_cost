@@ -4,9 +4,13 @@ import '../widgets/profile_avatar.dart';
 import '../widgets/info_container.dart';
 import '../constants/app_strings.dart';
 import '../constants/app_constants.dart';
+import '../utils/profile_validator.dart';
 import 'personal_info_screen.dart';
 import 'professional_situation_screen.dart';
 import 'transport_screen.dart';
+import 'professional_expenses_screen.dart';
+import 'fiscal_parameters_screen.dart';
+
 
 class ProfileDetailScreen extends StatefulWidget {
   final UserProfile profile;
@@ -102,6 +106,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 icon: Icons.person,
                 title: AppStrings.personalInfoSectionTitle,
                 subtitle: AppStrings.personalInfoSectionSubtitle,
+                validationStatus: ProfileValidator.getSectionValidationStatus(
+                  ProfileValidator.hasPersonalInfoErrors(profile), 
+                  ProfileValidator.isPersonalInfoComplete(profile),
+                ),
                 onTap: () async {
                   try {
                     final updatedProfile = await Navigator.push<UserProfile>(
@@ -132,6 +140,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 icon: Icons.work,
                 title: AppStrings.professionalSituationTitle,
                 subtitle: AppStrings.professionalSituationSubtitle,
+                validationStatus: ProfileValidator.getSectionValidationStatus(
+                  ProfileValidator.hasProfessionalSituationErrors(profile), 
+                  ProfileValidator.isProfessionalSituationComplete(profile),
+                ),
                 onTap: () async {
                   try {
                     final updatedProfile = await Navigator.push<UserProfile>(
@@ -162,6 +174,10 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 icon: Icons.directions_car,
                 title: AppStrings.transportTitle,
                 subtitle: AppStrings.transportSubtitle,
+                validationStatus: ProfileValidator.getSectionValidationStatus(
+                  ProfileValidator.hasTransportErrors(profile), 
+                  ProfileValidator.isTransportComplete(profile),
+                ),
                 onTap: () async {
                   try {
                     final updatedProfile = await Navigator.push<UserProfile>(
@@ -192,18 +208,66 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                 icon: Icons.receipt_long,
                 title: AppStrings.professionalExpensesTitle,
                 subtitle: AppStrings.professionalExpensesSubtitle,
-                onTap: () {
-                  // TODO: Navigation
+                validationStatus: ProfileValidator.getSectionValidationStatus(
+                  ProfileValidator.hasProfessionalExpensesErrors(profile), 
+                  ProfileValidator.isProfessionalExpensesComplete(profile),
+                ),
+                onTap: () async {
+                  try {
+                    final updatedProfile = await Navigator.push<UserProfile>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfessionalExpensesScreen(profile: profile),
+                      ),
+                    );
+                    
+                    if (updatedProfile != null && mounted) {
+                      setState(() {
+                        profile = updatedProfile;
+                      });
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erreur de navigation: $e')),
+                      );
+                    }
+                  }
                 },
               ),
               
               _buildSectionCard(
                 context,
                 icon: Icons.account_balance,
-                title: AppStrings.taxParametersTitle,
-                subtitle: AppStrings.taxParametersSubtitle,
-                onTap: () {
-                  // TODO: Navigation
+                title: AppStrings.fiscalParametersTitle,
+                subtitle: AppStrings.fiscalParametersSubtitle,
+                validationStatus: ProfileValidator.getSectionValidationStatus(
+                  ProfileValidator.hasFiscalParametersErrors(profile), 
+                  ProfileValidator.isFiscalParametersComplete(profile),
+                ),
+                onTap: () async {
+                  try {
+                    final updatedProfile = await Navigator.push<UserProfile>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FiscalParametersScreen(profile: profile),
+                      ),
+                    );
+                    
+                    if (updatedProfile != null && mounted) {
+                      setState(() {
+                        profile = updatedProfile;
+                      });
+                    }
+                  } catch (e) {
+                    if (mounted) {
+                      // ignore: use_build_context_synchronously
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Erreur de navigation: $e')),
+                      );
+                    }
+                  }
                 },
               ),
               
@@ -269,6 +333,19 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
       },
     );
   }
+
+
+  // Widget pour l'icône de validation
+  Widget _buildValidationIcon(ValidationStatus status) {
+    switch (status) {
+      case ValidationStatus.valid:
+        return const Icon(Icons.check_circle, color: Colors.green, size: 20);
+      case ValidationStatus.error:
+        return const Icon(Icons.error, color: Colors.red, size: 20);
+      case ValidationStatus.incomplete:
+        return const Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 20);
+    }
+  }
   
   Widget _buildSectionCard(
     BuildContext context, {
@@ -276,6 +353,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    required ValidationStatus validationStatus,
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
@@ -298,7 +376,14 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
           ),
         ),
         subtitle: Text(subtitle),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildValidationIcon(validationStatus),
+            const SizedBox(width: 8),
+            const Icon(Icons.arrow_forward_ios, size: 16),
+          ],
+        ),
         onTap: onTap,
       ),
     );

@@ -17,6 +17,7 @@ class UserProfile {
   // Professional situation fields
   final String employmentStatus;
   final String? companyName;
+  final String? companyAddress;
   final String? jobTitle;
   final double workTimePercentage; // Pourcentage de temps de travail (10-100)
   final double weeklyHours; // Heures hebdomadaires
@@ -27,11 +28,34 @@ class UserProfile {
   final double conventionalBonusMonths; // Nombre de mois de prime conventionnelle
   final DateTime? companyEntryDate; // Date d'entrée dans l'entreprise (pour prime d'ancienneté)
   final double mutualEmployeeCost; // Part salarié de la mutuelle (€/mois)
-  final double? mealVoucherValue; // Valeur faciale des titres-restaurant
-  final int? mealVouchersPerMonth; // Nombre de titres-restaurant par mois
   
   // Transport fields
   final Map<String, dynamic>? transport;
+
+  // Professional expenses fields
+  final double? mealExpenses; // Frais de repas mensuels (hors titres)
+  final double? mealAllowance; // Indemnité repas employeur
+  final double? mealTicketValue; // Valeur des titres-restaurant
+  final int? mealTicketsPerMonth; // Nombre de titres-restaurant par mois
+  final String? childcareType; // Type de garde d'enfants
+  final double? childcareCost; // Coût mensuel de la garde
+  final double? childcareAids; // Aides reçues (CAF, employeur)
+  final double? workDaysPerWeek; // Jours travaillés par semaine
+  final double? remoteDaysPerWeek; // Jours de télétravail par semaine
+  final double? remoteAllowance; // Forfait télétravail employeur
+  final double? remoteExpenses; // Frais réels télétravail
+  final double? remoteEquipment; // Équipement télétravail (amortissement)
+  final double? workClothing; // Vêtements de travail
+  final double? professionalEquipment; // Matériel professionnel
+  final double? trainingCost; // Formation non remboursée
+  final double? unionFees; // Cotisations syndicales
+
+  // Fiscal parameters fields
+  final String? fiscalRegime; // Régime fiscal (réel ou forfaitaire)
+  final double? withholdingRate; // Taux de prélèvement à la source
+  final double? fiscalParts; // Nombre de parts fiscales
+  final double? deductibleCSG; // CSG déductible (pourcentage personnalisé si différent du standard)
+  final double? additionalDeductions; // Autres déductions fiscales mensuelles
 
   UserProfile({
     required this.id,
@@ -48,6 +72,7 @@ class UserProfile {
     required this.createdAt,
     required this.employmentStatus,
     this.companyName,
+    this.companyAddress,
     this.jobTitle,
     required this.workTimePercentage,
     required this.weeklyHours,
@@ -58,9 +83,28 @@ class UserProfile {
     required this.conventionalBonusMonths,
     this.companyEntryDate,
     required this.mutualEmployeeCost,
-    this.mealVoucherValue,
-    this.mealVouchersPerMonth,
     this.transport,
+    this.mealExpenses,
+    this.mealAllowance,
+    this.mealTicketValue,
+    this.mealTicketsPerMonth,
+    this.childcareType,
+    this.childcareCost,
+    this.childcareAids,
+    this.workDaysPerWeek,
+    this.remoteDaysPerWeek,
+    this.remoteAllowance,
+    this.remoteExpenses,
+    this.remoteEquipment,
+    this.workClothing,
+    this.professionalEquipment,
+    this.trainingCost,
+    this.unionFees,
+    this.fiscalRegime,
+    this.withholdingRate,
+    this.fiscalParts,
+    this.deductibleCSG,
+    this.additionalDeductions,
   });
 
   String get fullName => '$firstName $lastName';
@@ -78,6 +122,7 @@ class UserProfile {
     String? nationality,
     String? employmentStatus,
     String? companyName,
+    String? companyAddress,
     String? jobTitle,
     double? workTimePercentage,
     double? weeklyHours,
@@ -88,9 +133,28 @@ class UserProfile {
     double? conventionalBonusMonths,
     DateTime? companyEntryDate,
     double? mutualEmployeeCost,
-    double? mealVoucherValue,
-    int? mealVouchersPerMonth,
     Map<String, dynamic>? transport,
+    double? mealExpenses,
+    double? mealAllowance,
+    double? mealTicketValue,
+    int? mealTicketsPerMonth,
+    String? childcareType,
+    double? childcareCost,
+    double? childcareAids,
+    double? workDaysPerWeek,
+    double? remoteDaysPerWeek,
+    double? remoteAllowance,
+    double? remoteExpenses,
+    double? remoteEquipment,
+    double? workClothing,
+    double? professionalEquipment,
+    double? trainingCost,
+    double? unionFees,
+    String? fiscalRegime,
+    double? withholdingRate,
+    double? fiscalParts,
+    double? deductibleCSG,
+    double? additionalDeductions,
   }) {
     return UserProfile(
       id: id,
@@ -107,6 +171,7 @@ class UserProfile {
       createdAt: createdAt,
       employmentStatus: employmentStatus ?? this.employmentStatus,
       companyName: companyName ?? this.companyName,
+      companyAddress: companyAddress ?? this.companyAddress,
       jobTitle: jobTitle ?? this.jobTitle,
       workTimePercentage: workTimePercentage ?? this.workTimePercentage,
       weeklyHours: weeklyHours ?? this.weeklyHours,
@@ -117,9 +182,28 @@ class UserProfile {
       conventionalBonusMonths: conventionalBonusMonths ?? this.conventionalBonusMonths,
       companyEntryDate: companyEntryDate ?? this.companyEntryDate,
       mutualEmployeeCost: mutualEmployeeCost ?? this.mutualEmployeeCost,
-      mealVoucherValue: mealVoucherValue ?? this.mealVoucherValue,
-      mealVouchersPerMonth: mealVouchersPerMonth ?? this.mealVouchersPerMonth,
       transport: transport ?? this.transport,
+      mealExpenses: mealExpenses ?? this.mealExpenses,
+      mealAllowance: mealAllowance ?? this.mealAllowance,
+      mealTicketValue: mealTicketValue ?? this.mealTicketValue,
+      mealTicketsPerMonth: mealTicketsPerMonth ?? this.mealTicketsPerMonth,
+      childcareType: childcareType ?? this.childcareType,
+      childcareCost: childcareCost ?? this.childcareCost,
+      childcareAids: childcareAids ?? this.childcareAids,
+      workDaysPerWeek: workDaysPerWeek ?? this.workDaysPerWeek,
+      remoteDaysPerWeek: remoteDaysPerWeek ?? this.remoteDaysPerWeek,
+      remoteAllowance: remoteAllowance ?? this.remoteAllowance,
+      remoteExpenses: remoteExpenses ?? this.remoteExpenses,
+      remoteEquipment: remoteEquipment ?? this.remoteEquipment,
+      workClothing: workClothing ?? this.workClothing,
+      professionalEquipment: professionalEquipment ?? this.professionalEquipment,
+      trainingCost: trainingCost ?? this.trainingCost,
+      unionFees: unionFees ?? this.unionFees,
+      fiscalRegime: fiscalRegime ?? this.fiscalRegime,
+      withholdingRate: withholdingRate ?? this.withholdingRate,
+      fiscalParts: fiscalParts ?? this.fiscalParts,
+      deductibleCSG: deductibleCSG ?? this.deductibleCSG,
+      additionalDeductions: additionalDeductions ?? this.additionalDeductions,
     );
   }
 
@@ -136,6 +220,7 @@ class UserProfile {
     String? nationality,
     String? employmentStatus,
     String? companyName,
+    String? companyAddress,
     String? jobTitle,
     double? workTimePercentage,
     double? weeklyHours,
@@ -146,9 +231,28 @@ class UserProfile {
     double? conventionalBonusMonths,
     DateTime? companyEntryDate,
     double? mutualEmployeeCost,
-    double? mealVoucherValue,
-    int? mealVouchersPerMonth,
     Map<String, dynamic>? transport,
+    double? mealExpenses,
+    double? mealAllowance,
+    double? mealTicketValue,
+    int? mealTicketsPerMonth,
+    String? childcareType,
+    double? childcareCost,
+    double? childcareAids,
+    double? workDaysPerWeek,
+    double? remoteDaysPerWeek,
+    double? remoteAllowance,
+    double? remoteExpenses,
+    double? remoteEquipment,
+    double? workClothing,
+    double? professionalEquipment,
+    double? trainingCost,
+    double? unionFees,
+    String? fiscalRegime,
+    double? withholdingRate,
+    double? fiscalParts,
+    double? deductibleCSG,
+    double? additionalDeductions,
   }) {
     return UserProfile(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -165,6 +269,7 @@ class UserProfile {
       createdAt: DateTime.now(),
       employmentStatus: employmentStatus ?? AppConstants.defaultEmploymentStatus,
       companyName: companyName,
+      companyAddress: companyAddress,
       jobTitle: jobTitle,
       workTimePercentage: workTimePercentage ?? AppConstants.defaultWorkTimePercentage,
       weeklyHours: weeklyHours ?? AppConstants.defaultWeeklyHours,
@@ -175,9 +280,28 @@ class UserProfile {
       conventionalBonusMonths: conventionalBonusMonths ?? 0.0,
       companyEntryDate: companyEntryDate,
       mutualEmployeeCost: mutualEmployeeCost ?? 0.0,
-      mealVoucherValue: mealVoucherValue,
-      mealVouchersPerMonth: mealVouchersPerMonth,
       transport: transport,
+      mealExpenses: mealExpenses,
+      mealAllowance: mealAllowance,
+      mealTicketValue: mealTicketValue,
+      mealTicketsPerMonth: mealTicketsPerMonth,
+      childcareType: childcareType,
+      childcareCost: childcareCost,
+      childcareAids: childcareAids,
+      workDaysPerWeek: workDaysPerWeek,
+      remoteDaysPerWeek: remoteDaysPerWeek,
+      remoteAllowance: remoteAllowance,
+      remoteExpenses: remoteExpenses,
+      remoteEquipment: remoteEquipment,
+      workClothing: workClothing,
+      professionalEquipment: professionalEquipment,
+      trainingCost: trainingCost,
+      unionFees: unionFees,
+      fiscalRegime: fiscalRegime,
+      withholdingRate: withholdingRate,
+      fiscalParts: fiscalParts,
+      deductibleCSG: deductibleCSG,
+      additionalDeductions: additionalDeductions,
     );
   }
 }

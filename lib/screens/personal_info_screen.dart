@@ -32,6 +32,24 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late String _nationality;
   late UserProfile _modifiedProfile;
 
+  // États d'expansion des sections
+  bool _identityExpanded = false;
+  bool _contactExpanded = false;
+  bool _familyExpanded = false;
+
+  // Système de tracking des erreurs par section
+  final Map<String, bool> _sectionHasError = {
+    'identity': false,
+    'contact': false,
+    'family': false,
+  };
+
+  final Map<String, bool> _sectionIsComplete = {
+    'identity': false,
+    'contact': false,
+    'family': false,
+  };
+
 
   @override
   void initState() {
@@ -48,6 +66,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     _dependentChildren = widget.profile.dependentChildren;
     _birthDate = widget.profile.birthDate;
     _nationality = widget.profile.nationality;
+    
+    // Initialiser l'état des erreurs
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateSectionErrorStatus();
+    });
   }
 
   @override
@@ -72,6 +95,9 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
       birthDate: _birthDate,
       nationality: _nationality,
     );
+    
+    // Mettre à jour l'état des erreurs
+    _updateSectionErrorStatus();
     
     // Sauvegarder automatiquement le profil
     _profileService.updateProfile(_modifiedProfile);
@@ -106,6 +132,84 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
     );
   }
 
+  // Méthodes de validation par section
+  bool _hasIdentityErrors() {
+    return Validators.validateName(_lastNameController.text, AppStrings.lastName) != null ||
+           Validators.validateName(_firstNameController.text, AppStrings.firstName) != null;
+  }
+
+  bool _hasContactErrors() {
+    return Validators.validateAddress(_addressController.text) != null ||
+           Validators.validatePhone(_phoneController.text) != null ||
+           Validators.validateEmail(_emailController.text) != null;
+  }
+
+  bool _hasFamilyErrors() {
+    // Pas d'erreurs possibles dans la section famille pour le moment
+    return false;
+  }
+
+  bool _isIdentityComplete() {
+    return _lastNameController.text.isNotEmpty && 
+           _firstNameController.text.isNotEmpty &&
+           _birthDate != null;
+  }
+
+  bool _isContactComplete() {
+    return _addressController.text.isNotEmpty;
+  }
+
+  bool _isFamilyComplete() {
+    return true; // Toujours complète car pas de champs obligatoires
+  }
+
+  void _updateSectionErrorStatus() {
+    setState(() {
+      _sectionHasError['identity'] = _hasIdentityErrors();
+      _sectionHasError['contact'] = _hasContactErrors();
+      _sectionHasError['family'] = _hasFamilyErrors();
+      
+      _sectionIsComplete['identity'] = _isIdentityComplete() && !_hasIdentityErrors();
+      _sectionIsComplete['contact'] = _isContactComplete() && !_hasContactErrors();
+      _sectionIsComplete['family'] = _isFamilyComplete() && !_hasFamilyErrors();
+    });
+  }
+
+  String _findFirstErrorSection() {
+    if (_sectionHasError['identity']!) return 'identity';
+    if (_sectionHasError['contact']!) return 'contact';
+    if (_sectionHasError['family']!) return 'family';
+    return '';
+  }
+
+  void _validateAndShowErrors() {
+    _updateSectionErrorStatus();
+    if (!_formKey.currentState!.validate()) {
+      String errorSection = _findFirstErrorSection();
+      
+      // Ouvrir automatiquement la section avec erreur
+      if (errorSection.isNotEmpty) {
+        setState(() {
+          if (errorSection == 'identity') _identityExpanded = true;
+          if (errorSection == 'contact') _contactExpanded = true;
+          if (errorSection == 'family') _familyExpanded = true;
+        });
+        
+        // Guider l'utilisateur
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur dans la section "$errorSection" - section ouverte'),
+            backgroundColor: Colors.orange,
+            action: SnackBarAction(
+              label: 'OK',
+              onPressed: () => ScaffoldMessenger.of(context).hideCurrentSnackBar(),
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -116,6 +220,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
             _updateProfile();
             Navigator.pop(context, _modifiedProfile);
           } else {
+            // Déclencher la validation avec indicateurs visuels
+            _validateAndShowErrors();
             // Afficher un dialogue de confirmation
             final bool? shouldExit = await showDialog<bool>(
               context: context,
@@ -193,21 +299,43 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),
           children: [
-              // Card Identité
+              // Section 1 - Identité
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTile(
+                  initiallyExpanded: _identityExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _identityExpanded = expanded;
+                    });
+                  },
+                  shape: const Border(),
+                  title: Row(
                     children: [
                       Text(
                         AppStrings.identitySection,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: AppConstants.defaultPadding),
+                      if (_sectionHasError['identity']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.error, color: Colors.red, size: 20),
+                        const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                      ] else if (_sectionIsComplete['identity']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      ]
+                    ],
+                  ),
+                  backgroundColor: _sectionHasError['identity']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                      child: Column(
+                        children: [
                       TextFormField(
                         controller: _lastNameController,
                         decoration: const InputDecoration(
@@ -289,28 +417,52 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           }
                         },
                       ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
               
-              // Card Coordonnées
+              // Section 2 - Coordonnées
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTile(
+                  initiallyExpanded: _contactExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _contactExpanded = expanded;
+                    });
+                  },
+                  shape: const Border(),
+                  title: Row(
                     children: [
                       Text(
                         AppStrings.contactSection,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: AppConstants.defaultPadding),
+                      if (_sectionHasError['contact']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.error, color: Colors.red, size: 20),
+                        const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                      ] else if (_sectionIsComplete['contact']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      ]
+                    ],
+                  ),
+                  backgroundColor: _sectionHasError['contact']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                      child: Column(
+                        children: [
                       TextFormField(
                         controller: _addressController,
                         decoration: const InputDecoration(
@@ -362,28 +514,52 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                         validator: Validators.validateEmail,
                         onChanged: (_) => _updateProfile(),
                       ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
               
-              // Card Situation familiale
+              // Section 3 - Situation familiale
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                child: ExpansionTile(
+                  initiallyExpanded: _familyExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _familyExpanded = expanded;
+                    });
+                  },
+                  shape: const Border(),
+                  title: Row(
                     children: [
                       Text(
                         AppStrings.familySection,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        style: const TextStyle(
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: AppConstants.defaultPadding),
+                      if (_sectionHasError['family']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.error, color: Colors.red, size: 20),
+                        const Text(' (erreur)', style: TextStyle(color: Colors.red, fontSize: 12)),
+                      ] else if (_sectionIsComplete['family']!) ...[
+                        const SizedBox(width: 8),
+                        const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                      ]
+                    ],
+                  ),
+                  backgroundColor: _sectionHasError['family']! 
+                    ? Colors.red.withValues(alpha: 0.1) 
+                    : Colors.transparent,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                      child: Column(
+                        children: [
                       DropdownButtonFormField<String>(
                         value: _maritalStatus,
                         decoration: const InputDecoration(
@@ -433,8 +609,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           }
                         },
                       ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
@@ -578,26 +756,6 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                 }
               },
               child: const Text('Valider'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _pickImage() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text(AppStrings.profilePhotoTitle),
-          content: const Text(AppStrings.profilePhotoInfo),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text(AppStrings.ok),
             ),
           ],
         );

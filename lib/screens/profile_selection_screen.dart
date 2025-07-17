@@ -3,6 +3,7 @@ import '../models/user_profile.dart';
 import '../widgets/profile_avatar.dart';
 import '../constants/app_strings.dart';
 import '../utils/validators.dart';
+import '../utils/profile_validator.dart';
 import '../services/profile_service.dart';
 import 'profile_detail_screen.dart';
 
@@ -104,7 +105,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                           OutlinedButton.icon(
                             onPressed: _createDemoProfile,
                             icon: const Icon(Icons.science),
-                            label: const Text('Créer un profil de démonstration'),
+                            label: const Text('Créer un profil de démo'),
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24,
@@ -148,7 +149,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (profile.email == 'sophie.martin@example.com')
+                                  if (profile.email == 'sophie.martin@example.com' || profile.email == 'marc.durand@invalid')
                                     Container(
                                       margin: const EdgeInsets.only(top: 4),
                                       padding: const EdgeInsets.symmetric(
@@ -156,23 +157,37 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                         vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.blue.shade100,
+                                        color: profile.email == 'sophie.martin@example.com' 
+                                          ? Colors.green.shade100 
+                                          : Colors.orange.shade100,
                                         borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: const Text(
-                                        'Profil de démonstration',
+                                      child: Text(
+                                        profile.email == 'sophie.martin@example.com' 
+                                          ? 'Profil de démonstration (complet)'
+                                          : 'Profil de démonstration (avec erreurs)',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: Colors.blue,
+                                          color: profile.email == 'sophie.martin@example.com' 
+                                            ? Colors.green.shade700
+                                            : Colors.orange.shade700,
                                         ),
                                       ),
                                     ),
+                                  const SizedBox(height: 4),
+                                  _buildProfileValidationInfo(profile),
                                 ],
                               ),
                             ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
+                            Column(
+                              children: [
+                                _buildValidationIcon(ProfileValidator.getOverallProfileStatus(profile)),
+                                const SizedBox(height: 4),
+                                const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -328,7 +343,8 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
   }
 
   void _createDemoProfile() async {
-    final demoProfile = UserProfile.create(
+    // PROFIL 1 : Sophie Martin - COMPLET ET VALIDE
+    final demoProfileComplete = UserProfile.create(
       lastName: 'Martin',
       firstName: 'Sophie',
       address: '15 rue de la République, 75001 Paris',
@@ -340,6 +356,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       nationality: 'France',
       employmentStatus: 'Salarié(e) CDI',
       companyName: 'Tech Solutions SARL',
+      companyAddress: '50 avenue des Champs-Élysées, 75008 Paris',
       jobTitle: 'Développeuse Full Stack',
       workTimePercentage: 100.0,
       weeklyHours: 35.0,
@@ -348,27 +365,112 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       taxSystem: 'Prélèvement à la source',
       isNonCadre: true,
       conventionalBonusMonths: 1.0,
-      companyEntryDate: DateTime(2020, 3, 15), // Il y a ~4 ans
-      mutualEmployeeCost: 35.0, // Part salarié mutuelle
-      mealVoucherValue: 9.0, // Valeur titre-restaurant
-      mealVouchersPerMonth: 19, // Nombre de titres par mois
+      companyEntryDate: DateTime(2020, 3, 15),
+      mutualEmployeeCost: 35.0,
       transport: {
         'mode': 'Voiture personnelle',
         'vehicleType': 'Voiture',
+        'fuelType': 'Essence',
         'fiscalPower': 5,
         'dailyDistance': 25.0,
-        'workDaysPerWeek': 5,
+        'distanceToWork': 25.0, // Distance domicile-travail aller simple
         'publicTransportCost': null,
         'parkingCost': 120.0,
-        'tollsCost': 0.0,
+        'tollsCost': 45.0,
+        'employerReimbursement': 50.0,
       },
+      // Frais professionnels - COMPLET
+      mealTicketValue: 9.50,
+      mealTicketsPerMonth: 19,
+      mealExpenses: 120.0,
+      mealAllowance: 80.0,
+      childcareType: 'Assistant(e) maternel(le)',
+      childcareCost: 850.0,
+      childcareAids: 294.0,
+      workDaysPerWeek: 5,
+      remoteDaysPerWeek: 2,
+      remoteAllowance: 50.0,
+      remoteExpenses: 45.0,
+      remoteEquipment: 20.0,
+      workClothing: 30.0,
+      professionalEquipment: 15.0,
+      trainingCost: 50.0,
+      unionFees: 18.0,
+      // Paramètres fiscaux - AJOUT COMPLET
+      fiscalRegime: 'Frais réels',
+      withholdingRate: 12.5, // Taux de prélèvement à la source
+      fiscalParts: 2.5, // Mariée + 2 enfants (2 + 0.5*2 = 3, mais plafonné)
+      deductibleCSG: 6.8, // CSG déductible standard
+      additionalDeductions: 25.0, // Autres déductions mensuelles
+    );
+
+    // PROFIL 2 : Marc Durand - AVEC ERREURS VOLONTAIRES
+    final demoProfileWithErrors = UserProfile.create(
+      lastName: 'Durand',
+      firstName: 'Marc',
+      address: '', // ERREUR : Adresse vide
+      maritalStatus: 'Célibataire',
+      dependentChildren: 1,
+      phone: '123456', // ERREUR : Format téléphone invalide
+      email: 'marc.durand@invalid', // ERREUR : Email invalide
+      birthDate: DateTime(1990, 12, 10),
+      nationality: 'France',
+      employmentStatus: 'Salarié(e) CDI',
+      companyName: 'Digital Corp',
+      companyAddress: '25 boulevard Voltaire, 75011 Paris',
+      jobTitle: 'Chef de projet',
+      workTimePercentage: 100.0,
+      weeklyHours: 35.0,
+      overtimeHours: 2.0,
+      grossMonthlySalary: 4200,
+      taxSystem: 'Prélèvement à la source',
+      isNonCadre: false,
+      conventionalBonusMonths: 1.0,
+      companyEntryDate: DateTime(2021, 9, 1),
+      mutualEmployeeCost: 45.0,
+      transport: {
+        'mode': 'Voiture personnelle',
+        'vehicleType': 'Voiture',
+        'fuelType': 'Diesel',
+        'fiscalPower': 6,
+        'dailyDistance': 35.0,
+        'distanceToWork': 35.0,
+        'publicTransportCost': null,
+        'parkingCost': 150.0,
+        'tollsCost': 25.0,
+        'employerReimbursement': 40.0,
+      },
+      // Frais professionnels avec erreurs
+      mealTicketValue: 8.50,
+      mealTicketsPerMonth: 20,
+      mealExpenses: -50.0, // ERREUR : Valeur négative
+      mealAllowance: 60.0,
+      childcareType: 'Crèche',
+      childcareCost: -200.0, // ERREUR : Valeur négative
+      childcareAids: 150.0,
+      workDaysPerWeek: 15, // ERREUR : Plus de 7 jours par semaine
+      remoteDaysPerWeek: 1,
+      remoteAllowance: 30.0,
+      remoteExpenses: 35.0,
+      remoteEquipment: 15.0,
+      workClothing: 25.0,
+      professionalEquipment: 10.0,
+      trainingCost: 75.0,
+      unionFees: 12.0,
+      // Paramètres fiscaux
+      fiscalRegime: 'Forfaitaire',
+      withholdingRate: 8.2,
+      fiscalParts: 1.5, // Célibataire + 1 enfant
+      deductibleCSG: 6.8,
+      additionalDeductions: 15.0,
     );
 
     setState(() {
-      _profiles.add(demoProfile);
+      _profiles.add(demoProfileComplete);
+      _profiles.add(demoProfileWithErrors);
     });
     
-    // Sauvegarder le profil
+    // Sauvegarder les profils
     await _profileService.saveProfiles(_profiles);
     
     // Afficher un message de confirmation
@@ -381,25 +483,71 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
               children: [
                 Icon(Icons.check_circle, color: Colors.green),
                 SizedBox(width: 8),
-                Text('Profil créé'),
+                Text('Profils créés'),
               ],
             ),
             content: const Text(
-              'Le profil de démonstration "Sophie Martin" a été créé avec succès.\n\n'
-              'Vous pouvez maintenant explorer toutes les fonctionnalités de l\'application.',
+              '• Sophie Martin (complet et valide)\n'
+              '• Marc Durand (avec erreurs à corriger)\n\n'
+              'Vous pouvez maintenant explorer la validation des profils.',
             ),
             actions: [
-              ElevatedButton(
+              TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  _selectProfile(demoProfile);
                 },
-                child: const Text('Ouvrir le profil'),
+                child: const Text('Fermer'),
               ),
             ],
           );
         },
       );
     }
+  }
+
+  // Widget pour l'icône de validation globale
+  Widget _buildValidationIcon(ValidationStatus status) {
+    switch (status) {
+      case ValidationStatus.valid:
+        return const Icon(Icons.check_circle, color: Colors.green, size: 24);
+      case ValidationStatus.error:
+        return const Icon(Icons.error, color: Colors.red, size: 24);
+      case ValidationStatus.incomplete:
+        return const Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 24);
+    }
+  }
+
+  // Widget pour afficher les informations de validation du profil
+  Widget _buildProfileValidationInfo(UserProfile profile) {
+    final completedSections = ProfileValidator.getCompletedSectionsCount(profile);
+    final totalSections = ProfileValidator.totalSectionsCount;
+    final status = ProfileValidator.getOverallProfileStatus(profile);
+
+    String statusText;
+    Color statusColor;
+
+    switch (status) {
+      case ValidationStatus.valid:
+        statusText = 'Profil complet';
+        statusColor = Colors.green;
+        break;
+      case ValidationStatus.error:
+        statusText = 'Erreurs à corriger';
+        statusColor = Colors.red;
+        break;
+      case ValidationStatus.incomplete:
+        statusText = '$completedSections/$totalSections sections';
+        statusColor = Colors.grey.shade600;
+        break;
+    }
+
+    return Text(
+      statusText,
+      style: TextStyle(
+        fontSize: 12,
+        color: statusColor,
+        fontWeight: FontWeight.w500,
+      ),
+    );
   }
 }
