@@ -363,7 +363,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
         'teleworkDaysPerWeek': 2,
         'publicTransportCost': null,
         'parkingCost': 120.0,
-        'tollsCost': 0.0,
+        'tollsCost': 45.0,
         'employerReimbursement': 50.0,
       },
     );
