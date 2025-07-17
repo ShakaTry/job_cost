@@ -164,6 +164,34 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
   - Amortissement du véhicule
   - Contrôle technique
 
+## 🤖 Fonctionnalités IA (Futur lointain - Version Premium+)
+
+### Scan intelligent de fiche de paie
+- **Capture optimisée avec Flutter** :
+  - Détection automatique des bords du document (packages: `document_scanner_flutter`, `edge_detection`)
+  - Correction automatique de perspective
+  - Amélioration contraste/luminosité spécifique aux fiches de paie
+  - Interface de recadrage manuel style "Genius Scan"
+  - Prévisualisation avant validation
+
+- **OCR + IA pour extraction de données** :
+  - **Google Cloud Vision API** : OCR haute précision (~1,50$/1000 pages, 1000 gratuites/mois)
+  - **Google Gemini Pro** : Analyse intelligente du texte avec prompt personnalisé (~0,50$/1M tokens)
+  - Extraction automatique des données françaises : nom, salaire brut, heures sup, cotisations, net à payer
+  - Remplissage automatique du profil utilisateur
+  - Validation et correction manuelle possible
+
+- **Coûts estimés par utilisateur** :
+  - Usage normal (2-3 fiches/mois) : ~0,01€/mois
+  - Usage intensif (10 fiches/mois) : ~0,05€/mois
+  - Tarification suggérée : 10-20 scans inclus, puis 0,10-0,20€/scan supplémentaire
+
+- **Optimisations techniques** :
+  - Cache des résultats pour éviter re-scan identiques
+  - Preprocessing intelligent côté Flutter
+  - Détection zones importantes (en-tête, montants, cotisations)
+  - Format JSON structuré pour intégration directe
+
 ## 🎯 Prochaines étapes immédiates (approche itérative)
 
 ### 1. Révision des pages existantes
