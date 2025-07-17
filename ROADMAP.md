@@ -153,6 +153,11 @@ Application Flutter pour calculer le salaire réel net en déduisant tous les fr
 - Export PDF professionnel
 - Simulations 5 ans
 - Comparaison multi-statuts
+- **Frais véhicule avancés** :
+  - Assurance véhicule (coût mensuel)
+  - Entretien annuel (révisions, pneus, réparations)
+  - Amortissement du véhicule
+  - Contrôle technique
 
 ## 🎯 Prochaines étapes immédiates (approche itérative)
 

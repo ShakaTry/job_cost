@@ -21,8 +21,10 @@ class _TransportScreenState extends State<TransportScreen> {
   // Controllers
   final _distanceController = TextEditingController();
   final _workDaysController = TextEditingController();
+  final _teleworkDaysController = TextEditingController();
   final _parkingController = TextEditingController();
   final _tollsController = TextEditingController();
+  final _employerReimbursementController = TextEditingController();
   
   // State
   String _vehicleType = 'Voiture';
@@ -46,16 +48,20 @@ class _TransportScreenState extends State<TransportScreen> {
       _fiscalPower = transport['fiscalPower'] ?? 5;
       _distanceController.text = transport['dailyDistance']?.toString() ?? '';
       _workDaysController.text = transport['workDaysPerWeek']?.toString() ?? '';
+      _teleworkDaysController.text = transport['teleworkDaysPerWeek']?.toString() ?? '';
       _parkingController.text = transport['parkingCost']?.toString() ?? '';
       _tollsController.text = transport['tollsCost']?.toString() ?? '';
+      _employerReimbursementController.text = transport['employerReimbursement']?.toString() ?? '';
     }
   }
 
   void _setupListeners() {
     _distanceController.addListener(_onDataChanged);
     _workDaysController.addListener(_onDataChanged);
+    _teleworkDaysController.addListener(_onDataChanged);
     _parkingController.addListener(_onDataChanged);
     _tollsController.addListener(_onDataChanged);
+    _employerReimbursementController.addListener(_onDataChanged);
   }
 
   void _onDataChanged() {
@@ -70,8 +76,10 @@ class _TransportScreenState extends State<TransportScreen> {
   void dispose() {
     _distanceController.dispose();
     _workDaysController.dispose();
+    _teleworkDaysController.dispose();
     _parkingController.dispose();
     _tollsController.dispose();
+    _employerReimbursementController.dispose();
     super.dispose();
   }
 
@@ -90,8 +98,10 @@ class _TransportScreenState extends State<TransportScreen> {
           'fiscalPower': _fiscalPower,
           'dailyDistance': double.tryParse(_distanceController.text),
           'workDaysPerWeek': int.tryParse(_workDaysController.text),
+          'teleworkDaysPerWeek': int.tryParse(_teleworkDaysController.text),
           'parkingCost': double.tryParse(_parkingController.text),
           'tollsCost': double.tryParse(_tollsController.text),
+          'employerReimbursement': double.tryParse(_employerReimbursementController.text),
         },
       );
 
@@ -303,6 +313,25 @@ class _TransportScreenState extends State<TransportScreen> {
                           ),
                           textInputAction: TextInputAction.next,
                         ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Jours de télétravail
+                        TextFormField(
+                          controller: _teleworkDaysController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(1),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Jours de télétravail par semaine',
+                            border: OutlineInputBorder(),
+                            suffixText: 'jours',
+                            helperText: 'Réduit les frais de transport',
+                          ),
+                          textInputAction: TextInputAction.next,
+                        ),
                       ],
                     ),
                   ),
@@ -354,6 +383,24 @@ class _TransportScreenState extends State<TransportScreen> {
                             labelText: 'Frais de péages mensuel',
                             border: OutlineInputBorder(),
                             suffixText: '€/mois',
+                          ),
+                          textInputAction: TextInputAction.next,
+                        ),
+                        
+                        const SizedBox(height: 16),
+                        
+                        // Remboursement employeur
+                        TextFormField(
+                          controller: _employerReimbursementController,
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                          ],
+                          decoration: const InputDecoration(
+                            labelText: 'Remboursement transport employeur',
+                            border: OutlineInputBorder(),
+                            suffixText: '€/mois',
+                            helperText: 'Montant remboursé par l\'employeur',
                           ),
                           textInputAction: TextInputAction.done,
                         ),

@@ -340,6 +340,7 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
       nationality: 'France',
       employmentStatus: 'Salarié(e) CDI',
       companyName: 'Tech Solutions SARL',
+      companyAddress: '50 avenue des Champs-Élysées, 75008 Paris',
       jobTitle: 'Développeuse Full Stack',
       workTimePercentage: 100.0,
       weeklyHours: 35.0,
