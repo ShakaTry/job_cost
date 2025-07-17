@@ -3,6 +3,7 @@ import '../models/user_profile.dart';
 import '../widgets/profile_avatar.dart';
 import '../constants/app_strings.dart';
 import '../utils/validators.dart';
+import '../utils/profile_validator.dart';
 import '../services/profile_service.dart';
 import 'profile_detail_screen.dart';
 
@@ -167,12 +168,20 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
                                         ),
                                       ),
                                     ),
+                                  const SizedBox(height: 4),
+                                  _buildProfileValidationInfo(profile),
                                 ],
                               ),
                             ),
-                            const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
+                            Column(
+                              children: [
+                                _buildValidationIcon(ProfileValidator.getOverallProfileStatus(profile)),
+                                const SizedBox(height: 4),
+                                const Icon(
+                                  Icons.arrow_forward_ios,
+                                  size: 16,
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -418,5 +427,51 @@ class _ProfileSelectionScreenState extends State<ProfileSelectionScreen> {
         },
       );
     }
+  }
+
+  // Widget pour l'icône de validation globale
+  Widget _buildValidationIcon(ValidationStatus status) {
+    switch (status) {
+      case ValidationStatus.valid:
+        return const Icon(Icons.check_circle, color: Colors.green, size: 24);
+      case ValidationStatus.error:
+        return const Icon(Icons.error, color: Colors.red, size: 24);
+      case ValidationStatus.incomplete:
+        return const Icon(Icons.radio_button_unchecked, color: Colors.grey, size: 24);
+    }
+  }
+
+  // Widget pour afficher les informations de validation du profil
+  Widget _buildProfileValidationInfo(UserProfile profile) {
+    final completedSections = ProfileValidator.getCompletedSectionsCount(profile);
+    final totalSections = ProfileValidator.totalSectionsCount;
+    final status = ProfileValidator.getOverallProfileStatus(profile);
+
+    String statusText;
+    Color statusColor;
+
+    switch (status) {
+      case ValidationStatus.valid:
+        statusText = 'Profil complet';
+        statusColor = Colors.green;
+        break;
+      case ValidationStatus.error:
+        statusText = 'Erreurs à corriger';
+        statusColor = Colors.red;
+        break;
+      case ValidationStatus.incomplete:
+        statusText = '$completedSections/$totalSections sections';
+        statusColor = Colors.grey.shade600;
+        break;
+    }
+
+    return Text(
+      statusText,
+      style: TextStyle(
+        fontSize: 12,
+        color: statusColor,
+        fontWeight: FontWeight.w500,
+      ),
+    );
   }
 }
