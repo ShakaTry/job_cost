@@ -158,10 +158,10 @@ class _ProfessionalExpensesScreenState extends State<ProfessionalExpensesScreen>
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) {
-          await _saveProfile();
+        if (!didPop) {
+          Navigator.pop(context, _profile);
         }
       },
       child: Scaffold(

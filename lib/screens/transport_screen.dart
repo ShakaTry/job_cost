@@ -18,6 +18,7 @@ class TransportScreen extends StatefulWidget {
 class _TransportScreenState extends State<TransportScreen> {
   final _formKey = GlobalKey<FormState>();
   final ProfileService _profileService = ProfileService();
+  late UserProfile _modifiedProfile;
   
   // Controllers
   final _distanceController = TextEditingController();
@@ -35,6 +36,7 @@ class _TransportScreenState extends State<TransportScreen> {
   @override
   void initState() {
     super.initState();
+    _modifiedProfile = widget.profile;
     _initializeControllers();
     _setupListeners();
   }
@@ -84,7 +86,7 @@ class _TransportScreenState extends State<TransportScreen> {
     });
 
     try {
-      final updatedProfile = widget.profile.copyWith(
+      _modifiedProfile = _modifiedProfile.copyWith(
         transport: {
           'vehicleType': _vehicleType,
           'fuelType': _fuelType,
@@ -96,7 +98,7 @@ class _TransportScreenState extends State<TransportScreen> {
         },
       );
 
-      await _profileService.updateProfile(updatedProfile);
+      await _profileService.updateProfile(_modifiedProfile);
       
       if (mounted) {
         setState(() {
@@ -135,12 +137,14 @@ class _TransportScreenState extends State<TransportScreen> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: !_hasModifications,
+      canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
-        if (!didPop && _hasModifications) {
-          await _saveProfile();
+        if (!didPop) {
+          if (_hasModifications) {
+            await _saveProfile();
+          }
           if (context.mounted) {
-            Navigator.of(context).pop();
+            Navigator.of(context).pop(_modifiedProfile);
           }
         }
       },
