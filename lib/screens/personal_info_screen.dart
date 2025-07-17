@@ -32,6 +32,11 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
   late String _nationality;
   late UserProfile _modifiedProfile;
 
+  // États d'expansion des sections
+  bool _identityExpanded = false;
+  bool _contactExpanded = false;
+  bool _familyExpanded = false;
+
 
   @override
   void initState() {
@@ -193,21 +198,27 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
         child: ListView(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),
           children: [
-              // Card Identité
+              // Section 1 - Identité
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.identitySection,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.defaultPadding),
+                child: ExpansionTile(
+                  initiallyExpanded: _identityExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _identityExpanded = expanded;
+                    });
+                  },
+                  title: Text(
+                    AppStrings.identitySection,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                      child: Column(
+                        children: [
                       TextFormField(
                         controller: _lastNameController,
                         decoration: const InputDecoration(
@@ -289,28 +300,36 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           }
                         },
                       ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
               
-              // Card Coordonnées
+              // Section 2 - Coordonnées
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.contactSection,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.defaultPadding),
+                child: ExpansionTile(
+                  initiallyExpanded: _contactExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _contactExpanded = expanded;
+                    });
+                  },
+                  title: Text(
+                    AppStrings.contactSection,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                      child: Column(
+                        children: [
                       TextFormField(
                         controller: _addressController,
                         decoration: const InputDecoration(
@@ -362,28 +381,36 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                         validator: Validators.validateEmail,
                         onChanged: (_) => _updateProfile(),
                       ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
               const SizedBox(height: AppConstants.defaultPadding),
               
-              // Card Situation familiale
+              // Section 3 - Situation familiale
               Card(
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        AppStrings.familySection,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.defaultPadding),
+                child: ExpansionTile(
+                  initiallyExpanded: _familyExpanded,
+                  onExpansionChanged: (expanded) {
+                    setState(() {
+                      _familyExpanded = expanded;
+                    });
+                  },
+                  title: Text(
+                    AppStrings.familySection,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                      child: Column(
+                        children: [
                       DropdownButtonFormField<String>(
                         value: _maritalStatus,
                         decoration: const InputDecoration(
@@ -433,8 +460,10 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                           }
                         },
                       ),
-                    ],
-                  ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
               
