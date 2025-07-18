@@ -25,10 +25,20 @@ def load_tracking_data():
     }
 
 def save_tracking_data(data):
-    """Save tracking data"""
+    """Save tracking data with atomic write"""
     os.makedirs(os.path.dirname(TRACKING_FILE), exist_ok=True)
-    with open(TRACKING_FILE, 'w') as f:
-        json.dump(data, f, indent=2)
+    # Write to temp file first then rename (atomic operation)
+    temp_file = TRACKING_FILE + '.tmp'
+    try:
+        with open(temp_file, 'w') as f:
+            json.dump(data, f, indent=2)
+        # Atomic rename
+        os.rename(temp_file, TRACKING_FILE)
+    except Exception as e:
+        # Clean up temp file if it exists
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
+        raise e
 
 def categorize_file(file_path):
     """Categorize file based on path and name"""

@@ -37,7 +37,7 @@ def parse_flutter_test_output(output):
     current_test = None
     
     lines = output.split('\n')
-    for i, line in range(len(lines)):
+    for i, line in enumerate(lines):
         # Look for test failures
         if '✗' in line or 'FAILED' in line:
             current_test = line.strip()

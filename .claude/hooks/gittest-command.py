@@ -78,9 +78,6 @@ def main():
         # Generate context
         context = generate_test_context(target)
         
-        # Output the context (this replaces the user's prompt)
-        print(context)
-        
         # Log for debugging
         print(f"[GITTEST] Triggered test generation for: {target}", file=sys.stderr)
         

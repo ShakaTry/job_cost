@@ -11,6 +11,10 @@ import subprocess
 import time
 from datetime import datetime
 
+# Import lock utilities
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lock_utils import acquire_lock, release_lock, cleanup_stale_locks
+
 # File where changes are tracked
 TRACKING_FILE = os.path.expanduser("~/.claude/job_cost_changes.json")
 # File to track test results
@@ -184,6 +188,14 @@ This PR was automatically created by Claude Code workflow hooks.
     return pr_output, pr_number
 
 def main():
+    # Clean up old locks first
+    cleanup_stale_locks()
+    
+    # Try to acquire workflow lock
+    if not acquire_lock("workflow_orchestration"):
+        print("[WORKFLOW] Another workflow is already running, skipping")
+        sys.exit(0)
+    
     try:
         # Read input from stdin
         input_data = json.load(sys.stdin)
@@ -224,11 +236,27 @@ def main():
             print(f"[WORKFLOW] On protected branch {current_branch}, skipping automation")
             sys.exit(0)
         
+        # Check if we're already on an auto-created branch
+        if "auto-" in current_branch:
+            print(f"[WORKFLOW] Already on auto-created branch {current_branch}, skipping to prevent loops")
+            sys.exit(0)
+        
+        # Verify we have a clean git state for critical operations
+        try:
+            # Check if git repo is in a good state
+            run_git_command("git rev-parse --git-dir")
+        except Exception as e:
+            print(f"[WORKFLOW ERROR] Git repository check failed: {e}", file=sys.stderr)
+            sys.exit(1)
+        
         # Categorize changes
         categories = categorize_changes(tracking_data)
         
-        # Stash any uncommitted changes
-        run_git_command("git stash push -u -m 'Claude Code workflow automation stash'")
+        # Check if there are changes to stash
+        status_output, _ = run_git_command("git status --porcelain", check=False)
+        if status_output.strip():
+            # Stash any uncommitted changes
+            run_git_command("git stash push -u -m 'Claude Code workflow automation stash'")
         
         created_branches = []
         
@@ -301,8 +329,11 @@ def main():
             
             # Restore stash if any
             stash_list, _ = run_git_command("git stash list", check=False)
-            if "Claude Code workflow automation stash" in stash_list:
-                run_git_command("git stash pop")
+            if stash_list and "Claude Code workflow automation stash" in stash_list:
+                try:
+                    run_git_command("git stash pop")
+                except Exception as e:
+                    print(f"[WORKFLOW WARNING] Could not restore stash: {e}", file=sys.stderr)
         
         # Clear tracking data
         clear_tracking_data()
@@ -336,6 +367,9 @@ def main():
         }
         print(json.dumps(output))
         sys.exit(0)
+    finally:
+        # Always release the lock
+        release_lock("workflow_orchestration")
 
 if __name__ == "__main__":
     main()
