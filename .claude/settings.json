@@ -5,6 +5,11 @@
         "hooks": [
           {
             "type": "command",
+            "command": "/home/shaka/AndroidStudioProjects/job_cost/.claude/hooks/gittest-command.py",
+            "timeout": 5
+          },
+          {
+            "type": "command",
             "command": "/home/shaka/AndroidStudioProjects/job_cost/.claude/hooks/analyze-workflow.py",
             "timeout": 5
           }

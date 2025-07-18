@@ -193,6 +193,25 @@ def main():
             print("[WORKFLOW] Already in stop hook, skipping to prevent loop")
             sys.exit(0)
         
+        # Check if we're in a test workflow - if yes, delegate to test orchestrator
+        test_workflow_marker = os.path.expanduser("~/.claude/job_cost_test_workflow.json")
+        if os.path.exists(test_workflow_marker):
+            try:
+                with open(test_workflow_marker, 'r') as f:
+                    data = json.load(f)
+                    if data.get("active", False):
+                        # Delegate to test workflow orchestrator
+                        import subprocess
+                        test_orchestrator = "/home/shaka/AndroidStudioProjects/job_cost/.claude/hooks/test-workflow-orchestrator.py"
+                        result = subprocess.run([test_orchestrator], input=json.dumps(input_data), 
+                                              capture_output=True, text=True, shell=False)
+                        print(result.stdout)
+                        if result.stderr:
+                            print(result.stderr, file=sys.stderr)
+                        sys.exit(result.returncode)
+            except:
+                pass
+        
         # Load tracking data
         tracking_data = load_tracking_data()
         if not tracking_data or not tracking_data.get("changes"):
@@ -274,14 +293,7 @@ def main():
                         
                         run_git_command(f'gh pr comment {pr_number} --body "{comment}"')
             
-            # STEP 4: Create feature branch for remaining changes
-            if categories["feature"] or categories["config"]:
-                print("\n[WORKFLOW] Step 4: Features")
-                branch_name = f"feature/auto-{current_branch}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-                all_feature_files = categories["feature"] + categories["config"]
-                pr_url, pr_number = create_branch_and_pr("feature", branch_name, all_feature_files, auto_merge=False)
-                if pr_url:
-                    created_branches.append(("Feature", branch_name, pr_url))
+            # Skip feature branch creation - not needed in simplified workflow
             
         finally:
             # Return to original branch
