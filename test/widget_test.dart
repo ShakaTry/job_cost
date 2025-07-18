@@ -1,30 +1,34 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:job_cost/main.dart';
+import 'package:job_cost/screens/profile_selection_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Profile selection screen displays correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify that the app starts with ProfileSelectionScreen
+    expect(find.byType(ProfileSelectionScreen), findsOneWidget);
+    
+    // Verify that we have an AppBar with the correct title
+    expect(find.text('Sélection du profil'), findsOneWidget);
+    
+    // Verify that we have a floating action button for adding profiles
+    expect(find.byType(FloatingActionButton), findsOneWidget);
+    
+    // Verify that the add icon is present
+    expect(find.byIcon(Icons.add), findsOneWidget);
+    
+    // Test tapping the demo profile button if it exists
+    final demoButton = find.text('Créer un profil de démonstration');
+    if (demoButton.evaluate().isNotEmpty) {
+      await tester.tap(demoButton);
+      await tester.pumpAndSettle();
+      
+      // After creating demo profile, we should see Sophie Martin
+      expect(find.text('Sophie Martin'), findsOneWidget);
+    }
   });
 }
