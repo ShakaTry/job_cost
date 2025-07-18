@@ -2,15 +2,19 @@
 """
 Orchestrate automatic branch creation based on tracked changes.
 This hook runs on Stop event to create appropriate branches and PRs.
+Implements a sequential workflow: docs -> tests -> fixes
 """
 import json
 import sys
 import os
 import subprocess
+import time
 from datetime import datetime
 
 # File where changes are tracked
 TRACKING_FILE = os.path.expanduser("~/.claude/job_cost_changes.json")
+# File to track test results
+TEST_RESULTS_FILE = os.path.expanduser("~/.claude/job_cost_test_results.json")
 
 def run_git_command(cmd, check=True):
     """Execute Git command and return output"""
@@ -56,8 +60,71 @@ def categorize_changes(tracking_data):
     
     return categories
 
-def create_branch_and_pr(branch_type, branch_name, files, base_branch="develop"):
-    """Create a branch, commit files, and create PR"""
+def wait_for_pr_checks(pr_number, timeout=300):
+    """Wait for PR checks to complete"""
+    print(f"[WORKFLOW] Waiting for PR #{pr_number} checks...")
+    start_time = time.time()
+    
+    while time.time() - start_time < timeout:
+        # Check PR status
+        status_cmd = f"gh pr checks {pr_number} --json state,name"
+        output, _ = run_git_command(status_cmd, check=False)
+        
+        if output:
+            try:
+                checks = json.loads(output)
+                all_completed = all(check['state'] != 'pending' for check in checks)
+                if all_completed:
+                    return checks
+            except:
+                pass
+        
+        time.sleep(10)
+    
+    return None
+
+def merge_pr_if_safe(pr_number, branch_type):
+    """Merge PR if it's safe (docs always, others if tests pass)"""
+    if branch_type == "documentation":
+        # Always merge documentation PRs
+        print(f"[WORKFLOW] Auto-merging documentation PR #{pr_number}")
+        merge_cmd = f"gh pr merge {pr_number} --merge --delete-branch"
+        run_git_command(merge_cmd)
+        return True
+    else:
+        # For other types, check if tests pass
+        checks = wait_for_pr_checks(pr_number)
+        if checks and all(check['state'] == 'success' for check in checks):
+            print(f"[WORKFLOW] Tests passed, auto-merging PR #{pr_number}")
+            merge_cmd = f"gh pr merge {pr_number} --merge --delete-branch"
+            run_git_command(merge_cmd)
+            return True
+        else:
+            print(f"[WORKFLOW] PR #{pr_number} has failing checks, manual review required")
+            return False
+
+def run_tests_and_get_failures():
+    """Run tests and return list of failures"""
+    print("[WORKFLOW] Running tests to detect failures...")
+    
+    # Try Flutter tests first
+    test_cmd = "flutter test"
+    result = subprocess.run(test_cmd, shell=True, capture_output=True, text=True)
+    
+    if result.returncode != 0:
+        # Parse test output for failures
+        failures = []
+        lines = result.stdout.split('\n') + result.stderr.split('\n')
+        for line in lines:
+            if 'FAILED' in line or 'Error:' in line:
+                failures.append(line.strip())
+        
+        return failures
+    
+    return []
+
+def create_branch_and_pr(branch_type, branch_name, files, base_branch="develop", auto_merge=True):
+    """Create a branch, commit files, create PR, and optionally auto-merge"""
     
     print(f"\n[WORKFLOW] Creating {branch_type} branch: {branch_name}")
     
@@ -76,7 +143,7 @@ def create_branch_and_pr(branch_type, branch_name, files, base_branch="develop")
         print(f"[WORKFLOW] No files to commit for {branch_type}")
         run_git_command(f"git checkout {base_branch}")
         run_git_command(f"git branch -d {branch_name}")
-        return None
+        return None, None
     
     # Commit
     commit_message = f"[{branch_type.capitalize()}] Automated {branch_type} from Claude Code session"
@@ -94,15 +161,27 @@ This PR was automatically created by Claude Code workflow hooks.
 ### Files changed:
 {chr(10).join(f"- {f['file']}" for f in files)}
 
+### Workflow Step: {branch_type}
+### Auto-merge: {'Yes' if auto_merge else 'No'}
+
 ### Generated at: {datetime.now().isoformat()}
 
 🤖 Generated with Claude Code workflow automation
 """
     
     pr_cmd = f'''gh pr create --base {base_branch} --title "{pr_title}" --body "{pr_body}" --label "{branch_type}"'''
-    pr_url, _ = run_git_command(pr_cmd)
+    pr_output, _ = run_git_command(pr_cmd)
     
-    return pr_url
+    # Extract PR number from output
+    pr_number = None
+    if pr_output and '/pull/' in pr_output:
+        pr_number = pr_output.split('/pull/')[-1].strip()
+    
+    # Auto-merge if requested
+    if auto_merge and pr_number:
+        merge_pr_if_safe(pr_number, branch_type)
+    
+    return pr_output, pr_number
 
 def main():
     try:
@@ -135,32 +214,72 @@ def main():
         created_branches = []
         
         try:
-            # Create documentation branch if needed
+            # STEP 1: Create and merge documentation branch
             if categories["documentation"]:
+                print("\n[WORKFLOW] Step 1: Documentation")
                 branch_name = f"docs/auto-{current_branch}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-                pr_url = create_branch_and_pr("documentation", branch_name, categories["documentation"])
+                pr_url, pr_number = create_branch_and_pr("documentation", branch_name, categories["documentation"], auto_merge=True)
                 if pr_url:
                     created_branches.append(("Documentation", branch_name, pr_url))
+                    # Wait for merge to complete
+                    time.sleep(5)
+                    run_git_command("git pull origin develop")
             
-            # Create test branch if needed
+            # STEP 2: Create test branch and run tests
+            test_failures = []
             if categories["test"]:
+                print("\n[WORKFLOW] Step 2: Tests")
                 branch_name = f"test/auto-{current_branch}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-                pr_url = create_branch_and_pr("test", branch_name, categories["test"])
+                pr_url, pr_number = create_branch_and_pr("test", branch_name, categories["test"], auto_merge=False)
                 if pr_url:
                     created_branches.append(("Test", branch_name, pr_url))
+                    
+                    # Run tests to check for failures
+                    print("\n[WORKFLOW] Running tests to check for failures...")
+                    test_failures = run_tests_and_get_failures()
+                    
+                    if not test_failures:
+                        # Tests pass, auto-merge
+                        print("[WORKFLOW] All tests passed!")
+                        if pr_number:
+                            merge_pr_if_safe(pr_number, "test")
+                    else:
+                        print(f"[WORKFLOW] Found {len(test_failures)} test failures")
+                        # Save test failures for fix generation
+                        with open(TEST_RESULTS_FILE, 'w') as f:
+                            json.dump({"failures": test_failures}, f)
             
-            # Create fix branch if needed
-            if categories["fix"]:
+            # STEP 3: Create fix branch if tests failed or if fixes were tracked
+            if test_failures or categories["fix"]:
+                print("\n[WORKFLOW] Step 3: Fixes")
                 branch_name = f"fix/auto-{current_branch}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
-                pr_url = create_branch_and_pr("fix", branch_name, categories["fix"])
+                
+                # If we have test failures, prompt for fix creation
+                if test_failures:
+                    fix_reason = f"Fix {len(test_failures)} test failures"
+                else:
+                    fix_reason = "Apply tracked fixes"
+                
+                pr_url, pr_number = create_branch_and_pr("fix", branch_name, categories["fix"], auto_merge=False)
                 if pr_url:
                     created_branches.append(("Fix", branch_name, pr_url))
+                    
+                    # If this was for test failures, add a comment to the PR
+                    if test_failures and pr_number:
+                        comment = f"This PR addresses the following test failures:\n\n"
+                        for failure in test_failures[:5]:  # Show first 5 failures
+                            comment += f"- {failure}\n"
+                        if len(test_failures) > 5:
+                            comment += f"\n... and {len(test_failures) - 5} more failures"
+                        
+                        run_git_command(f'gh pr comment {pr_number} --body "{comment}"')
             
-            # Create feature branch for remaining changes
+            # STEP 4: Create feature branch for remaining changes
             if categories["feature"] or categories["config"]:
+                print("\n[WORKFLOW] Step 4: Features")
                 branch_name = f"feature/auto-{current_branch}-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
                 all_feature_files = categories["feature"] + categories["config"]
-                pr_url = create_branch_and_pr("feature", branch_name, all_feature_files)
+                pr_url, pr_number = create_branch_and_pr("feature", branch_name, all_feature_files, auto_merge=False)
                 if pr_url:
                     created_branches.append(("Feature", branch_name, pr_url))
             

@@ -2,7 +2,14 @@
 
 ## Vue d'ensemble
 
-Ce système de hooks Claude Code automatise la création de branches Git et de pull requests en fonction des changements effectués pendant une session de développement. Il organise automatiquement les modifications en branches appropriées (documentation, tests, corrections, fonctionnalités).
+Ce système de hooks Claude Code automatise un workflow Git séquentiel intelligent :
+
+1. **Documentation** → Commit → PR → Auto-merge
+2. **Tests** → Commit → PR → Exécution des tests
+3. **Fixes** → Si les tests échouent → Commit → PR
+4. **Features** → Pour les autres changements → Commit → PR
+
+Le système suit les changements, les catégorise, et orchestre automatiquement le workflow complet.
 
 ## Architecture
 
@@ -14,7 +21,8 @@ Ce système de hooks Claude Code automatise la création de branches Git et de p
 └── hooks/
     ├── analyze-workflow.py      # Analyse les prompts utilisateur
     ├── track-changes.py         # Suit les modifications de fichiers
-    └── orchestrate-branches.py  # Crée les branches et PRs
+    ├── orchestrate-branches.py  # Crée les branches et PRs séquentiellement
+    └── test-runner.py          # Exécute les tests et analyse les échecs
 ```
 
 ## Fonctionnement
@@ -38,17 +46,35 @@ Le script `track-changes.py` :
   - **feature** : tout le reste
 - Stocke les changements dans `~/.claude/job_cost_changes.json`
 
-### 3. Orchestration (Stop)
+### 3. Orchestration séquentielle (Stop)
 
-Le script `orchestrate-branches.py` :
-- S'exécute à la fin de la session Claude Code
-- Lit les changements suivis
-- Crée des branches séparées pour chaque catégorie :
-  - `docs/auto-[branch]-[timestamp]`
-  - `test/auto-[branch]-[timestamp]`
-  - `fix/auto-[branch]-[timestamp]`
-  - `feature/auto-[branch]-[timestamp]`
-- Crée une PR pour chaque branche avec le label approprié
+Le script `orchestrate-branches.py` exécute un workflow intelligent :
+
+#### Étape 1 : Documentation
+- Crée la branche `docs/auto-[branch]-[timestamp]`
+- Commit les fichiers de documentation
+- Crée une PR avec label "documentation"
+- **Auto-merge immédiat** (la doc est toujours safe)
+
+#### Étape 2 : Tests
+- Crée la branche `test/auto-[branch]-[timestamp]`
+- Commit les fichiers de test
+- Crée une PR avec label "test"
+- **Exécute `flutter test`** pour vérifier
+- Si succès → Auto-merge
+- Si échec → Passe à l'étape 3
+
+#### Étape 3 : Fixes (si nécessaire)
+- Activé si des tests échouent
+- Crée la branche `fix/auto-[branch]-[timestamp]`
+- Crée une PR avec label "fix"
+- Ajoute un commentaire avec les échecs détectés
+- Attend une intervention manuelle
+
+#### Étape 4 : Features
+- Crée la branche `feature/auto-[branch]-[timestamp]`
+- Commit les autres changements
+- Crée une PR avec label "feature"
 
 ## Configuration
 
@@ -97,28 +123,46 @@ Les hooks s'activent automatiquement quand Claude Code détecte :
 - Des modifications de fichiers pendant la session
 - La fin d'une session de développement
 
-### Exemple de workflow
+### Exemple de workflow séquentiel
 
-1. **Prompt utilisateur** : "Crée un système d'automatisation de branches Git"
-2. **Claude Code** : Développe le système
-3. **Hooks actifs** :
-   - `analyze-workflow.py` détecte l'intention
-   - `track-changes.py` suit chaque fichier modifié
-   - `orchestrate-branches.py` crée les branches à la fin
+1. **Prompt utilisateur** : "Crée des tests pour le widget ProfileAvatar"
+2. **Claude Code** :
+   - Crée `/docs/tests/profile_avatar_test.md` (documentation)
+   - Crée `/test/widgets/profile_avatar_test.dart` (tests)
+   - Modifie `/lib/widgets/profile_avatar.dart` (fix si nécessaire)
 
-### Résultat attendu
+3. **Workflow automatique** :
 
 ```
-[WORKFLOW] Workflow automation completed! Created 3 branches:
+[WORKFLOW] Step 1: Documentation
+✅ Created PR #123 - Auto-merged
 
-• Documentation: docs/auto-feature-git-workflow-20241219-143052
-  PR: https://github.com/user/repo/pull/123
+[WORKFLOW] Step 2: Tests
+Creating test branch...
+Running flutter test...
+❌ 2 tests failed
 
-• Feature: feature/auto-feature-git-workflow-20241219-143052  
-  PR: https://github.com/user/repo/pull/124
+[WORKFLOW] Step 3: Fixes
+Created PR #125 with test failures:
+- ProfileAvatar should display initials
+- ProfileAvatar should handle null image
 
-• Config: config/auto-feature-git-workflow-20241219-143052
-  PR: https://github.com/user/repo/pull/125
+[WORKFLOW] Workflow completed:
+• Documentation: PR #123 (merged)
+• Tests: PR #124 (pending - tests failed)
+• Fixes: PR #125 (pending - addresses test failures)
+```
+
+### Résultat idéal (tests passent)
+
+```
+[WORKFLOW] Step 1: Documentation
+✅ Created PR #123 - Auto-merged
+
+[WORKFLOW] Step 2: Tests
+✅ All tests passed - Auto-merged PR #124
+
+[WORKFLOW] Workflow completed successfully!
 ```
 
 ## Sécurité
@@ -162,11 +206,12 @@ git stash clear
 
 ### Améliorations possibles
 
-1. **Tests automatiques** : Exécuter les tests avant création de PR
-2. **Validation du code** : Linting et formatage automatique
-3. **Intégration CI/CD** : Déclencher des pipelines après PR
-4. **Notifications** : Slack/Discord pour les PRs créées
-5. **Configuration par projet** : `.claude/project-settings.json`
+1. **Multi-framework tests** : Support pour Jest, Pytest, etc.
+2. **Fix automatique** : Génération de code pour corriger les tests
+3. **Intégration CI/CD** : Attendre les checks GitHub Actions
+4. **Notifications** : Webhook Discord/Slack pour le statut
+5. **Analyse de couverture** : Vérifier la couverture de code
+6. **Rollback automatique** : Revert si les tests échouent après merge
 
 ### Contribution
 
